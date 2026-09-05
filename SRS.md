@@ -442,6 +442,7 @@ The Student and Administrator each perform their own primary actions via direct 
 - `Remove Study Material` `<<include>>` `Search/View Study Materials`: locating a material is mandatory before removal; this is the only relationship shared across both actors, since both roles use the same lookup function.
 
 ![Content and Question Bank System](UML-DIAGRAM-1.png)
+
 **Figure 1: Content and Question Bank System**
 
 ## 8.2 UML Diagram 2: Quiz and Performance System
