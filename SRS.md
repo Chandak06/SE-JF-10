@@ -430,15 +430,18 @@ The system shall be accepted when:
 - Remove Question/Quiz
 - Remove Study Material
 
+
 ### UML interpretation
 
-The Student performs study-material activities. The Administrator performs question-bank and moderation activities.
+The Student and Administrator each perform their own primary actions via direct associations. The `<<include>>`/`<<extend>>` relationships reflect only genuine preconditions:
 
-The Administrator actions are independent use cases. **Adding a question does not include searching/filtering, and searching/filtering does not extend to removal.** These functions therefore are not connected by `<<include>>` or `<<extend>>` relationships.
+- `Search/View Study Materials` `<<extend>>` `Upload Study Material` : a student may optionally check for existing materials before uploading, to avoid duplicates.
+- `Download Study Material` `<<extend>>` `Search/View Study Materials`: downloading is an optional follow-on after viewing, not a forced step.
+- `Search/Filter Questions` `<<extend>>` `Add Question to Bank`: an admin may optionally check for duplicate questions before adding one.
+- `Remove Question/Quiz` `<<include>>` `Search/Filter Questions`: locating a question is mandatory before it can be removed.
+- `Remove Study Material` `<<include>>` `Search/View Study Materials`: locating a material is mandatory before removal; this is the only relationship shared across both actors, since both roles use the same lookup function.
 
-Downloading study material is an optional action after a student finds/views material and may be represented as `<<extend>>` from `Download Study Material` to `Search/View Study Materials`.
-
-![Content and Question Bank System](UML-DIAGRAM-1.jpeg)
+![Content and Question Bank System](UML-DIAGRAM-1.png)
 **Figure 1: Content and Question Bank System**
 
 ## 8.2 UML Diagram 2: Quiz and Performance System
