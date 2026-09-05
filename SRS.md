@@ -49,8 +49,6 @@
 8. [System Models and UML Use-Case Diagrams](#8-system-models-and-uml-use-case-diagrams)  
 9. [Work Division and Cross-Testing Plan](#9-work-division-and-cross-testing-plan)  
 10. [Requirements Traceability Matrix](#10-requirements-traceability-matrix)  
-11. [Assumptions and Out of Scope](#11-assumptions-and-out-of-scope)  
-12. [Final Consistency Checklist](#12-final-consistency-checklist)  
 
 ---
 
