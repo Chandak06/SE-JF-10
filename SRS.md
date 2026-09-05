@@ -3,7 +3,7 @@
 **Project:** Collaborative Study Material & Quiz Platform  
 **Version:** 1.5 (Final)  
 **Date:** 04-09-2026  
-**Status:** Draft / Final Review  
+**Status:** Final Review  
 
 ## Authors
 
@@ -609,56 +609,6 @@ Each member is responsible for the backend and database work associated with the
 | CSMQ-SR-003 | Role-based access control | 6 | AuthModule / AdminModule | TC-Sec-03 | N |
 | CSMQ-SR-004 | Input validation | 6 | Backend | TC-Sec-04 | N |
 | CSMQ-SR-005 | HTTPS communication | 6 | WebUI / Backend | TC-Sec-05 | N |
-
----
-
-# 11. Assumptions and Out of Scope
-
-## 11.1 Assumptions
-
-- Users have access to a supported web browser and internet connection.
-- An administrator account is provisioned with administrator privileges.
-- Question-bank entries are objective/MCQ questions with one stored correct answer.
-- Uploaded study materials comply with the configured file type and size constraints.
-- The implementation uses MongoDB as the primary persistent data store.
-- The system is demonstrated in a single local/development environment.
-
-## 11.2 Out of Scope
-
-The following are outside the current project scope unless added through a future revision:
-
-- Student editing or deleting of question-bank entries
-- Student moderation of content
-- Non-MCQ question types
-- Online payment or subscriptions
-- Real-time chat or messaging
-- Video-conferencing
-- Large-scale distributed deployment
-- Enterprise-level load testing
-- Advanced recommendation or AI tutoring features
-
----
-
-# 12. Final Consistency Checklist
-
-Before final submission, verify that:
-
-1. The Student role does not claim permission to add, edit, or remove questions.
-2. The Administrator role is responsible for question-bank maintenance and content removal.
-3. The final UML diagrams use the same actor names and use-case names as this SRS.
-4. The UML relationships use `<<include>>` only for mandatory sub-functions and `<<extend>>` only for optional behavior.
-5. `Add Question to Bank` is not shown as including `Search/Filter Questions`.
-6. `Search/Filter Questions` is not shown as extending `Remove Question/Quiz`.
-7. Quiz evaluation and result display follow the quiz-submission flow.
-8. The work-division table names the members exactly as follows:
-   - Member 1 – Dharani S
-   - Member 2 – Prajwal M
-   - Member 3 – Karan Varshney
-   - Member 4 – Harshit Chandak
-9. Each member owns the backend/database work for their assigned module.
-10. RTM statuses are updated from `N` to the actual test results before final submission.
-11. The configured PDF file-size limit is recorded in the implementation/configuration documentation.
-12. The actual deployed URL/environment, if applicable, is recorded outside this SRS.
 
 ---
 
