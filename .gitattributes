@@ -1,0 +1,6 @@
+* text=auto
+*.ts text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+Jenkinsfile text eol=lf
+*.md text diff
