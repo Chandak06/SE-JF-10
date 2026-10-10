@@ -4,7 +4,7 @@ import styles from './HomePage.module.css'
 const benefits = [
   ['01', 'Keep useful notes together', 'Keep study materials organized and easy for your group to access.'],
   ['02', 'Practice what you learn', 'Create quizzes to test your understanding and prepare for exams.'],
-  ['03', 'Make progress together', 'Share explanations, discuss difficult topics, and learn from one another.'],
+  ['03', 'Track your learning progress', 'Review your quiz results, revisit past attempts, and monitor your performance by subject.'],
 ]
 
 export default function HomePage() {
