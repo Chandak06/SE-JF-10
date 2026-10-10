@@ -38,3 +38,13 @@ Current GitHub Actions execution links will be recorded below. Reports and build
 
 The user elected to open the PR themselves. Independent Member 1 or Member 3 review/cross-testing remains required; self-tests and CI do not constitute peer approval. Do not represent Jira tasks as independently reviewed until sign-off. No later-sprint moderation, full-platform performance, live HTTPS or hosted deployment is claimed.
 - Atlas-backed compiled runtime smoke: health/readiness returned 200 and anonymous PDF upload returned 401. Runtime indexes initialized; no application records created.
+
+## GitHub Actions and Jira evidence
+
+- Passing integrated build: https://github.com/Chandak06/SE-JF-10/actions/runs/38062842450 (commit d5d14e7).
+- Controlled failure detection: https://github.com/Chandak06/SE-JF-10/actions/runs/38062875287. Checkout/install/typecheck/build passed; the intentional assertion failed at backend tests, later build stages were skipped, and the failure report was retained.
+- The temporary codex/sprint1-ci-failure-demo branch was deleted after recording evidence. Its intentional assertion never entered PES2UG24CS185.
+- Passing run artifacts: sprint-1-test-reports, sprint-1-backend and sprint-1-frontend. Download retained artifacts for the Sprint review; retention is 14 days.
+- Evidence links were added to descriptions of CSMQ-2 through CSMQ-7, preserving their acceptance criteria and existing status. Independent review remains pending.
+
+PR preparation: compare main against PES2UG24CS185. Suggested title: CSMQ-2–CSMQ-7: Sprint 1 authentication, Dharani integration and GitHub Actions. Request Member 1 or Member 3 review and verify the PR-triggered workflow before merging.
