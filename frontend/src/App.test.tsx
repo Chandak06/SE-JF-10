@@ -32,6 +32,69 @@ describe('Study Commons routes and forms', () => {
     expect(screen.getByText('Enter a password.')).toBeInTheDocument()
     expect(auth.register).not.toHaveBeenCalled()
   })
+  it('shows a success message after successful registration', async () => {
+    const user = userEvent.setup()
+    vi.mocked(auth.register).mockResolvedValueOnce({
+      authenticatedUser: {
+        id: 'user-1',
+        name: 'Test Student',
+        email: 'student@example.com',
+        role: 'student',
+      },
+    })
+
+    renderApp()
+    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.type(screen.getByLabelText('Name'), 'Test Student')
+    await user.type(screen.getByLabelText('Email'), 'student@example.com')
+    await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
+    await user.click(screen.getByRole('button', { name: /create account/i }))
+
+    expect(
+      await screen.findByText(/account created for test student/i),
+    ).toBeInTheDocument()
+    expect(auth.register).toHaveBeenCalledWith({
+      name: 'Test Student',
+      email: 'student@example.com',
+      password: 'ExamplePassword123!',
+    })
+  })
+
+  it('shows a duplicate-email error during registration', async () => {
+    const user = userEvent.setup()
+    vi.mocked(auth.register).mockRejectedValueOnce(
+      new Error('An account with this email already exists.'),
+    )
+
+    renderApp()
+    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.type(screen.getByLabelText('Name'), 'Test Student')
+    await user.type(screen.getByLabelText('Email'), 'student@example.com')
+    await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
+    await user.click(screen.getByRole('button', { name: /create account/i }))
+
+    expect(
+      await screen.findByText('An account with this email already exists.'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows a useful error when registration cannot reach the server', async () => {
+    const user = userEvent.setup()
+    vi.mocked(auth.register).mockRejectedValueOnce(
+      new Error('Unable to reach the server. Check your connection and try again.'),
+    )
+
+    renderApp()
+    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.type(screen.getByLabelText('Name'), 'Test Student')
+    await user.type(screen.getByLabelText('Email'), 'student@example.com')
+    await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
+    await user.click(screen.getByRole('button', { name: /create account/i }))
+
+    expect(
+      await screen.findByText(/unable to reach the server/i),
+    ).toBeInTheDocument()
+  })
   it('shows login validation and API errors', async () => {
     const user = userEvent.setup(); vi.mocked(auth.login).mockRejectedValueOnce(new Error('Invalid email or password.'))
     renderApp(); await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Log in' }))
