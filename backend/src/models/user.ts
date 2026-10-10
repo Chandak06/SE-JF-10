@@ -29,7 +29,8 @@ const userSchema = new Schema<UserFields>(
     passwordHash: {
       type: String,
       required: true,
-      select: false
+      select: false,
+      match: /^\$2[aby]\$(10|11|12|13|14)\$[./A-Za-z0-9]{53}$/
     },
     role: {
       type: String,
@@ -45,7 +46,8 @@ const userSchema = new Schema<UserFields>(
   },
   {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
+    strict: 'throw'
   }
 );
 

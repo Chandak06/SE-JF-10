@@ -1,4 +1,4 @@
-import type { Connection } from 'mongoose';
+import { Types, type Connection } from 'mongoose';
 import type { Account, AccountRepository } from '../types/security.js';
 import { getUserModel, type UserDocument } from '../models/user.js';
 
@@ -18,6 +18,7 @@ export function createMongoAccountRepository(connection: Connection) {
 
   const accounts: AccountRepository = {
     async findById(id) {
+      if (!Types.ObjectId.isValid(id)) return null;
       const user = await User.findById(id)
         .select('+passwordHash')
         .exec();
@@ -49,6 +50,7 @@ export function createMongoAccountRepository(connection: Connection) {
 
   return {
     accounts,
+    User,
     async initialize() {
       await User.init();
     }

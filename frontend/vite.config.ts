@@ -4,5 +4,6 @@ import { defineConfig } from 'vitest/config'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  test: { environment: 'jsdom', setupFiles: './src/test/setup.ts', css: true, restoreMocks: true },
+  test: { environment: 'jsdom', setupFiles: './src/test/setup.ts', css: true, restoreMocks: true,
+    reporters: ['default', 'junit'], outputFile: { junit: 'reports/junit.xml' } },
 })

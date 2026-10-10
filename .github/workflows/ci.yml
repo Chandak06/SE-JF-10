@@ -2,6 +2,7 @@ name: Sprint 1 security CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -32,6 +33,7 @@ jobs:
         run: |
           npm ci
           npm run test:ci
+          npm run lint
           npm run build
       - name: Retain test and coverage evidence
         if: always()
@@ -41,8 +43,15 @@ jobs:
           path: |
             reports/
             coverage/
+            frontend/reports/
           if-no-files-found: warn
           retention-days: 14
+      - name: Retain frontend build
+        uses: actions/upload-artifact@v7
+        with:
+          name: sprint-1-frontend
+          path: frontend/dist/
+          if-no-files-found: error
       - name: Retain backend build
         uses: actions/upload-artifact@v7
         with:

@@ -4,7 +4,7 @@ Owner: Harshit Chandak, PES2UG24CS185. Jira: CSMQ-2, CSMQ-3, CSMQ-4, CSMQ-5.
 
 ## Composition
 
-The shared module avoids a second production User schema. Dharani implements `AccountRepository` against their MongoDB User model (see `backend/src/types/security.ts`):
+The shared module avoids a second production User schema. Dharani's integrated `createMongoAccountRepository` implements `AccountRepository` against their MongoDB User model (see `backend/src/types/security.ts`):
 
 | Method | Contract |
 | --- | --- |
@@ -14,29 +14,7 @@ The shared module avoids a second production User schema. Dharani implements `Ac
 
 `Account` has id (string), name, email, role (`student` or `admin`), active (boolean), passwordHash. Adapter methods must not spread untrusted request bodies into database queries. Translate their User model fields to this interface. `passwordHash` must be selected internally for login, and excluded from all public responses. Create administrator accounts only through a trusted provisioning process, never public registration.
 
-In the server composition root, after connecting to MongoDB:
-
-```typescript
-import { createAuthService } from './security/auth-service.js';
-import { createMongoSessionStore } from './security/sessions.js';
-import { createApp } from './app.js';
-
-// Import accounts and feature routers from the respective member's modules.
-const sessions = createMongoSessionStore(connection);
-await sessions.initialize();
-const auth = await createAuthService({
-  accounts, sessions,
-  rounds: config.BCRYPT_ROUNDS,
-  ttlMinutes: config.SESSION_TTL_MINUTES
-});
-const app = createApp({
-  config, auth,
-  databaseReady: () => connection.readyState === 1,
-  features: { materials: materialsRouter, questions: questionsRouter, attempts: attemptsRouter }
-});
-```
-
-This is a composition example, not a standalone script: the named adapters/routers are teammate dependencies. `backend/tests/helpers/fixtures.ts` is an executable reference adapter backed by MongoDB, kept out of the production build.
+The executable composition root is backend/src/runtime.ts. It connects Dharani's model/repository, shared authentication and sessions, and the real PDF upload router. server.ts starts that runtime. Optional question and attempt routers can be passed to createRuntime by their owners.
 
 ## Authentication HTTP contract
 
@@ -63,12 +41,12 @@ The rate-limit response has the same error shape; its request ID is available in
 
 ## Feature route boundaries
 
-- Materials: mounted at `/api/materials` after `requireAuth(auth)`. Dharani enforces upload metadata, size/PDF checks, storage and Student-only upload policy inside their router.
+- Materials: mounted at `/api/materials` after `requireAuth(auth)`. The integrated upload router enforces Student-only access, plain-text title/subject/description, one valid unencrypted PDF with at least one page, and MAX_UPLOAD_BYTES (10 MiB default). Multipart field name: file. Metadata is stored in materials and bytes in the materialFiles GridFS bucket; failed metadata writes clean up the file.
 - Question management: `/api/questions` requires authentication and admin role before Prajwal's router runs. This is the Sprint 1 admin Add/Filter contract. A future student-safe selection endpoint must be separate and omit correct answers.
 - Attempts: `/api/attempts` requires authentication and student role. Karan's router uses `req.user.id`, never a userId supplied by the client.
 - Exported `requireRole('admin')` can protect later moderation routes. Do not expose admin mutation routes behind authentication alone.
 
-Authorization tests use sentinel handlers. They prove denied requests cannot reach a feature handler and allowed requests receive trusted user context. They do not verify PDF parsing, file storage, MCQ creation, evaluation, or React flows; run those against actual teammate modules after composition.
+Security contract tests retain question/attempt sentinel handlers because those business modules are not yet integrated. Production runtime tests additionally verify Dharani's account model and actual PDF parsing, GridFS bytes, metadata persistence, upload limits and logout replay. Frontend tests verify the shared API client and upload/logout UI. These do not claim completed MCQ creation or evaluation.
 
 ## Transport and failures
 

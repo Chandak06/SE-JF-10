@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import MaterialsPage from './pages/MaterialsPage'
 import styles from './App.module.css'
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
     <Route path="/" element={<HomePage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/materials" element={<MaterialsPage />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></main></div>
 }

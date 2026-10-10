@@ -9,3 +9,5 @@ reports/
 .reference-text/
 *.log
 *.tsbuildinfo
+.local/
+frontend/reports/

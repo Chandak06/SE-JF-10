@@ -10,6 +10,7 @@ const environmentSchema = z.object({
   }).default('http://localhost:5173'),
   SESSION_TTL_MINUTES: z.coerce.number().int().min(1).max(1440).default(60),
   BCRYPT_ROUNDS: z.coerce.number().int().min(10).max(14).default(12),
+  MAX_UPLOAD_BYTES: z.coerce.number().int().min(1024).max(25 * 1024 * 1024).default(10 * 1024 * 1024),
   TRUST_PROXY: z.string().default('')
 }).superRefine((env, context) => {
   if (env.NODE_ENV === 'production' && !env.CLIENT_ORIGIN.startsWith('https://')) {

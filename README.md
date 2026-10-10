@@ -1,56 +1,35 @@
 # Collaborative Study Material & Quiz Platform
 
-Team 10 · SE Jackfruit · MERN stack
+Team 10 · SE Jackfruit · MERN
 
-This branch contains **Harshit Chandak's Sprint 1 backend/security contribution (PES2UG24CS185, CSMQ-2 through CSMQ-7)**. It implements shared Express/MongoDB infrastructure, bcrypt password handling, persistent revocable sessions, authentication/RBAC middleware, reusable validation, integration contracts, tests and CI.
+Harshit Chandak (PES2UG24CS185), Sprint 1, CSMQ-2 through CSMQ-7: shared authentication/security, Member 1 integration, tests and GitHub Actions.
 
-## Scope and current integration status
+Dharani's account model, repository and React pages are integrated from branch PES2UG24CS157, preserving their commits. Harshit's integration adds runtime composition, secured PDF upload/storage and browser upload/logout. Question-bank and attempt business features remain assigned to their respective teammates.
 
-The starting repository contained planning documents, with no application code. The Sprint 1 plan assigns User models/UI/PDF upload to Dharani, Question Bank to Prajwal, and the attempt prototype to Karan. Their feature implementations are not present here.
+## Run locally
 
-The reusable auth router works with an `AccountRepository` supplied by Dharani's module. Tests use a real temporary MongoDB and an explicitly labelled fixture User model. Upload/question/attempt sentinels test authorization boundaries, **not** completed teammate business features. `npm start` runs the shared foundation's health endpoints; mount the account adapter and feature routers as described in [integration guide](docs/INTEGRATION.md) to expose their APIs.
+Use Node.js 24.15 or newer within the supported Node 24 series. Run `npm ci`. If no `.env` exists, copy `.env.example` to `.env`; keep your existing Atlas configuration. Never overwrite or commit a configured `.env`.
 
-## Quick start
+- `npm run db:check`: compile and verify MongoDB with an authenticated ping, without changing records.
+- `npm run dev`: backend at port 5000 by default.
+- In `frontend`, run `npm ci` and `npm run dev`. Set `VITE_API_BASE_URL` in a local frontend `.env` when needed.
+- Register, log in, follow **Share a PDF or log out**, enter title/subject/description and choose a PDF.
+- `npm run build` and `npm start`: production backend.
 
-Install Node.js 24 and MongoDB, then:
+The API provides `/health`, `/ready`, `/api/auth/register`, `/login`, `/me`, `/logout` (under `/api/auth`) and authenticated `POST /api/materials`.
 
-```powershell
-npm ci
-Copy-Item .env.example .env
-npm run dev
-```
+## Verify
 
-Configure `MONGODB_URI` in your local `.env`. The server defaults to port 5000:
+Run `npm run check` at the repository root. In `frontend`, run `npm run test:ci`, `npm run lint` and `npm run build`.
 
-- `GET /health`: process liveness.
-- `GET /ready`: database readiness (503 when disconnected).
-- `npm run build` then `npm start`: compile and run the same foundation.
+Backend tests use isolated temporary MongoDB, never the configured Atlas database. Coverage gates: 85% statements/lines/functions and 80% branches. Reports are generated in `reports/`, `coverage/` and `frontend/reports/`.
 
-Do not commit `.env` or database credentials.
+## Sprint 1 CI/CD
 
-## Verification
+[GitHub Actions](.github/workflows/ci.yml) checks backend types, builds both applications, runs backend/frontend tests and frontend lint, and retains reports plus backend/frontend build artifacts. Pushes, pull requests and manual runs trigger it. This implements Sprint 1 build/package delivery; hosted deployment requires a later deployment target.
 
-```powershell
-npm run check
-```
+GitHub Actions replaces Jenkins per the updated Jira requirements and project decision on 10 October 2026. No Jenkins setup is needed.
 
-This performs strict TypeScript checks, compiles the backend, and runs unit plus MongoDB integration tests with coverage. Tests start an isolated `mongodb-memory-server` process; they do not read `MONGODB_URI` or modify your development database. The initial test run needs network access to download MongoDB. Jenkins agents need the same supported MongoDB runtime prerequisites.
+See [integration contracts](docs/INTEGRATION.md), [Sprint evidence](docs/SPRINT1_HARSHIT.md) and [CI guide](docs/GITHUB_ACTIONS.md). Independent teammate review and the user-created PR remain necessary before merging.
 
-Other commands: `npm run test:unit`, `npm run test:integration`, `npm run test:coverage`.
-
-Reports: `reports/junit.xml`, `coverage/index.html`, `coverage/lcov.info`, and `coverage/coverage-summary.json`. Coverage gates are 85% lines/functions/statements and 80% branches.
-
-## CI and review
-
-[Jenkinsfile](Jenkinsfile) provides checkout, install, type check, build, unit/integration tests and report retention. It supports Windows/Linux agents, GitHub push triggers and five-minute SCM polling. A frontend stage activates when `frontend/package.json` is integrated and requires its `test:ci` and `build` scripts.
-
-[GitHub Actions](.github/workflows/ci.yml) runs the same checks on pushes and pull requests and retains reports/build artifacts. It supplements the required Jenkins demonstration.
-
-Read [Jenkins setup](docs/JENKINS.md), [API/integration contracts](docs/INTEGRATION.md), and [Sprint 1 traceability and test evidence](docs/SPRINT1_HARSHIT.md). Merge only after teammate review. No deployment target is configured in this sprint.
-
-## Design references
-
-- [SRS](SRS.md): CSMQ-SR-001..004 and CSMQ-F-001/F-002/F-004.
-- [SAD](SAD.pdf): layered MERN architecture, shared Auth/RBAC, API/error conventions.
-- [Test plan](TEST_PLAN.pdf): unit/integration/security tests and QA responsibility.
-- Local detailed Sprint 1 plan, section 6: Member 4 scope and UT-M4/IT-M4/CI-M4 cases.
+References: [SRS](SRS.md), [SAD](SAD.pdf), [test plan](TEST_PLAN.pdf), detailed Sprint 1 work plan and updated work division in the project folder.
