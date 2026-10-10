@@ -1,0 +1,2 @@
+.app { min-height: 100vh; background: var(--page-bg); }
+.main { min-height: calc(100vh - 76px); }

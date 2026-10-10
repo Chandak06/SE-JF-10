@@ -1,0 +1,9 @@
+.header { height: 76px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.inner { max-width: 1440px; height: 100%; margin: auto; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; letter-spacing: -.3px; }
+.mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: var(--accent-contrast); }
+.nav { display: flex; align-items: center; gap: 22px; }
+.nav a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { color: var(--accent); }
+.nav a.register { color: var(--accent); }
+@media (max-width: 500px) { .inner { padding: 0 18px; } .nav { gap: 12px; } .brand { font-size: 14px; } .nav a { font-size: 13px; } }
