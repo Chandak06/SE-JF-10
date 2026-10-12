@@ -9,18 +9,21 @@ import {
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import type { Connection } from 'mongoose';
 import mongoose from 'mongoose';
+import { hashPassword } from '../../src/security/password.js';
 
 import { connectDatabase } from '../../src/db.js';
 import { getUserModel } from '../../src/models/user.js';
 import { createMongoAccountRepository } from '../../src/repositories/mongo-account-repository.js';
 
 describe('Production User model and Mongo account repository', () => {
+  let testHash: string;
   let mongo: MongoMemoryServer;
   let connection: Connection;
   let User: ReturnType<typeof getUserModel>;
   let repository: ReturnType<typeof createMongoAccountRepository>;
 
   beforeAll(async () => {
+    testHash = await hashPassword('Repository test password!', 10);
     mongo = await MongoMemoryServer.create({
       instance: {
         dbName: 'csmq_user_repository_test',
@@ -47,7 +50,7 @@ describe('Production User model and Mongo account repository', () => {
       const user = await User.create({
         name: '  Test Student  ',
         email: '  STUDENT@EXAMPLE.COM  ',
-        passwordHash: 'test-hash'
+        passwordHash: testHash
       });
 
       expect(user.name).toBe('Test Student');
@@ -71,7 +74,7 @@ describe('Production User model and Mongo account repository', () => {
       const user = new User({
         name: 'Test Student',
         email: 'student@example.com',
-        passwordHash: 'test-hash',
+        passwordHash: testHash,
         role: 'superuser'
       });
 
@@ -84,7 +87,7 @@ describe('Production User model and Mongo account repository', () => {
       await User.create({
         name: 'Test Student',
         email: 'student@example.com',
-        passwordHash: 'test-hash'
+        passwordHash: testHash
       });
 
       const user = await User.findOne({
@@ -100,7 +103,7 @@ describe('Production User model and Mongo account repository', () => {
         .select('+passwordHash')
         .exec();
 
-      expect(withHash?.passwordHash).toBe('test-hash');
+      expect(withHash?.passwordHash).toBe(testHash);
     });
 
     it('reuses the model registered on the same connection', () => {
@@ -121,7 +124,7 @@ describe('Production User model and Mongo account repository', () => {
       const user = await User.create({
         name: 'Test Student',
         email: 'student@example.com',
-        passwordHash: 'test-hash'
+        passwordHash: testHash
       });
 
       const account = await repository.accounts.findById(user.id);
@@ -130,7 +133,7 @@ describe('Production User model and Mongo account repository', () => {
         id: user.id,
         name: 'Test Student',
         email: 'student@example.com',
-        passwordHash: 'test-hash',
+        passwordHash: testHash,
         role: 'student',
         active: true
       });
@@ -148,14 +151,14 @@ describe('Production User model and Mongo account repository', () => {
       await User.create({
         name: 'Test Student',
         email: 'student@example.com',
-        passwordHash: 'test-hash'
+        passwordHash: testHash
       });
 
       const account =
         await repository.accounts.findByEmail('  STUDENT@EXAMPLE.COM  ');
 
       expect(account?.email).toBe('student@example.com');
-      expect(account?.passwordHash).toBe('test-hash');
+      expect(account?.passwordHash).toBe(testHash);
     });
 
     it('returns null for an unknown email', async () => {
@@ -169,13 +172,13 @@ describe('Production User model and Mongo account repository', () => {
       const account = await repository.accounts.createStudent({
         name: '  New Student  ',
         email: '  NEW.STUDENT@EXAMPLE.COM  ',
-        passwordHash: 'new-hash'
+        passwordHash: testHash
       });
 
       expect(account).toMatchObject({
         name: 'New Student',
         email: 'new.student@example.com',
-        passwordHash: 'new-hash',
+        passwordHash: testHash,
         role: 'student',
         active: true
       });
