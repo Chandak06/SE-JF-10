@@ -6,9 +6,11 @@ import { createMaterialUpload } from './materials/upload.js';
 import { createAuthService } from './security/auth-service.js';
 import { createMongoSessionStore } from './security/sessions.js';
 import type { SafeLogger } from './errors.js';
+import { createModerationRouter, type ModerationResources } from './admin/moderation.js';
 
 export async function createRuntime(connection: Connection, config: Config, options: {
   logger?: SafeLogger; authLimit?: number; features?: Pick<FeatureRouters, 'questions' | 'attempts'>;
+  moderation?: Pick<ModerationResources, 'questions' | 'quizzes'>;
 } = {}) {
   const accounts = createMongoAccountRepository(connection);
   const materials = createMaterialUpload(connection, config.MAX_UPLOAD_BYTES);
@@ -19,7 +21,8 @@ export async function createRuntime(connection: Connection, config: Config, opti
   });
   const app = createApp({
     config, auth, authLimit: options.authLimit,
-    features: { materials: materials.router, ...options.features },
+    features: { materials: materials.router, ...options.features,
+      admin: createModerationRouter({ materials: materials.moderation, ...options.moderation }) },
     databaseReady: () => connection.readyState === 1, logger: options.logger
   });
   return { app, accounts, materials, sessions, auth };
