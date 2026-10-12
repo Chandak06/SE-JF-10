@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getSessionToken, logout, uploadMaterial } from '../services/authService'
 import FormField from '../components/FormField'
 import styles from './AuthPage.module.css'
+import MaterialLibrary from '../components/MaterialLibrary'
 
 export default function MaterialsPage() {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ export default function MaterialsPage() {
   return <div className={styles.wrap}><section className={styles.card}><h1>Share study materials</h1>
     {!getSessionToken() ? <p>Please <Link to="/login">log in</Link> to upload a PDF.</p> : <>
       <p className={styles.intro}>Add a valid, unencrypted PDF and help your group study.</p>
+      <MaterialLibrary />
       <form className={styles.form} onSubmit={submit}>
         <FormField label="Title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
         <FormField label="Subject" name="subject" value={subject} onChange={e => setSubject(e.target.value)} />
