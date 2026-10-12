@@ -46,8 +46,11 @@ test('student uploads, administrator confirms removal and removed content cannot
   await page.getByRole('button', { name: 'Create account', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('Account created')
   await page.getByRole('link', { name: 'Log in', exact: true }).last().click()
+  // Registration and login share field labels; wait for the new form before filling.
+  await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible()
   await page.getByLabel('Email', { exact: true }).fill('browser@example.com')
   await page.getByLabel('Password', { exact: true }).fill('Browser test password!')
+  await expect(page.getByLabel('Email', { exact: true })).toHaveValue('browser@example.com')
   await page.getByRole('button', { name: 'Log in', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('You’re signed in')
   await page.getByRole('link', { name: 'Share a PDF or log out' }).click()
@@ -63,6 +66,7 @@ test('student uploads, administrator confirms removal and removed content cannot
   await page.getByRole('button', { name: 'Download Browser notes' }).click()
   expect((await downloadPromise).suggestedFilename()).toMatch(/\.pdf$/)
   await page.getByRole('button', { name: 'Log out', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible()
   // Promotion applies only to this isolated test database, never the user's Atlas account.
   await runtime.accounts.User.updateOne({ email: 'browser@example.com' }, { role: 'admin' })
   await page.getByLabel('Email', { exact: true }).fill('browser@example.com')
