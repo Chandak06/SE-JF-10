@@ -1,6 +1,6 @@
 # Harshit Chandak Sprint 2 implementation
 
-Owner: PES2UG24CS185. Branch: codex/harshit-sprint-2. Jira CSMQ-29–34. Reference date: 12 October 2026.
+Owner: PES2UG24CS185. Branch: PES2UG24CS185. Jira CSMQ-29–34. Reference date: 12 October 2026.
 
 Sprint 1's shared contribution was merged in PR #3 with green push, PR and main CI. The entire team's missing Question Bank/Attempt work and independent review are not retroactively represented as complete.
 
