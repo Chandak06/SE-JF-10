@@ -1,0 +1,60 @@
+name: Sprint 1 security CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sprint-1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test:ci
+      - name: Frontend tests and build when integrated
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run test:ci
+          npm run lint
+          npm run build
+      - name: Retain test and coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sprint-1-test-reports
+          path: |
+            reports/
+            coverage/
+            frontend/reports/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Retain frontend build
+        uses: actions/upload-artifact@v7
+        with:
+          name: sprint-1-frontend
+          path: frontend/dist/
+          if-no-files-found: error
+      - name: Retain backend build
+        uses: actions/upload-artifact@v7
+        with:
+          name: sprint-1-backend
+          path: dist/
+          if-no-files-found: error

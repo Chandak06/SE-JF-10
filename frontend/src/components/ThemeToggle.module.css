@@ -1,0 +1,4 @@
+.toggle { width: 54px; height: 30px; display: inline-flex; align-items: center; border: 1px solid var(--border); background: var(--surface-subtle); border-radius: 20px; padding: 3px; cursor: pointer; }
+.track { display: flex; width: 100%; align-items: center; }
+.thumb { display: grid; place-items: center; height: 22px; width: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast); font-size: 15px; line-height: 1; transition: transform .18s ease; }
+.toggle[aria-checked='true'] .thumb { transform: translateX(23px); }

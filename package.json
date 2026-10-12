@@ -1,0 +1,48 @@
+{
+  "name": "se-jackfruit-security-foundation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Harshit Chandak (PES2UG24CS185) Sprint 1 shared backend and security foundation",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "scripts": {
+    "dev": "tsx watch backend/src/server.ts",
+    "start": "node dist/server.js",
+    "db:check": "npm run build && node scripts/check-database.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:unit": "vitest run backend/tests/unit",
+    "test:integration": "vitest run backend/tests/integration",
+    "test:coverage": "vitest run --coverage",
+    "test:ci": "vitest run --coverage",
+    "check": "npm run typecheck && npm run build && npm run test:ci"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "mongoose": "^9.11.1",
+    "multer": "^2.4.0",
+    "pdf-lib": "^1.17.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.4",
+    "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "mongodb-memory-server": "^11.3.0",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

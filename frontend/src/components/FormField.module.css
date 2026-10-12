@@ -1,0 +1,6 @@
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 650; color: var(--text-primary); }
+.field input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 11px 12px; background: var(--input-bg); color: var(--text-primary); }
+.field input::placeholder { color: var(--text-tertiary); }
+.field input.invalid { border-color: var(--error); }
+.error { color: var(--error); font-size: 13px; }
