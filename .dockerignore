@@ -1,0 +1,16 @@
+.git
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+.local
+.reference-text
+.cache
+coverage
+reports
+**/reports
+**/test-results
+**/playwright-report
+*.pdf
+*.docx
+Jira_Evidence_Screenshots_Master_Updated2
