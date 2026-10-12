@@ -8,6 +8,6 @@ Artifacts: `sprint-1-test-reports` (backend JUnit/coverage plus frontend JUnit),
 
 Do not commit `.env` values. For future deployment, supply credentials through GitHub environment secrets and specify the actual hosting target; no hosted deployment is claimed for this sprint.
 
-The main contribution is branch `PES2UG24CS185`. The user will open its PR. Obtain Member 1 or Member 3 review as required by the work division before merging. The CI failure demonstration uses a separate, non-merge branch; its intentional assertion must never enter the contribution branch.
+The main contribution is branch `PES2UG24CS185`. The October 12 user request authorizes the agent to open and merge its PR after passing checks. Obtain Member 1 or Member 3 review as required by the work division before merging. The CI failure demonstration uses a separate, non-merge branch; its intentional assertion must never enter the contribution branch.
 
 Current execution links and test results are recorded in `docs/SPRINT1_HARSHIT.md`.
