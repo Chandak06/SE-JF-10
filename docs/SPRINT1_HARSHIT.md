@@ -48,3 +48,15 @@ The user elected to open the PR themselves. Independent Member 1 or Member 3 rev
 - Evidence links were added to descriptions of CSMQ-2 through CSMQ-7, preserving their acceptance criteria and existing status. Independent review remains pending.
 
 PR preparation: compare main against PES2UG24CS185. Suggested title: CSMQ-2–CSMQ-7: Sprint 1 authentication, Dharani integration and GitHub Actions. Request Member 1 or Member 3 review and verify the PR-triggered workflow before merging.
+
+## Re-audit — 12 October 2026
+
+The current Jira acceptance criteria and Sprint 1 plan section 6 were checked again. CSMQ-2–7 implementation requirements are covered by the hashing/auth/RBAC suites, real production PDF integration, safe errors, Actions workflow and retained reports. GitHub Actions remains the user-approved replacement for Jenkins.
+
+New available integration: merged CSMQ-11-registration-ui-api through 8b1a5d7, preserving Dharani's three commits. Their placeholder hash fixtures were updated to use the shared bcrypt helper; model protection was not weakened. The actual frontend API client now has a live HTTP integration test against the production Express composition and disposable MongoDB: register, invalid login, valid login, real PDF persistence, logout/replay rejection and anonymous multipart denial.
+
+Revalidation: 80 backend tests and 19 frontend tests passed; backend types/build, frontend build/lint, and coverage gates passed. Coverage remains 97.43% statements, 97.29% branches, 97.01% functions and 98.43% lines. Atlas authenticated ping passed without modifying records.
+
+No question-bank or attempt implementation branch is available on origin. Shared authorization contracts remain tested, but real business integration for those modules cannot be claimed. CSMQ-29–34 concern Sprint 2 and were excluded from this Sprint 1 scope.
+
+The October 12 user request now authorizes this agent to create a PR and merge it into main, superseding the earlier preference for a user-created PR. Independent teammate review is not fabricated; any repository-enforced requirements must still pass. New genuine file changes are committed individually. Previously pushed history is preserved without duplicate or empty commits.
