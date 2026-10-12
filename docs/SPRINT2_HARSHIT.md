@@ -25,3 +25,13 @@ Status: available-module implementation ready for verified integration; whole Sp
 
 ## Final local verification
 88 backend tests and 22 frontend tests passed; all three browser projects passed (Chrome, Edge, Firefox). Backend type/build/coverage and frontend lint/build passed. Final coverage: 97.88% statements, 97.72% branches, 97.43% functions, 98.69% lines. The final concurrent smoke run, overlapping browser/regression work, measured p90 1,433 ms for the same 50-session/100-request scope; the earlier run measured 510 ms. These are development smoke measurements, not hosted or full-platform performance evidence.
+
+## Audit after branch relocation — 12 October 2026
+
+Sprint 1 (Harshit's CSMQ-2–7 implementation): hashing, authentication/logout, RBAC, real Member 1 registration/PDF integration, validation/security tests and GitHub Actions are implemented. PR #3 was merged after green checks. Independent peer sign-off is not recorded and the Jira tasks remain To Do; the entire team's Sprint 1 cannot be marked complete without the missing Question Bank/Attempt deliverables.
+
+Sprint 2: CSMQ-29 material moderation is implemented/tested. CSMQ-30 has shared adapters and fixture evidence only; actual Question/Quiz removal is not integrated. CSMQ-31–34 remain partial until real quiz/attempt integration, full-platform performance/RTM, deployed HTTPS/demo and independent review are verified. Container configuration is build-validated, not a live deployment.
+
+The latest relocated-branch CI (38266371714 and 38266311868) exposed a Chrome test navigation race, while backend/frontend, containers, Edge and Firefox passed. The error context showed an empty login email: the test could fill a registration field while the SPA switched to login, because both forms share labels. The test now waits for the actual login heading before filling credentials and verifies the email value. No sleeps, retries or relaxed assertions were added. Fresh CI must pass before treating the current PR as green.
+
+All Sprint 2 work is on PES2UG24CS185 and replacement draft PR #5; draft #4 was closed when its old source branch was removed. main remains at the verified Sprint 1 merge.
