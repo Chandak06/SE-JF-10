@@ -4,8 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, expect, it, vi } from 'vitest'
 import MaterialsPage from './MaterialsPage'
 import * as auth from '../services/authService'
-vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
-beforeEach(() => { vi.clearAllMocks(); vi.mocked(auth.getSessionToken).mockReturnValue('test-token') })
+vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn(), searchMaterials: vi.fn(), materialFile: vi.fn() }))
+beforeEach(() => { vi.clearAllMocks(); vi.mocked(auth.getSessionToken).mockReturnValue('test-token'); vi.mocked(auth.searchMaterials).mockResolvedValue([]) })
 const show = () => render(<MemoryRouter><MaterialsPage /></MemoryRouter>)
 it('requires login before showing the upload form', () => {
   vi.mocked(auth.getSessionToken).mockReturnValue(null); show()
