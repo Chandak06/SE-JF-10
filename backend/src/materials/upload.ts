@@ -47,6 +47,16 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     }
   }).single('file');
   const router = Router();
+  router.get('/', async (_req, res) => {
+    const materials = await Material.find({}, {
+      title: 1, subject: 1, description: 1, size: 1, createdAt: 1
+    }).sort({ createdAt: -1 }).lean();
+    res.json({ materials: materials.map((material) => ({
+      id: material._id.toString(), title: material.title, subject: material.subject,
+      description: material.description, size: material.size,
+      createdAt: material.createdAt.toISOString()
+    })) });
+  });
   router.post('/', requireRole('student'), (req, res, next) => {
     upload(req, res, (error: unknown) => {
       if (error instanceof multer.MulterError) {
