@@ -6,9 +6,10 @@ import { ThemeProvider } from './components/ThemeToggle'
 import { BrowserRouter } from 'react-router-dom'
 import * as auth from './services/authService'
 
-vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn() }))
+const authState = vi.hoisted(() => ({ sessionToken: null as string | null }))
+vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), getSessionToken: () => authState.sessionToken }))
 function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></BrowserRouter></ThemeProvider>) }
-beforeEach(() => { localStorage.clear(); vi.clearAllMocks() })
+beforeEach(() => { localStorage.clear(); authState.sessionToken = null; vi.clearAllMocks() })
 
 describe('Study Commons routes and forms', () => {
   it('shows landing navigation and opens registration', async () => {
@@ -111,5 +112,42 @@ describe('Study Commons routes and forms', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
     await waitFor(() => expect(screen.getByText('Enter a valid email address.')).toBeInTheDocument())
     expect(auth.login).not.toHaveBeenCalled()
+  })
+
+  it('redirects logged-out visitors from materials to login', () => {
+    window.history.pushState({}, '', '/materials')
+    renderApp()
+    expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+  })
+
+  it('navigates to materials after a successful login and updates navigation', async () => {
+    const user = userEvent.setup()
+    vi.mocked(auth.login).mockImplementationOnce(async () => {
+      authState.sessionToken = 'test-token'
+      return { authenticatedUser: { id: 'user-1', name: 'Student', email: 'student@example.com', role: 'student' }, token: 'test-token' }
+    })
+    renderApp()
+    await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Log in' }))
+    await user.type(screen.getByLabelText('Email'), 'student@example.com')
+    await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
+    await user.click(screen.getByRole('button', { name: 'Log in' }))
+
+    expect(await screen.findByRole('heading', { name: 'Share study materials' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument()
+    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Materials' })).toBeInTheDocument()
+  })
+
+  it('logs out and returns to login with logged-out navigation', async () => {
+    const user = userEvent.setup()
+    authState.sessionToken = 'test-token'
+    vi.mocked(auth.logout).mockImplementationOnce(async () => { authState.sessionToken = null })
+    window.history.pushState({}, '', '/materials')
+    renderApp()
+
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+
+    expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Log in' })).toBeInTheDocument()
+    expect(auth.logout).toHaveBeenCalledOnce()
   })
 })
