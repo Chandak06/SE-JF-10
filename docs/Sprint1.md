@@ -1,4 +1,6 @@
-# CSMQ-11 Registration UI and API Implementation and Verification
+# Sprint 1 Authentication Implementation Reports
+
+## CSMQ-11 Registration UI and API Implementation and Verification
 
 **Branch:** `PES2UG24CS157`  
 **Owner:** Dharani S
@@ -101,3 +103,35 @@ The registration UI and API implementation has passed the recorded frontend test
 
 The implementation is ready to be submitted for review. Completion of the pull-request and peer-review steps remains pending.
 
+## CSMQ-12 Student Login and Logout Implementation Report
+
+**Jira issue:** CSMQ-12 : Implement student login and logout functionality and integrate it with the shared authentication mechanism.
+
+**Scope:** Student credential login, shared session-token handling, authenticated access, and logout/revocation.
+
+### Implementation Summary
+
+The login page submits the student's email and password through the shared frontend authentication service. The backend validates the request, verifies the password against the stored password hash, and returns a generic invalid-credentials response when the credentials are wrong or the account is unavailable. On success, the backend creates a cryptographically random bearer token and stores only its SHA-256 hash with the user ID and expiration time. The frontend retains the returned token for authenticated requests.
+
+Protected API routes require a valid bearer token and an active, allowed account. Authentication is resolved against the shared session store, including an explicit expiry check. Logout requires authentication, revokes the matching server-side session, and clears the frontend token after successful revocation. Protected requests using a revoked token are rejected.
+
+### Acceptance Criteria Traceability
+
+| # | Acceptance criterion | Implementation | Test evidence |
+|---|---|---|---|
+| 1 | Student can submit valid email and password credentials. | `frontend/src/pages/LoginPage.tsx`; `frontend/src/services/authService.ts`; backend `loginSchema` in `backend/src/middleware/validation.ts` | `frontend/src/App.test.tsx` checks login submission; `frontend/tests/auth.integration.test.ts` uses the actual frontend client. |
+| 2 | Valid credentials result in successful authentication. | `backend/src/security/auth-service.ts` verifies the password and returns the authenticated user and token. | `backend/tests/integration/security.test.ts` verifies login and protected user context; `frontend/tests/auth.integration.test.ts` logs in against the composed backend. |
+| 3 | Invalid credentials are rejected with a clear error response. | Login returns a consistent `401` invalid-credentials response; the frontend displays the safe server message. | Security integration tests cover wrong password, unknown account, and disabled account; frontend unit/integration tests cover invalid login feedback. |
+| 4 | Successful authentication establishes the agreed session/token. | A 32-byte random bearer token is returned; only its SHA-256 hash, user ID, and expiry are persisted by `backend/src/security/sessions.ts`. | Security integration test checks token shape, persisted hash, and that the raw token is not stored. |
+| 5 | Protected functionality is accessible only after successful authentication. | `backend/src/middleware/auth.ts` enforces bearer authentication; feature routers are mounted behind authentication in `backend/src/app.ts`. The frontend protects the materials route in `frontend/src/App.tsx`. | Middleware and security integration tests reject missing, malformed, random, expired, or revoked tokens and allow valid sessions. |
+| 6 | Logout clears or invalidates the session/token. | `backend/src/routes/auth.ts` calls the shared auth service to revoke the session. The frontend `logout` function clears its token and user state after the server accepts logout. | `frontend/src/services/authService.test.ts` checks successful clearing and that a failed logout keeps the session available for retry; backend integration covers revocation. |
+| 7 | Protected access is rejected after logout. | Revoked token hashes no longer resolve to an active session. | Backend security integration replays the logged-out token against `/api/auth/me` and expects `401`; frontend integration checks protected upload is refused after logout. |
+| 8 | Login and logout behavior is covered by unit and integration tests. | Frontend validation/client tests, backend password and auth middleware unit tests, and MongoDB-backed security integration tests cover the flow. | See `frontend/src/App.test.tsx`, `frontend/src/services/authService.test.ts`, `frontend/tests/auth.integration.test.ts`, `backend/tests/unit/password.test.ts`, `backend/tests/unit/middleware.test.ts`, and `backend/tests/integration/security.test.ts`. |
+
+### Verification Record
+
+Automated coverage is present at the UI, client-service, middleware, and MongoDB-backed integration layers. The last project verification results already recorded in `docs/SPRINT1_HARSHIT.md` (12 October 2026 re-audit) report 80 backend tests and 19 frontend tests passing, with backend type/build, frontend build/lint, and coverage gates passing. Those are the existing project results; checks were not rerun as part of this documentation update.
+
+### Conclusion
+
+The implementation and test coverage address all eight CSMQ-12 acceptance criteria. The server-side session is the authority for protected access, and logout invalidates that session so token replay is rejected.
