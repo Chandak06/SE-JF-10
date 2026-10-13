@@ -15,12 +15,24 @@ export default function MaterialsPage() {
   const [file, setFile] = useState<File | null>(null); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false)
 
   const refreshMaterials = useCallback(async () => {
-    setLoading(true); setLoadError('')
-    try { setMaterials(await listMaterials()) }
+    try {
+      const result = await listMaterials()
+      setMaterials(result); setLoadError('')
+    }
     catch (error) { setLoadError(error instanceof Error ? error.message : 'Unable to load materials.') }
     finally { setLoading(false) }
   }, [])
-  useEffect(() => { void refreshMaterials() }, [refreshMaterials])
+  useEffect(() => {
+    let mounted = true
+    void listMaterials().then((result) => {
+      if (mounted) { setMaterials(result); setLoadError('') }
+    }).catch((error: unknown) => {
+      if (mounted) setLoadError(error instanceof Error ? error.message : 'Unable to load materials.')
+    }).finally(() => {
+      if (mounted) setLoading(false)
+    })
+    return () => { mounted = false }
+  }, [])
 
   async function submit(event: FormEvent) {
     event.preventDefault(); if (!file) { setMessage('Choose a PDF file to continue.'); return }
