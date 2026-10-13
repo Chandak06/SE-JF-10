@@ -135,3 +135,26 @@ Automated coverage is present at the UI, client-service, middleware, and MongoDB
 ### Conclusion
 
 The implementation and test coverage address all eight CSMQ-12 acceptance criteria. The server-side session is the authority for protected access, and logout invalidates that session so token replay is rejected.
+
+## CSMQ-13: Student User Model and Authentication Integration
+
+**Jira issue:** CSMQ-13
+**Branch:** `PES2UG24CS157`
+
+The production User model and Mongo account repository were already integrated with the shared Member 4 authentication service. This CSMQ-13 update adds model-level checks so invalid data is rejected even when a write bypasses the registration request validator:
+
+- Names are trimmed, required, 1–100 characters, and reject control characters and markup delimiters.
+- Emails are trimmed and lowercased, limited to 254 characters, validated for email shape, and protected by a unique database index.
+- `passwordHash` is required, excluded from ordinary queries, and must match the shared bcrypt hash format. Plaintext passwords are not valid model data.
+- The model retains the shared `student`/`admin` role enum, with new users defaulting to active students. Public registration continues to force the student role through the repository.
+
+
+### Verification recorded for this update
+
+| Check | Result |
+|---|---|
+| User model/repository tests | 16 passed |
+| Backend integration tests (runtime and security) | 25 passed |
+| TypeScript typecheck | Passed |
+| Backend production build | Passed |
+
