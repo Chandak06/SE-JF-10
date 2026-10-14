@@ -150,29 +150,33 @@ const questions: QuizQuestion[] = [
 
 export default function QuizAttemptPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [responses, setResponses] = useState<Record<string, string>>({})
+
+  const [responses, setResponses] = useState<Record<string, string>>(() => {
+    const savedResponses = window.localStorage.getItem(
+      'study-commons-quiz-responses'
+    )
+
+    if (!savedResponses) {
+      return {}
+    }
+
+    try {
+      return JSON.parse(savedResponses) as Record<string, string>
+    } catch {
+      window.localStorage.removeItem('study-commons-quiz-responses')
+      return {}
+    }
+  })
+
   const [reviewQuestions, setReviewQuestions] = useState<Set<string>>(
     new Set()
   )
+
   const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
   const currentQuestion = questions[currentIndex]
-
-  useEffect(() => {
-    const savedResponses = window.localStorage.getItem(
-      'study-commons-quiz-responses'
-    )
-
-    if (savedResponses) {
-      try {
-        setResponses(JSON.parse(savedResponses) as Record<string, string>)
-      } catch {
-        window.localStorage.removeItem('study-commons-quiz-responses')
-      }
-    }
-  }, [])
 
   useEffect(() => {
     window.localStorage.setItem(
