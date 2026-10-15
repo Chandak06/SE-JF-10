@@ -158,3 +158,39 @@ The production User model and Mongo account repository were already integrated w
 | TypeScript typecheck | Passed |
 | Backend production build | Passed |
 
+## CSMQ-14: Authenticated Student PDF Study-Material Upload
+
+**Jira issue:** CSMQ-14 (under CSMQ-8)
+**Implementation branch:** `PES2UG24CS157`
+**Updated:** 16 October 2026
+
+### Implementation summary
+
+The authenticated Materials page exposes an upload form with title, subject, description, and PDF file fields. The frontend sends these as multipart form data with the shared bearer session token. The Express application authenticates the request before the material router accepts the multipart body, then requires the current account role to be `student`.
+
+The API validates required metadata, rejects unknown or unsafe fields, enforces a single PDF file and the configured size limit, and parses the bytes to confirm the file is a non-empty valid PDF. PDF bytes are stored in MongoDB GridFS; a Material record stores the metadata, authenticated `uploadedBy` user ID, GridFS `fileId`, byte size, and timestamps. If metadata persistence fails after file storage, the uploaded GridFS file is removed. Successful requests return HTTP `201` with a clear material response. The frontend displays an upload success message and refreshes the library.
+
+### Acceptance criteria traceability
+
+| # | Acceptance criterion | Implementation / evidence |
+|---|---|---|
+| 1 | Authenticated student can open PDF upload functionality. | Materials page is protected by the frontend session route; its upload action opens the form. Backend material routes require authentication. |
+| 2 | Form accepts title, subject, description, and PDF. | `frontend/src/pages/MaterialsPage.tsx` provides required metadata fields and a PDF file input. |
+| 3 | Valid PDF files submit successfully. | `backend/src/materials/upload.ts` parses the PDF and stores validated bytes in GridFS. |
+| 4 | Upload is associated with the authenticated user. | Backend sets `uploadedBy` from `req.user.id`; clients cannot supply this field. |
+| 5 | Required material metadata is stored correctly. | Material schema persists title, subject, and description with validation and length limits. |
+| 6 | File storage reference is persisted correctly. | Material schema stores the unique GridFS `fileId` and byte size; integration test reads back identical file bytes. |
+| 7 | Unauthenticated uploads are rejected. | `requireAuth` guards `/api/materials`; runtime integration verifies HTTP `401` before any file is stored. |
+| 8 | Successful upload returns a clear response. | API returns HTTP `201` and material details; UI displays “Your material has been uploaded.” |
+| 9 | Relevant upload integration tests pass. | Backend runtime integration: 8 passed. Frontend authenticated-client and upload-form integration/unit tests: 4 passed. |
+| 10 | Jira-linked feature branch and Pull Request submitted for review. | Code is on the existing `PES2UG24CS157` branch. No commit or PR was created per the current instruction; Jira-linked branch/PR submission and review remain pending. |
+
+### Verification run
+
+| Command | Result |
+|---|---|
+| `npm exec vitest run backend/tests/integration/runtime.test.ts` | 8 tests passed |
+| `cd frontend && npm run test:ci -- --run tests/auth.integration.test.ts src/pages/MaterialsPage.test.tsx` | 4 tests passed |
+
+The test runs used disposable MongoDB instances. This documentation update and implementation work remain uncommitted as requested.
+
