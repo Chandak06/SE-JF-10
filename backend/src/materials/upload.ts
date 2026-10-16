@@ -19,7 +19,7 @@ export interface StoredMaterial {
   createdAt: Date;
 }
 const plainText = (maximum: number) => z.string().trim().min(1).max(maximum).regex(/^[^<>\x00-\x1f\x7f]+$/);
-const metadataSchema = z.strictObject({
+export const materialMetadataSchema = z.strictObject({
   title: plainText(150), subject: plainText(100), description: plainText(1000)
 });
 
@@ -66,7 +66,7 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
       }
       next(error);
     });
-  }, validateBody(metadataSchema), async (req, res) => {
+  }, validateBody(materialMetadataSchema), async (req, res) => {
     const file = req.file;
     if (!file) throw new AppError(400, 'FILE_REQUIRED', 'A PDF file is required.');
     try {

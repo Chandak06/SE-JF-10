@@ -162,7 +162,7 @@ The production User model and Mongo account repository were already integrated w
 
 **Jira issue:** CSMQ-14 (under CSMQ-8)
 **Implementation branch:** `PES2UG24CS157`
-**Updated:** 16 October 2026
+
 
 ### Implementation summary
 
@@ -193,4 +193,72 @@ The API validates required metadata, rejects unknown or unsafe fields, enforces 
 | `cd frontend && npm run test:ci -- --run tests/auth.integration.test.ts src/pages/MaterialsPage.test.tsx` | 4 tests passed |
 
 The test runs used disposable MongoDB instances. This documentation update and implementation work remain uncommitted as requested.
+
+## CSMQ-15: Sprint 1 Study-Material Upload Validation
+
+**Jira issue:** CSMQ-15
+**Parent:** CSMQ-8
+
+
+### Validation changes
+
+The backend metadata schema is exported for focused unit coverage and remains the source of validation for multipart requests. It requires non-empty title, subject, and description values, trims surrounding whitespace, applies field length limits, rejects unsafe control/markup characters, and rejects unexpected fields. The upload middleware enforces one file, a configured byte limit, and PDF MIME type plus `.pdf` extension. The API parses the uploaded bytes and rejects malformed, encrypted, or page-less PDFs before writing to GridFS or creating a Material record. Validation errors return controlled HTTP responses with stable error codes. Storage cleanup also removes the GridFS object if a later metadata write fails.
+
+### Acceptance criteria traceability
+
+| # | Acceptance criterion | Implementation / evidence |
+|---|---|---|
+| 1 | Missing required metadata is rejected. | `materialMetadataSchema` requires title, subject, and description; unit tests and multipart integration cases cover each missing field. |
+| 2 | Missing file is rejected. | API returns `400 FILE_REQUIRED`; runtime integration asserts the error response. |
+| 3 | Non-PDF files are rejected. | Upload filter checks MIME type and filename; runtime integration asserts `400 INVALID_FILE_TYPE`. PDF-like invalid bytes are separately rejected as `INVALID_PDF`. |
+| 4 | Files over the configured maximum size are rejected. | Multer uses `MAX_UPLOAD_BYTES`; runtime configures a 2 KiB test limit and asserts a larger upload returns `413 FILE_TOO_LARGE`. |
+| 5 | Valid PDFs within the configured limit are accepted. | Runtime integration submits a generated valid PDF below the 2 KiB limit and expects `201`. |
+| 6 | Validation errors are clear and controlled. | API returns safe messages and stable codes for metadata, missing-file, file-type, invalid-PDF, and size failures. |
+| 7 | Invalid uploads do not create corrupt or incomplete records. | Integration test verifies no Material or GridFS file records exist after all invalid upload cases; persistence-failure coverage verifies uploaded bytes are cleaned up. |
+| 8 | Validation is enforced at the backend/API. | All checks run in the backend route and storage path, independent of frontend form constraints. |
+| 9 | Relevant unit and integration tests pass. | Metadata validation unit tests: 8 passed. MongoDB-backed runtime upload integration tests: 8 passed. |
+| 10 | Jira-linked branch and Pull Request submitted for review. | Work remains on `PES2UG24CS157`; no commit or PR was created. Jira-linked branch/PR submission remains pending. |
+
+### Verification run
+
+| Command | Result |
+|---|---|
+| `npm exec vitest run backend/tests/unit/material-upload-validation.test.ts backend/tests/integration/runtime.test.ts` | 16 tests passed |
+
+Tests use a disposable MongoDB instance and a 2 KiB configured upload limit. Changes remain uncommitted.
+
+## CSMQ-16: Sprint 1 Authentication and PDF Upload Test Evidence
+
+**Jira issue:** CSMQ-16
+**Parent:** CSMQ-8
+
+
+### Coverage
+
+The automated backend suites cover student registration and validation, duplicate accounts, valid and invalid login, session persistence and revocation, protected-route authentication, shared role/auth middleware, PDF validation, configured upload size limits, authenticated upload persistence, and anonymous upload rejection. Runtime integration uses a disposable MongoDB instance and the production Express/runtime composition. Frontend unit and integration tests exercise registration/login/logout views, protected navigation, multipart upload requests with the shared bearer token, and an end-to-end client flow through registration, login, PDF upload, and logout.
+
+### Acceptance criteria results
+
+| Acceptance criteria | Evidence |
+|---|---|
+| Valid/invalid registration and login | `backend/tests/integration/security.test.ts`; frontend registration/login tests |
+| Logout blocks protected access | Backend session revocation and replay tests; frontend logout/protected-route tests |
+| Valid PDF, invalid file type, and oversized PDF | `backend/tests/integration/runtime.test.ts`; metadata schema unit tests |
+| Authenticated upload stores metadata and file reference | Runtime integration reads stored metadata and GridFS bytes back |
+| Anonymous upload is rejected | Runtime and security integration verify `401` before persistence |
+| Shared authentication/security middleware integration | MongoDB-backed security suite and full runtime composition tests |
+| Non-interactive project test commands | Backend and frontend CI-compatible commands below completed successfully |
+
+### Verification run
+
+| Command | Result / evidence |
+|---|---|
+| `npm test` | 7 backend test files passed; 93 tests passed |
+| `npm run test:ci` | 7 backend test files passed; 93 tests passed. Coverage: 96.21% statements, 97.29% branches, 94.20% functions, 97.43% lines. |
+| `cd frontend && npm run test:ci` | 4 frontend test files passed; 21 tests passed |
+| `npm run typecheck` | Passed after the CSMQ-15 test changes |
+
+JUnit reports were generated at `reports/junit.xml` and `frontend/reports/junit.xml`; backend coverage reports are in `coverage/`. The reports are ignored local artifacts. The repository's `.github/workflows/ci.yml` runs backend `npm run test:ci`, frontend `npm run test:ci`, lint, and build non-interactively on pushes and pull requests, then retains JUnit/coverage evidence in the `sprint-1-test-reports` workflow artifact for 14 days. These are local results; no new GitHub Actions run was triggered during this task.
+
+The test results and report locations are recorded here for CSMQ-16. Jira attachment/linking remains pending because no Atlassian connection is currently available in this session.
 
