@@ -3,14 +3,14 @@
 Updated 17 October 2026 at the user's request.
 
 - `main`: verified Sprint 1, including teammate PRs #6 and #7.
-- `codex/sprint-1-video`: recording branch based on Sprint 1 commit `86f6bf8`. Only this guide is added; no Sprint 2 application code is included.
-- `PES2UG24CS185`: preserved Sprint 2 work and resolved teammate integration, in draft PR #5.
+- `PES2UG24CS185-Sprint-1`: recording branch based on Sprint 1 commit `86f6bf8`. Only this guide is added; no Sprint 2 application code is included.
+- `PES2UG24CS185-Sprint-2`: preserved Sprint 2 work and resolved teammate integration, in draft PR #8.
 
-Do not merge Sprint 2 into main or the video branch until the user explicitly confirms that the final Sprint 1 video has been recorded. Keep PR #5 as a draft. Do not reset, delete or overwrite the saved Sprint 2 branch.
+Do not merge Sprint 2 into main or the video branch until the user explicitly confirms that the final Sprint 1 video has been recorded. Keep PR #8 as a draft. Do not reset, delete or overwrite the saved Sprint 2 branch.
 
 ## Recording setup
 
-Use `codex/sprint-1-video`. Stop and restart any existing app servers after changing branches. Rebuild after switching: ignored dist folders may otherwise contain output from the other sprint.
+Use `PES2UG24CS185-Sprint-1`. Stop and restart any existing app servers after changing branches. Rebuild after switching: ignored dist folders may otherwise contain output from the other sprint.
 
 At the repository root:
 ```powershell
@@ -45,4 +45,4 @@ Do not demonstrate Sprint 2 administration, removal/search/download additions, d
 
 ## After recording
 
-Wait for the user's explicit confirmation first. Then update PES2UG24CS185 from the latest main, resolve any new conflicts, and run its full tests/browser/container CI before making PR #5 ready and merging as authorized. The saved Sprint 2 branch already includes the reviewed Sprint 1 history; no application files need to be copied or reverted.
+Wait for the user's explicit confirmation first. Then update PES2UG24CS185-Sprint-2 from the latest main, resolve any new conflicts, and run its full tests/browser/container CI before making PR #8 ready and merging as authorized. The saved Sprint 2 branch already includes the reviewed Sprint 1 history; no application files need to be copied or reverted.
