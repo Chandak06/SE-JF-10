@@ -12,6 +12,25 @@ function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></Brow
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); authState.sessionToken = null; authState.user = null; vi.clearAllMocks() })
 
 describe('Study Commons routes and forms', () => {
+  it('redirects anonymous quiz access to login', async () => {
+    window.history.replaceState({}, '', '/quiz-attempt'); renderApp()
+    expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Computer Science Practice Quiz' })).not.toBeInTheDocument()
+  })
+  it('keeps independent answers in the authenticated student prototype', async () => {
+    const user = userEvent.setup()
+    authState.sessionToken = 'test-token'
+    authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
+    sessionStorage.setItem('study-commons-quiz-responses:student-1', 'null')
+    window.history.replaceState({}, '', '/quiz-attempt'); renderApp()
+    await user.click(screen.getByRole('radio', { name: /TCP/ }))
+    await user.click(screen.getByRole('button', { name: /Next/ }))
+    await user.click(screen.getByRole('radio', { name: /Queue/ }))
+    await user.click(screen.getByRole('button', { name: /Previous/ }))
+    expect(screen.getByRole('radio', { name: /TCP/ })).toHaveAttribute('aria-checked', 'true')
+    expect(JSON.parse(sessionStorage.getItem('study-commons-quiz-responses:student-1')!)).toEqual({ q1: 'B', q2: 'B' })
+    expect(sessionStorage.getItem('study-commons-quiz-responses:student-2')).toBeNull()
+  })
   it('shows landing navigation and opens registration', async () => {
     const user = userEvent.setup(); renderApp()
     expect(screen.getByRole('heading', { name: /good learning/i })).toBeInTheDocument()
