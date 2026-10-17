@@ -6,9 +6,10 @@ import { ThemeProvider } from './components/ThemeToggle'
 import { BrowserRouter } from 'react-router-dom'
 import * as auth from './services/authService'
 
-vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn() }))
+const authState = vi.hoisted(() => ({ sessionToken: null as string | null, user: null as { id: string; name: string; email: string; role: string } | null }))
+vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), listMaterials: vi.fn().mockResolvedValue([]), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user }))
 function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></BrowserRouter></ThemeProvider>) }
-beforeEach(() => { localStorage.clear(); vi.clearAllMocks() })
+beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); authState.sessionToken = null; authState.user = null; vi.clearAllMocks() })
 
 describe('Study Commons routes and forms', () => {
   it('shows landing navigation and opens registration', async () => {
@@ -25,7 +26,7 @@ describe('Study Commons routes and forms', () => {
     expect(localStorage.getItem('study-theme')).toBe('dark')
   })
   it('validates registration fields before calling the API', async () => {
-    const user = userEvent.setup(); renderApp(); await user.click(screen.getByRole('link', { name: /create account/i }))
+    const user = userEvent.setup(); renderApp(); await user.click(screen.getByRole('link', { name: /create your account/i }))
     await user.click(screen.getByRole('button', { name: /create account/i }))
     expect(screen.getByText('Enter your name.')).toBeInTheDocument()
     expect(screen.getByText('Enter your email address.')).toBeInTheDocument()
@@ -44,7 +45,7 @@ describe('Study Commons routes and forms', () => {
     })
 
     renderApp()
-    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.click(screen.getByRole('link', { name: /create your account/i }))
     await user.type(screen.getByLabelText('Name'), 'Test Student')
     await user.type(screen.getByLabelText('Email'), 'student@example.com')
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
@@ -67,7 +68,7 @@ describe('Study Commons routes and forms', () => {
     )
 
     renderApp()
-    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.click(screen.getByRole('link', { name: /create your account/i }))
     await user.type(screen.getByLabelText('Name'), 'Test Student')
     await user.type(screen.getByLabelText('Email'), 'student@example.com')
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
@@ -85,7 +86,7 @@ describe('Study Commons routes and forms', () => {
     )
 
     renderApp()
-    await user.click(screen.getByRole('link', { name: /create account/i }))
+    await user.click(screen.getByRole('link', { name: /create your account/i }))
     await user.type(screen.getByLabelText('Name'), 'Test Student')
     await user.type(screen.getByLabelText('Email'), 'student@example.com')
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
@@ -97,7 +98,7 @@ describe('Study Commons routes and forms', () => {
   })
   it('shows login validation and API errors', async () => {
     const user = userEvent.setup(); vi.mocked(auth.login).mockRejectedValueOnce(new Error('Invalid email or password.'))
-    renderApp(); await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Log in' }))
+    renderApp(); await user.click(screen.getByRole('link', { name: 'Log in' }))
     await user.type(screen.getByLabelText('Email'), 'student@example.com')
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
     await user.click(screen.getByRole('button', { name: 'Log in' }))
@@ -105,11 +106,51 @@ describe('Study Commons routes and forms', () => {
     expect(auth.login).toHaveBeenCalledWith({ email: 'student@example.com', password: 'ExamplePassword123!' })
   })
   it('does not accept invalid email or short password on login', async () => {
-    renderApp(); fireEvent.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Log in' }))
+    renderApp(); fireEvent.click(screen.getByRole('link', { name: 'Log in' }))
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'bad-email' } })
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'short' } })
     fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
     await waitFor(() => expect(screen.getByText('Enter a valid email address.')).toBeInTheDocument())
     expect(auth.login).not.toHaveBeenCalled()
+  })
+
+  it('redirects logged-out visitors from materials to login', () => {
+    window.history.pushState({}, '', '/materials')
+    renderApp()
+    expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+  })
+
+  it('navigates to materials after a successful login and updates navigation', async () => {
+    const user = userEvent.setup()
+    vi.mocked(auth.login).mockImplementationOnce(async () => {
+      authState.sessionToken = 'test-token'
+      authState.user = { id: 'user-1', name: 'Student', email: 'student@example.com', role: 'student' }
+      return { authenticatedUser: { id: 'user-1', name: 'Student', email: 'student@example.com', role: 'student' }, token: 'test-token' }
+    })
+    renderApp()
+    await user.click(screen.getByRole('link', { name: 'Log in' }))
+    await user.type(screen.getByLabelText('Email'), 'student@example.com')
+    await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
+    await user.click(screen.getByRole('button', { name: 'Log in' }))
+
+    expect(await screen.findByText('Nothing exists yet')).toBeInTheDocument()
+    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Materials' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Materials' })).not.toBeInTheDocument()
+  })
+
+  it('logs out and returns to login with logged-out navigation', async () => {
+    const user = userEvent.setup()
+    authState.sessionToken = 'test-token'
+    authState.user = { id: 'user-1', name: 'Student', email: 'student@example.com', role: 'student' }
+    vi.mocked(auth.logout).mockImplementationOnce(async () => { authState.sessionToken = null; authState.user = null })
+    window.history.pushState({}, '', '/materials')
+    renderApp()
+
+    await user.click(screen.getByRole('button', { name: 'Open profile menu' }))
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+
+    expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Log in' })).not.toBeInTheDocument()
+    expect(auth.logout).toHaveBeenCalledOnce()
   })
 })

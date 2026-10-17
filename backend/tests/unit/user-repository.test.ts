@@ -70,6 +70,32 @@ describe('Production User model and Mongo account repository', () => {
       expect(error?.errors.passwordHash).toBeDefined();
     });
 
+    it.each([
+      { name: '   ', email: 'student@example.com' },
+      { name: '<script>', email: 'student@example.com' },
+      { name: 'Test Student', email: 'not-an-email' }
+    ])('rejects invalid persisted user data: %o', (fields) => {
+      const user = new User({ ...fields, passwordHash: testHash });
+
+      expect(user.validateSync()).toBeDefined();
+    });
+
+    it('rejects plaintext password data', () => {
+      const user = new User({
+        name: 'Test Student', email: 'student@example.com', passwordHash: 'plain text password'
+      });
+
+      expect(user.validateSync()?.errors.passwordHash).toBeDefined();
+    });
+
+    it('enforces unique normalized email addresses in MongoDB', async () => {
+      await User.create({ name: 'First Student', email: 'student@example.com', passwordHash: testHash });
+
+      await expect(User.create({
+        name: 'Second Student', email: ' STUDENT@EXAMPLE.COM ', passwordHash: testHash
+      })).rejects.toMatchObject({ code: 11000 });
+    });
+
     it('rejects a role outside the allowed values', async () => {
       const user = new User({
         name: 'Test Student',

@@ -1,34 +1,58 @@
-import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { getSessionToken, logout, uploadMaterial } from '../services/authService'
-import FormField from '../components/FormField'
-import styles from './AuthPage.module.css'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { listMaterials, uploadMaterial, type StudyMaterial } from '../services/authService'
+import styles from './MaterialsPage.module.css'
+
+function formatSize(bytes: number) {
+  return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 export default function MaterialsPage() {
-  const navigate = useNavigate()
+  const [materials, setMaterials] = useState<StudyMaterial[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+  const [uploadOpen, setUploadOpen] = useState(false)
   const [title, setTitle] = useState(''); const [subject, setSubject] = useState(''); const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false)
+
+  const refreshMaterials = useCallback(async () => {
+    try {
+      const result = await listMaterials()
+      setMaterials(result); setLoadError('')
+    }
+    catch (error) { setLoadError(error instanceof Error ? error.message : 'Unable to load materials.') }
+    finally { setLoading(false) }
+  }, [])
+  useEffect(() => {
+    let mounted = true
+    void listMaterials().then((result) => {
+      if (mounted) { setMaterials(result); setLoadError('') }
+    }).catch((error: unknown) => {
+      if (mounted) setLoadError(error instanceof Error ? error.message : 'Unable to load materials.')
+    }).finally(() => {
+      if (mounted) setLoading(false)
+    })
+    return () => { mounted = false }
+  }, [])
+
   async function submit(event: FormEvent) {
-    event.preventDefault(); if (!file) { setMessage('Choose a PDF file.'); return }
+    event.preventDefault(); if (!file) { setMessage('Choose a PDF file to continue.'); return }
     setBusy(true); setMessage('')
-    try { await uploadMaterial({ title, subject, description, file }); setMessage('Your PDF has been uploaded.') }
-    catch (error) { setMessage(error instanceof Error ? error.message : 'Upload failed. Please try again.') }
+    try {
+      await uploadMaterial({ title, subject, description, file })
+      setTitle(''); setSubject(''); setDescription(''); setFile(null); setMessage('Your material has been uploaded.')
+      await refreshMaterials()
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Upload failed. Please try again.') }
     finally { setBusy(false) }
   }
-  async function signOut() {
-    setBusy(true)
-    try { await logout(); navigate('/login') }
-    catch { setMessage('Unable to log out. Try again.'); setBusy(false) }
-  }
-  return <div className={styles.wrap}><section className={styles.card}><h1>Share study materials</h1>
-    {!getSessionToken() ? <p>Please <Link to="/login">log in</Link> to upload a PDF.</p> : <>
-      <p className={styles.intro}>Add a valid, unencrypted PDF and help your group study.</p>
-      <form className={styles.form} onSubmit={submit}>
-        <FormField label="Title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
-        <FormField label="Subject" name="subject" value={subject} onChange={e => setSubject(e.target.value)} />
-        <FormField label="Description" name="description" value={description} onChange={e => setDescription(e.target.value)} />
-        <label>PDF file<input type="file" accept="application/pdf,.pdf" onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>
-        <button className={styles.submit} disabled={busy} type="submit">{busy ? 'Please wait…' : 'Upload PDF'}</button>
-      </form><button className={styles.submit} disabled={busy} onClick={signOut}>Log out</button>
-    </>}{message && <p role="status">{message}</p>}</section></div>
+  return <div className={styles.page}>
+    <section className={styles.library} aria-label="Study materials">
+      {loading ? <p className={styles.status}>Loading materials…</p> : loadError ? <div className={styles.empty}><p className={styles.emptyTitle}>Materials aren’t available right now</p><p>{loadError}</p><button onClick={() => void refreshMaterials()}>Try again</button></div> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>Nothing exists yet</p><p>Shared notes and study resources will appear here.</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p></div></article>)}</div>}
+    </section>
+    <button className={styles.uploadFab} type="button" aria-label="Upload a material" onClick={() => { setMessage(''); setUploadOpen(true) }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
+    {uploadOpen && <div className={styles.overlay} onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setUploadOpen(false) }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className={styles.drawerHeader}><div><p className={styles.kicker}>CONTRIBUTE TO YOUR LIBRARY</p><h2 id="upload-title">Upload a material</h2><p>Give your classmates a useful resource to study from.</p></div><button className={styles.close} type="button" aria-label="Close upload form" disabled={busy} onClick={() => setUploadOpen(false)}>×</button></div><form className={styles.form} onSubmit={submit}>
+      <div className={styles.fields}><label className={styles.field}>Material title<input name="title" required maxLength={150} placeholder="e.g. Week 4 lecture notes" value={title} onChange={event => setTitle(event.target.value)} /></label><label className={styles.field}>Subject<input name="subject" required maxLength={100} placeholder="e.g. Software Engineering" value={subject} onChange={event => setSubject(event.target.value)} /></label><label className={`${styles.field} ${styles.full}`}>Description<textarea name="description" required maxLength={1000} rows={4} placeholder="What should classmates know about this resource?" value={description} onChange={event => setDescription(event.target.value)} /></label></div>
+      <label className={styles.filePicker}><span className={styles.fileIcon} aria-hidden="true">↑</span><span><strong>{file ? file.name : 'Choose a PDF to share'}</strong><small>{file ? formatSize(file.size) : 'PDF format · maximum 10 MB'}</small></span><input aria-label="PDF file" type="file" accept="application/pdf,.pdf" onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>
+      {message && <p className={styles.formMessage} role="status">{message}</p>}<div className={styles.formActions}><button type="button" className={styles.cancel} disabled={busy} onClick={() => setUploadOpen(false)}>Cancel</button><button className={styles.submit} disabled={busy} type="submit">{busy ? 'Uploading…' : 'Upload material'}</button></div>
+    </form></section></div>}
+  </div>
 }

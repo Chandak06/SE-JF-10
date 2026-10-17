@@ -19,7 +19,7 @@ export interface StoredMaterial {
   createdAt: Date;
 }
 const plainText = (maximum: number) => z.string().trim().min(1).max(maximum).regex(/^[^<>\x00-\x1f\x7f]+$/);
-const metadataSchema = z.strictObject({
+export const materialMetadataSchema = z.strictObject({
   title: plainText(150), subject: plainText(100), description: plainText(1000)
 });
 
@@ -47,6 +47,16 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     }
   }).single('file');
   const router = Router();
+  router.get('/', async (_req, res) => {
+    const materials = await Material.find({}, {
+      title: 1, subject: 1, description: 1, size: 1, createdAt: 1
+    }).sort({ createdAt: -1 }).lean();
+    res.json({ materials: materials.map((material) => ({
+      id: material._id.toString(), title: material.title, subject: material.subject,
+      description: material.description, size: material.size,
+      createdAt: material.createdAt.toISOString()
+    })) });
+  });
   router.post('/', requireRole('student'), (req, res, next) => {
     upload(req, res, (error: unknown) => {
       if (error instanceof multer.MulterError) {
@@ -56,7 +66,7 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
       }
       next(error);
     });
-  }, validateBody(metadataSchema), async (req, res) => {
+  }, validateBody(materialMetadataSchema), async (req, res) => {
     const file = req.file;
     if (!file) throw new AppError(400, 'FILE_REQUIRED', 'A PDF file is required.');
     try {

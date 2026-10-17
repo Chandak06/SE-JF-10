@@ -1,7 +1,15 @@
-.wrap { min-height: calc(100vh - 76px); display: grid; place-items: center; padding: 42px 20px; }
-.card { width: min(100%, 430px); background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px; box-shadow: var(--shadow); }
+.wrap { min-height: calc(100vh - 76px); width: min(100%, 1200px); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(390px, 500px); align-items: center; gap: clamp(50px, 10vw, 150px); padding: 64px 64px 80px; }
+.card { width: 100%; padding: 30px 0; }
+.aside { align-self: center; max-width: 480px; padding: 14px 0 14px 20px; border-left: 2px solid var(--border); }
+.asideEyebrow { margin: 0 0 22px; color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.7px; }
+.aside h2 { margin: 0; font: 500 clamp(42px, 5vw, 64px)/1.06 Georgia, 'Times New Roman', serif; letter-spacing: -2px; }
+.aside h2 em { color: var(--accent); font-weight: 500; }
+.aside > p:not(.asideEyebrow) { max-width: 370px; margin: 20px 0 27px; color: var(--text-secondary); font-size: 16px; line-height: 1.75; }
+.aside a { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 650; }
+.aside a:hover { color: var(--accent); }
+.aside a span { padding-left: 5px; }
 .eyebrow { color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.2px; }
-.card h1 { font-size: 29px; letter-spacing: -.8px; margin: 8px 0 4px; }
+.card h1 { font: 500 38px/1.15 Georgia, 'Times New Roman', serif; letter-spacing: -1px; margin: 8px 0 4px; }
 .intro { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
 .form { display: grid; gap: 17px; }
 .submit { border: 0; border-radius: 8px; padding: 12px; margin-top: 3px; color: var(--accent-contrast); background: var(--accent); font-weight: 700; cursor: pointer; }
@@ -12,3 +20,4 @@
 .success { color: var(--success); background: var(--success-bg); }
 .switch { border-top: 1px solid var(--border); margin-top: 22px; padding-top: 18px; text-align: center; color: var(--text-secondary); font-size: 13px; }
 .switch a { color: var(--accent); font-weight: 650; }
+@media (max-width: 760px) { .wrap { grid-template-columns: 1fr; gap: 28px; padding: 34px 25px 52px; } .aside { max-width: none; padding: 0 0 20px 17px; } .asideEyebrow { margin-bottom: 12px; } .aside h2 { font-size: 40px; } .aside > p:not(.asideEyebrow) { margin: 10px 0 13px; font-size: 14px; } .card { padding: 4px 0 16px; } .card h1 { font-size: 34px; } }
