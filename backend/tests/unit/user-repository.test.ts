@@ -34,6 +34,7 @@ describe('Production User model and Mongo account repository', () => {
     connection = await connectDatabase(mongo.getUri());
     User = getUserModel(connection);
     repository = createMongoAccountRepository(connection);
+    await repository.initialize();
   }, 90_000);
 
   beforeEach(async () => {
