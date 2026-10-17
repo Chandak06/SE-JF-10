@@ -43,7 +43,7 @@ function upload(token: string, data = pdf, name = 'notes.pdf', type = 'applicati
   return request(runtime.app).post('/api/materials').set(auth(token))
     .field(metadata).attach('file', data, { filename: name, contentType: type });
 }
-describe('CSMQ-5 production auth and PDF storage integration', () => {
+describe('CSMQ-14/15 authenticated PDF upload and validation integration', () => {
   it('registers, logs in, persists a real PDF and metadata, then rejects upload after logout', async () => {
     const token = await login();
     const created = await upload(token).expect(201);
@@ -70,14 +70,33 @@ describe('CSMQ-5 production auth and PDF storage integration', () => {
     await request(runtime.app).post('/api/materials').field(metadata).attach('file', pdf, 'notes.pdf').expect(401);
     expect(await connection.collection('materialFiles.files').countDocuments()).toBe(0);
   });
-  it('rejects non-PDFs, forged PDF contents, missing files, and oversized files', async () => {
+  it('rejects missing metadata, missing files, non-PDFs, forged PDFs, and oversized files with controlled errors', async () => {
     const token = await login();
-    await upload(token, Buffer.from('plain text'), 'notes.txt', 'text/plain').expect(400);
-    await upload(token, Buffer.from('not a PDF')).expect(400);
-    await request(runtime.app).post('/api/materials').set(auth(token)).send(metadata).expect(400);
-    await upload(token, Buffer.alloc(2049)).expect(413);
+    for (const field of ['title', 'subject', 'description'] as const) {
+      const incomplete = { ...metadata };
+      delete incomplete[field];
+      const response = await request(runtime.app).post('/api/materials').set(auth(token))
+        .field(incomplete).attach('file', pdf, 'notes.pdf').expect(400);
+      expect(response.body.error).toMatchObject({ code: 'VALIDATION_ERROR' });
+    }
+    const missingFile = await request(runtime.app).post('/api/materials').set(auth(token)).field(metadata).expect(400);
+    expect(missingFile.body.error).toMatchObject({ code: 'FILE_REQUIRED' });
+
+    const nonPdf = await upload(token, Buffer.from('plain text'), 'notes.txt', 'text/plain').expect(400);
+    expect(nonPdf.body.error).toMatchObject({ code: 'INVALID_FILE_TYPE' });
+    const forgedPdf = await upload(token, Buffer.from('not a PDF')).expect(400);
+    expect(forgedPdf.body.error).toMatchObject({ code: 'INVALID_PDF' });
+    const oversized = await upload(token, Buffer.alloc(2049)).expect(413);
+    expect(oversized.body.error).toMatchObject({ code: 'FILE_TOO_LARGE' });
     expect(await runtime.materials.Material.countDocuments()).toBe(0);
     expect(await connection.collection('materialFiles.files').countDocuments()).toBe(0);
+
+    // The generated valid fixture is below MAX_UPLOAD_BYTES (2 KiB) and succeeds.
+    const valid = await upload(token).expect(201);
+    expect(valid.body.material).toMatchObject(metadata);
+    expect(await runtime.materials.Material.countDocuments()).toBe(1);
+    expect(await connection.collection('materialFiles.files').countDocuments()).toBe(1);
+    expect(await runtime.materials.Material.countDocuments({ _id: valid.body.material.id })).toBe(1);
   });
   it('rejects unknown/malicious metadata, extra files, and oversized text fields', async () => {
     const token = await login();

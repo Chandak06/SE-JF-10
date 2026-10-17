@@ -15,7 +15,9 @@ const userSchema = new Schema<UserFields>(
       type: String,
       required: true,
       trim: true,
-      maxlength: 100
+      minlength: 1,
+      maxlength: 100,
+      match: /^[^<>\x00-\x1f\x7f]+$/
     },
     email: {
       type: String,
@@ -23,6 +25,7 @@ const userSchema = new Schema<UserFields>(
       trim: true,
       lowercase: true,
       maxlength: 254,
+      match: /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/,
       unique: true,
       index: true
     },
