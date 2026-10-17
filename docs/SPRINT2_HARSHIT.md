@@ -35,3 +35,13 @@ Sprint 2: CSMQ-29 material moderation is implemented/tested. CSMQ-30 has shared 
 The latest relocated-branch CI (38266371714 and 38266311868) exposed a Chrome test navigation race, while backend/frontend, containers, Edge and Firefox passed. The error context showed an empty login email: the test could fill a registration field while the SPA switched to login, because both forms share labels. The test now waits for the actual login heading before filling credentials and verifies the email value. No sleeps, retries or relaxed assertions were added. Fresh CI must pass before treating the current PR as green.
 
 All Sprint 2 work is on PES2UG24CS185 and replacement draft PR #5; draft #4 was closed when its old source branch was removed. main remains at the verified Sprint 1 merge.
+
+## Teammate integration — 17 October 2026
+
+Reviewed and integrated Dharani's PR #7 and Karan's PR #6 into main, preserving their original commits. Main's reviewed integration commit 86f6bf8 passed Actions run 38993489669 (110 backend tests and 30 frontend tests, builds, lint and coverage).
+
+This draft absorbed that reviewed main history. Resolved conflicts in material upload/listing, application routes, login navigation, the materials page/tests and shared session helpers. Preserved bounded search, removed-material exclusions, protected PDF downloads and administrator moderation while retaining Dharani's upload drawer/profile/logout and Karan's authenticated student quiz prototype. Browser tests now use the actual redirect, upload drawer and profile menu.
+
+The combined draft passed 118 backend tests and 33 frontend tests, type/build/lint/coverage. Scoped load smoke p90: 1,426 ms across 50 sessions and 100 protected requests. Original coverage gates remain enforced. The User repository test now waits for MongoDB indexes before asserting duplicate-email rejection, matching production startup initialization.
+
+Karan's QuizAttempt model, evaluation helper and seed-question UI are now present. A production Question/Quiz data provider, real attempt-submission/history flow and deployed HTTPS target remain outstanding; the prototype does not claim server scoring or submission persistence.
