@@ -15,11 +15,11 @@ Checked published branches and open PRs on 17 October 2026 against the detailed 
 | Member | Sprint 1 deliverable | Available in main |
 | --- | --- | --- |
 | Dharani S | Registration, login/logout, User model, authenticated PDF upload and validation | Yes; PR #7 and shared integration tests |
-| Prajwal M | Question model/API, administrator Add MCQ, Question Bank subject/topic/difficulty filtering | Missing; no published branch or open PR supplies this module |
+| Prajwal M | Question model/API, administrator Add MCQ, Question Bank subject/topic/difficulty filtering | Not implemented; excluded from the current integration and recording scope at Harshit's explicit request |
 | Karan Varshney | QuizAttempt model, attempt UI prototype and evaluation logic prototype | Yes; PR #6, model/helper tests and fixture integration; no production quiz submission/history claim |
 | Harshit Chandak | Authentication middleware, hashing, role foundations, Member 1 integration and CI/CD | Yes; GitHub Actions replaces Jenkins by the team's decision |
 
-Both published teammate branch tips (`PES2UG24CS157`, `PES2UG24CS903`) are ancestors of main. The only open PR is Sprint 2 draft #8. Sprint 2 moderation, protected PDF downloads, bounded material search and deployment containers are excluded from main. Do not describe the full team's Sprint 1 as complete until Prajwal's module is supplied, reviewed and integrated.
+Both published teammate branch tips (`PES2UG24CS157`, `PES2UG24CS903`) are ancestors of main. The only open PR is Sprint 2 draft #8. Sprint 2 moderation, protected PDF downloads, bounded material search and deployment containers are excluded from main. Harshit confirmed that Prajwal has not coded his module and asked to leave it out. Proceed with Dharani's, Karan's and Harshit's available Sprint 1 work; do not implement or wait for Prajwal's module, and do not present Question Bank features as completed in the video.
 
 Validation: 110 backend tests, 30 frontend tests, typecheck, both builds, frontend lint and backend coverage gates passed for this application snapshot. Tests use isolated temporary MongoDB. The configured live Atlas connection currently fails during the TLS handshake (`ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR`); fix connectivity and rerun `npm run db:check` before recording the live product. No credentials or application records were changed by the connection checks.
 
