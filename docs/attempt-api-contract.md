@@ -1,0 +1,365 @@
+# Question / Quiz Attempt API Contract
+
+## Purpose
+
+This document defines the Sprint 1 integration contract between the Question Bank, Quiz Attempt UI, evaluation logic, authentication layer, and QuizAttempt persistence.
+
+The student-facing frontend must never receive the correct answer before submission.
+
+---
+
+## 1. Student-Safe Question Payload
+
+The Quiz Attempt UI receives questions in this structure:
+
+```json
+{
+  "quizId": "QUIZ_ID",
+  "title": "Computer Science Practice Quiz",
+  "questions": [
+    {
+      "id": "QUESTION_ID",
+      "questionText": "Which protocol provides reliable, connection-oriented communication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "UDP"
+        },
+        {
+          "id": "B",
+          "text": "TCP"
+        },
+        {
+          "id": "C",
+          "text": "ARP"
+        },
+        {
+          "id": "D",
+          "text": "ICMP"
+        }
+      ],
+      "difficulty": "Easy",
+      "marks": 1
+    }
+  ]
+}
+```
+
+### Security Rule
+
+The student-facing payload must not contain:
+
+- `correctAnswer`
+- `correctOption`
+- `correctOptionId`
+- `answerKey`
+
+Correct answers remain available only to trusted backend evaluation logic.
+
+---
+
+## 2. Question Contract
+
+Each question contains:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | string | Yes | Unique question identifier |
+| `questionText` | string | Yes | Question displayed to the student |
+| `options` | array | Yes | Available answer options |
+| `difficulty` | string | No | Easy, Medium, or Hard |
+| `marks` | number | No | Marks assigned to the question |
+
+Each option contains:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | string | Yes | Stable option identifier |
+| `text` | string | Yes | Option text shown to the student |
+
+---
+
+## 3. Quiz Attempt Submission
+
+### Endpoint
+
+```text
+POST /api/attempts
+```
+
+### Authentication
+
+The request uses the project's normal Bearer-token authentication.
+
+```text
+Authorization: Bearer <token>
+```
+
+The frontend must not send a trusted `userId`.
+
+The backend obtains the user identity from the authenticated request context:
+
+```text
+req.user.id
+```
+
+This prevents one student from submitting an attempt on behalf of another student.
+
+---
+
+## 4. Attempt Request Payload
+
+```json
+{
+  "quizId": "QUIZ_ID",
+  "responses": [
+    {
+      "questionId": "QUESTION_ID_1",
+      "selectedOptionId": "B"
+    },
+    {
+      "questionId": "QUESTION_ID_2",
+      "selectedOptionId": "C"
+    }
+  ]
+}
+```
+
+### Request Fields
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `quizId` | string | Yes | Quiz being attempted |
+| `responses` | array | Yes | Student responses |
+| `responses[].questionId` | string | Yes | Question identifier |
+| `responses[].selectedOptionId` | string | Yes | Selected option identifier |
+
+An unanswered question may be omitted from the `responses` array.
+
+The evaluation logic must treat omitted questions as unanswered without crashing.
+
+---
+
+## 5. Backend Evaluation Contract
+
+The evaluation module uses:
+
+```ts
+interface EvaluationQuestion {
+  id: string
+  correctOptionId: string
+}
+
+interface SubmittedResponse {
+  questionId: string
+  selectedOptionId: string
+}
+```
+
+The backend compares submitted responses against the trusted answer key.
+
+The frontend must not calculate the authoritative score.
+
+---
+
+## 6. Evaluation Result
+
+The evaluation helper returns:
+
+```json
+{
+  "score": 8,
+  "total": 10,
+  "percentage": 80,
+  "correct": 8,
+  "incorrect": 1,
+  "unanswered": 1
+}
+```
+
+| Field | Description |
+|---|---|
+| `score` | Number of correct answers |
+| `total` | Total number of quiz questions |
+| `percentage` | Percentage score |
+| `correct` | Number of correct responses |
+| `incorrect` | Number of incorrect responses |
+| `unanswered` | Number of unanswered questions |
+
+---
+
+## 7. Successful Attempt Response
+
+A successful submission may return:
+
+```json
+{
+  "attemptId": "ATTEMPT_ID",
+  "quizId": "QUIZ_ID",
+  "score": 8,
+  "total": 10,
+  "percentage": 80,
+  "correct": 8,
+  "incorrect": 1,
+  "unanswered": 1
+}
+```
+
+The complete answer key does not need to be exposed to the student during the Sprint 1 attempt flow.
+
+---
+
+## 8. QuizAttempt Persistence Contract
+
+After server-side evaluation, the backend stores the result using the QuizAttempt model.
+
+Conceptually:
+
+```json
+{
+  "user": "AUTHENTICATED_USER_ID",
+  "quiz": "QUIZ_ID",
+  "responses": [
+    {
+      "questionId": "QUESTION_ID",
+      "selectedOption": "B"
+    }
+  ],
+  "score": 8,
+  "percentage": 80
+}
+```
+
+The API uses `selectedOptionId` as the external request field.
+
+The route maps this value to the current QuizAttempt model field `selectedOption` before persistence.
+
+The stored `user` value comes from the authenticated request context, not from client input.
+
+Timestamps are generated automatically by the QuizAttempt schema.
+
+---
+
+## 9. Authentication Behaviour
+
+### Authenticated Student
+
+```text
+POST /api/attempts
+→ authentication succeeds
+→ student authorization succeeds
+→ responses are evaluated
+→ QuizAttempt is stored
+→ result is returned
+```
+
+### Missing Authentication
+
+```text
+POST /api/attempts
+→ request rejected
+```
+
+### Invalid or Expired Authentication
+
+```text
+POST /api/attempts
+→ request rejected using the project's controlled authentication response
+```
+
+---
+
+## 10. Module Responsibilities
+
+### Question Bank
+
+Provides:
+
+- question ID
+- question text
+- answer options
+- optional difficulty
+- optional marks
+
+It must not expose the correct answer in the student-facing payload.
+
+### Quiz Attempt UI
+
+Responsible for:
+
+- rendering questions
+- rendering answer options
+- maintaining selected responses
+- handling unanswered questions
+- submitting `quizId` and responses
+- displaying the returned evaluation result
+
+### Evaluation Module
+
+Responsible for:
+
+- comparing responses against trusted correct answers
+- calculating score
+- calculating percentage
+- counting correct answers
+- counting incorrect answers
+- counting unanswered questions
+
+### Authentication Module
+
+Responsible for:
+
+- authenticating requests
+- rejecting unauthenticated users
+- exposing authenticated user context to protected routes
+
+### QuizAttempt Model
+
+Responsible for storing:
+
+- authenticated user reference
+- quiz reference
+- submitted responses
+- score
+- percentage
+- timestamps
+
+---
+
+## 11. Sprint 1 Integration Flow
+
+```text
+Question Bank
+     ↓
+Student-safe Question Payload
+     ↓
+Quiz Attempt UI
+     ↓
+POST /api/attempts
+     ↓
+Authentication / Student Authorization
+     ↓
+Server-side Evaluation
+     ↓
+QuizAttempt Persistence
+     ↓
+Score and Result Response
+     ↓
+Quiz Attempt UI
+```
+
+---
+
+## 12. Sprint 1 Limitations
+
+Sprint 1 may use agreed mock or seed questions until the complete quiz-creation workflow is available.
+
+The following are outside the current Sprint 1 scope:
+
+- complete quiz history
+- long-term performance analytics
+- leaderboards
+- complete result-history screens
+- adaptive quiz recommendations
+
+These features can build on the same API contract in later sprints.
