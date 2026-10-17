@@ -5,7 +5,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import MaterialsPage from './MaterialsPage'
 import * as auth from '../services/authService'
 
-vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), listMaterials: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
+vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), materialFile: vi.fn(), listMaterials: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
 beforeEach(() => {
   vi.clearAllMocks()
   vi.mocked(auth.getSessionToken).mockReturnValue('test-token')

@@ -59,3 +59,40 @@ export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!Array.isArray(result.materials)) throw new Error('The server returned an unexpected response.')
   return result.materials
 }
+async function authorized(path: string, options: RequestInit = {}) {
+  if (!sessionToken) throw new Error('Please log in to continue.')
+  let response: Response
+  try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + sessionToken } }) }
+  catch { throw new Error('Unable to reach the server. Try again.') }
+  if (response.status === 401) { sessionToken = null; sessionUser = null }
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({})) as { error?: { message?: string } }
+    throw new Error(result.error?.message ?? 'Request failed. Try again.')
+  }
+  return response
+}
+export async function currentUser(): Promise<AuthenticatedUser> {
+  const result = await (await authorized('/api/auth/me')).json() as { authenticatedUser: AuthenticatedUser }
+  return result.authenticatedUser
+}
+export type ModerationKind = 'materials' | 'questions' | 'quizzes'
+export type ModerationItem = { id: string; title: string }
+export async function moderationKinds(): Promise<ModerationKind[]> {
+  return ((await (await authorized('/api/admin/resources')).json()) as { resources: ModerationKind[] }).resources
+}
+export async function moderationItems(kind: ModerationKind): Promise<ModerationItem[]> {
+  return ((await (await authorized('/api/admin/' + kind)).json()) as { items: ModerationItem[] }).items
+}
+export async function removeItem(kind: ModerationKind, id: string) {
+  await authorized('/api/admin/' + kind + '/' + encodeURIComponent(id), {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true })
+  })
+}
+export type MaterialSummary = ModerationItem & { subject: string; description: string; size: number; createdAt: string }
+export async function searchMaterials(query: string): Promise<MaterialSummary[]> {
+  const search = query.trim() ? '?q=' + encodeURIComponent(query.trim()) : ''
+  return ((await (await authorized('/api/materials' + search)).json()) as { materials: MaterialSummary[] }).materials
+}
+export async function materialFile(id: string): Promise<Blob> {
+  return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file')).blob()
+}
