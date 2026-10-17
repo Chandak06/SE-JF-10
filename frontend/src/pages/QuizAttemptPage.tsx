@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './QuizAttemptPage.module.css'
+import { getSessionUser } from '../services/authService'
+import { readQuizDraft } from '../services/quizDraft'
 
 interface QuizOption {
   id: string
@@ -149,23 +151,11 @@ const questions: QuizQuestion[] = [
 ]
 
 export default function QuizAttemptPage() {
+  const draftKey = 'study-commons-quiz-responses:' + getSessionUser()!.id
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const [responses, setResponses] = useState<Record<string, string>>(() => {
-    const savedResponses = window.localStorage.getItem(
-      'study-commons-quiz-responses'
-    )
-
-    if (!savedResponses) {
-      return {}
-    }
-
-    try {
-      return JSON.parse(savedResponses) as Record<string, string>
-    } catch {
-      window.localStorage.removeItem('study-commons-quiz-responses')
-      return {}
-    }
+    try { return readQuizDraft(window.sessionStorage, draftKey, questions) } catch { return {} }
   })
 
   const [reviewQuestions, setReviewQuestions] = useState<Set<string>>(
@@ -179,11 +169,10 @@ export default function QuizAttemptPage() {
   const currentQuestion = questions[currentIndex]
 
   useEffect(() => {
-    window.localStorage.setItem(
-      'study-commons-quiz-responses',
-      JSON.stringify(responses)
-    )
-  }, [responses])
+    if (!submitted) {
+      try { window.sessionStorage.setItem(draftKey, JSON.stringify(responses)) } catch { /* In-memory answers still work when storage is blocked. */ }
+    }
+  }, [responses, submitted, draftKey])
 
   useEffect(() => {
     if (submitted) {
@@ -274,7 +263,7 @@ export default function QuizAttemptPage() {
   function confirmSubmission() {
     setSubmitted(true)
     setShowSubmitModal(false)
-    window.localStorage.removeItem('study-commons-quiz-responses')
+    try { window.sessionStorage.removeItem(draftKey) } catch { /* Storage may be disabled. */ }
   }
 
   function paletteClass(question: QuizQuestion, index: number) {
@@ -308,7 +297,7 @@ export default function QuizAttemptPage() {
               </h1>
 
               <p className={styles.subtitle}>
-                10 questions · 10 marks · Single correct answer
+                10 sample questions · practice prototype · not sent for scoring
               </p>
             </div>
 
