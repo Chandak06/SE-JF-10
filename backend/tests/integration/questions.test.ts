@@ -223,5 +223,26 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
       .expect(200);
     expect(diffRes.body.questions).toHaveLength(1);
     expect(diffRes.body.questions[0].difficulty).toBe('Easy');
+
+    // Combined filter: subject + topic + difficulty
+    const combinedRes = await request(runtime.app)
+      .get('/api/questions')
+      .query({
+        subject: 'Computer Networks',
+        topic: 'OSI Model',
+        difficulty: 'Medium'
+      })
+      .set(bearer(adminToken))
+      .expect(200);
+    expect(combinedRes.body.questions).toHaveLength(1);
+    expect(combinedRes.body.questions[0].questionText).toBe(sampleQuestion.questionText);
+
+    // Non-matching filter returns empty list
+    const emptyRes = await request(runtime.app)
+      .get('/api/questions')
+      .query({ subject: 'Nonexistent Subject' })
+      .set(bearer(adminToken))
+      .expect(200);
+    expect(emptyRes.body.questions).toEqual([]);
   });
 });

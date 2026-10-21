@@ -9,6 +9,8 @@ import {
   validateQuestionBody
 } from './validation.js';
 
+import { buildQuestionFilter } from './filters.js';
+
 export function createQuestionsRouter(connection: Connection) {
   const Question = getQuestionModel(connection);
   const router = Router();
@@ -46,19 +48,7 @@ export function createQuestionsRouter(connection: Connection) {
   );
 
   router.get('/', async (req, res) => {
-    const filter: Record<string, unknown> = {};
-    if (typeof req.query.subject === 'string' && req.query.subject.trim()) {
-      filter.subject = req.query.subject.trim();
-    }
-    if (typeof req.query.topic === 'string' && req.query.topic.trim()) {
-      filter.topic = req.query.topic.trim();
-    }
-    if (
-      typeof req.query.difficulty === 'string' &&
-      ['Easy', 'Medium', 'Hard'].includes(req.query.difficulty.trim())
-    ) {
-      filter.difficulty = req.query.difficulty.trim();
-    }
+    const filter = buildQuestionFilter(req.query);
 
     const items = await Question.find(filter)
       .sort({ createdAt: -1 })

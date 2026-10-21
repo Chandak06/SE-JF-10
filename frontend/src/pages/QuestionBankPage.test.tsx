@@ -158,4 +158,28 @@ describe('QuestionBankPage (CSMQ-23 / CSMQ-24)', () => {
     expect(screen.getByText('Transport Layer')).toBeInTheDocument();
     expect(screen.getByText('TCP')).toBeInTheDocument();
   });
+
+  it('triggers listQuestions with subject filter', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const subjectFilter = screen.getByLabelText('Filter by Subject');
+    await user.type(subjectFilter, 'Databases');
+
+    expect(questionService.listQuestions).toHaveBeenCalledWith(
+      expect.objectContaining({ subject: 'Databases' })
+    );
+  });
+
+  it('triggers listQuestions with difficulty filter', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const diffFilter = screen.getByLabelText('Filter by Difficulty');
+    await user.selectOptions(diffFilter, 'Hard');
+
+    expect(questionService.listQuestions).toHaveBeenCalledWith(
+      expect.objectContaining({ difficulty: 'Hard' })
+    );
+  });
 });
