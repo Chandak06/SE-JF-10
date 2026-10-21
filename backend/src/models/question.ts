@@ -22,6 +22,8 @@ export interface QuestionFields {
   difficulty: QuestionDifficulty;
   marks?: number;
   creator?: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const optionSchema = new Schema<QuestionOption>(
