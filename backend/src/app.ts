@@ -11,6 +11,7 @@ import { requireAuth, requireRole } from './middleware/auth.js';
 export interface FeatureRouters {
   materials?: Router;
   questions?: Router;
+  quizQuestions?: Router;
   attempts?: Router;
 }
 
@@ -45,6 +46,8 @@ export function createApp({ config, auth, features = {}, databaseReady = () => t
     if (features.materials) app.use('/api/materials', requireAuth(auth), features.materials);
     // Sprint 1 question management is administrator-only, including filtering.
     if (features.questions) app.use('/api/questions', requireAuth(auth), requireRole('admin'), features.questions);
+    // Student-safe question endpoint for practice quiz attempts (never exposes correctAnswer).
+    if (features.quizQuestions) app.use('/api/quiz-questions', requireAuth(auth), features.quizQuestions);
     if (features.attempts) app.use('/api/attempts', requireAuth(auth), requireRole('student'), features.attempts);
   }
   app.use(notFound);

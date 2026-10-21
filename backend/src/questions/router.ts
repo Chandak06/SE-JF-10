@@ -10,10 +10,28 @@ import {
 } from './validation.js';
 
 import { buildQuestionFilter } from './filters.js';
+import { toStudentSafeQuizPayload } from './serializer.js';
 
 export function createQuestionsRouter(connection: Connection) {
   const Question = getQuestionModel(connection);
   const router = Router();
+  const studentRouter = Router();
+
+  studentRouter.get('/', async (req, res) => {
+    const filter = buildQuestionFilter(req.query);
+    const items = await Question.find(filter)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json(
+      toStudentSafeQuizPayload(items, {
+        quizId:
+          typeof req.query.quizId === 'string' ? req.query.quizId : undefined,
+        title:
+          typeof req.query.title === 'string' ? req.query.title : undefined
+      })
+    );
+  });
 
   router.post(
     '/',
@@ -75,6 +93,7 @@ export function createQuestionsRouter(connection: Connection) {
 
   return {
     router,
+    studentRouter,
     Question,
     async initialize() {
       await Question.init();
