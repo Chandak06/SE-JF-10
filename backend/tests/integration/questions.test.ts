@@ -320,4 +320,30 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
       unanswered: 0
     });
   });
+
+  it('supports quizId, title, and subject filters on /api/quiz-questions', async () => {
+    const adminToken = await registerAndLogin(adminCredentials, 'admin');
+    const studentToken = await registerAndLogin(studentCredentials, 'student');
+
+    await request(runtime.app)
+      .post('/api/questions')
+      .set(bearer(adminToken))
+      .send(sampleQuestion)
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quiz-questions')
+      .query({
+        quizId: 'custom-quiz-101',
+        title: 'Networks Practice Test',
+        subject: 'Computer Networks'
+      })
+      .set(bearer(studentToken))
+      .expect(200);
+
+    expect(res.body.quizId).toBe('custom-quiz-101');
+    expect(res.body.title).toBe('Networks Practice Test');
+    expect(res.body.questions).toHaveLength(1);
+    expect(res.body.questions[0].correctAnswer).toBeUndefined();
+  });
 });

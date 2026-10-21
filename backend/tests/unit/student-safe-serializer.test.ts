@@ -103,4 +103,18 @@ describe('Student-safe question payload serializer (CSMQ-26 / UT-M2-05)', () => 
     expect(safe.options).toEqual([]);
     expect(safe.marks).toBe(1);
   });
+
+  it('handles missing id, missing questionText, and default payload options', () => {
+    const safeNoId = toStudentSafeQuestion({
+      options: [{ id: undefined, text: undefined }]
+    });
+    expect(safeNoId.id).toBe('');
+    expect(safeNoId.questionText).toBe('');
+    expect(safeNoId.options).toEqual([{ id: '', text: '' }]);
+
+    const defaultPayload = toStudentSafeQuizPayload([]);
+    expect(defaultPayload.quizId).toBe('practice-quiz-sprint1');
+    expect(defaultPayload.title).toBe('Practice Quiz');
+    expect(defaultPayload.questions).toEqual([]);
+  });
 });
