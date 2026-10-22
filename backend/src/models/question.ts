@@ -22,6 +22,8 @@ export interface QuestionFields {
   difficulty: QuestionDifficulty;
   marks?: number;
   creator?: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const optionSchema = new Schema<QuestionOption>(
@@ -35,7 +37,8 @@ const optionSchema = new Schema<QuestionOption>(
       type: String,
       required: true,
       trim: true,
-      minlength: 1
+      minlength: 1,
+      maxlength: 500
     }
   },
   {
@@ -57,13 +60,17 @@ export const questionSchema = new Schema<QuestionFields>(
       required: true,
       validate: {
         validator(options: QuestionOption[]) {
-          if (!Array.isArray(options) || options.length < 2) {
+          if (
+            !Array.isArray(options) ||
+            options.length < 2 ||
+            options.length > 6
+          ) {
             return false;
           }
           const ids = options.map((opt) => opt?.id?.trim()).filter(Boolean);
           return new Set(ids).size === options.length;
         },
-        message: 'Question must have at least two options with unique IDs.'
+        message: 'Question must have between 2 and 6 options with unique IDs.'
       }
     },
     correctAnswer: {
@@ -107,7 +114,13 @@ export const questionSchema = new Schema<QuestionFields>(
       type: Number,
       required: true,
       default: 1,
-      min: 1
+      min: 1,
+      validate: {
+        validator(val: number) {
+          return Number.isInteger(val);
+        },
+        message: 'marks must be an integer.'
+      }
     },
     creator: {
       type: Schema.Types.ObjectId,
