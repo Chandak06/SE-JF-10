@@ -1,6 +1,6 @@
 # Sprint separation and video hold
 
-Updated 17 October 2026 at the user's request.
+Updated 22 October 2026 at the user's request.
 
 - `main`: verified Sprint 1, including teammate PRs #6 and #7.
 - `PES2UG24CS185-Sprint-1`: recording branch based on Sprint 1 commit `86f6bf8`. Only this guide is added; no Sprint 2 application code is included.
@@ -15,11 +15,11 @@ Checked published branches and open PRs on 17 October 2026 against the detailed 
 | Member | Sprint 1 deliverable | Available in main |
 | --- | --- | --- |
 | Dharani S | Registration, login/logout, User model, authenticated PDF upload and validation | Yes; PR #7 and shared integration tests |
-| Prajwal M | Question model/API, administrator Add MCQ, Question Bank subject/topic/difficulty filtering | Not implemented; excluded from the current integration and recording scope at Harshit's explicit request |
+| Prajwal M | Question model/API, administrator Add MCQ, Question Bank subject/topic/difficulty filtering | Now published in Sprint 1 PRs #9–15; reviewed on 22 October, with changes required before merge |
 | Karan Varshney | QuizAttempt model, attempt UI prototype and evaluation logic prototype | Yes; PR #6, model/helper tests and fixture integration; no production quiz submission/history claim |
 | Harshit Chandak | Authentication middleware, hashing, role foundations, Member 1 integration and CI/CD | Yes; GitHub Actions replaces Jenkins by the team's decision |
 
-Both published teammate branch tips (`PES2UG24CS157`, `PES2UG24CS903`) are ancestors of main. The only open PR is Sprint 2 draft #8. Sprint 2 moderation, protected PDF downloads, bounded material search and deployment containers are excluded from main. Harshit confirmed that Prajwal has not coded his module and asked to leave it out. Proceed with Dharani's, Karan's and Harshit's available Sprint 1 work; do not implement or wait for Prajwal's module, and do not present Question Bank features as completed in the video.
+Both already merged teammate tips (`PES2UG24CS157-Sprint-1`, `PES2UG24CS903`) are ancestors of main. Prajwal subsequently published Sprint 1 PRs #9–15, which supersedes the earlier decision to exclude his missing code. The 22 October review found reproducible defects; keep those PRs open for their owner to fix and do not present Question Bank features as merged or completed in the main-branch video. See [the review findings](SPRINT1_REVIEW_2026-10-22.md). Sprint 2 draft PR #8 remains unmerged. Sprint 2 moderation, protected PDF downloads, bounded material search and deployment containers are excluded from main.
 
 Validation: 110 backend tests, 30 frontend tests, typecheck, both builds, frontend lint and backend coverage gates passed for this application snapshot. Tests use isolated temporary MongoDB. The configured live Atlas connection currently fails during the TLS handshake (`ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR`); fix connectivity and rerun `npm run db:check` before recording the live product. No credentials or application records were changed by the connection checks.
 
