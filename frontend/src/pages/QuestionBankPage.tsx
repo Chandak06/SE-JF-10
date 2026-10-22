@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   createQuestion,
   listQuestions,
@@ -19,7 +19,8 @@ export default function QuestionBankPage() {
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [listingError, setListingError] = useState('');
+  const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   // Form states
@@ -36,46 +37,59 @@ export default function QuestionBankPage() {
   const [filterTopic, setFilterTopic] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState('');
 
-  const fetchQuestions = useCallback(async () => {
-    try {
-      const items = await listQuestions({
-        subject: filterSubject || undefined,
-        topic: filterTopic || undefined,
-        difficulty: filterDifficulty || undefined
-      });
-      setQuestions(items);
-    } catch (err) {
-      setErrorMessage(
-        err instanceof Error ? err.message : 'Failed to load questions.'
-      );
-    } finally {
-      setLoading(false);
-    }
+  // Reference for active filters and request sequence tracking to prevent race conditions
+  const filtersRef = useRef({
+    subject: filterSubject,
+    topic: filterTopic,
+    difficulty: filterDifficulty
+  });
+  const activeRequestId = useRef(0);
+
+  useEffect(() => {
+    filtersRef.current = {
+      subject: filterSubject,
+      topic: filterTopic,
+      difficulty: filterDifficulty
+    };
   }, [filterSubject, filterTopic, filterDifficulty]);
 
   useEffect(() => {
-    let mounted = true;
+    filtersRef.current = {
+      subject: filterSubject,
+      topic: filterTopic,
+      difficulty: filterDifficulty
+    };
+    const reqId = ++activeRequestId.current;
     void listQuestions({
       subject: filterSubject || undefined,
       topic: filterTopic || undefined,
       difficulty: filterDifficulty || undefined
     })
       .then((items) => {
-        if (mounted) setQuestions(items);
+        if (reqId === activeRequestId.current) {
+          const current = filtersRef.current;
+          if (
+            (current.subject || '') === (filterSubject || '') &&
+            (current.topic || '') === (filterTopic || '') &&
+            (current.difficulty || '') === (filterDifficulty || '')
+          ) {
+            setQuestions(items);
+            setListingError(''); // Clear listing error on success
+          }
+        }
       })
       .catch((err: unknown) => {
-        if (mounted) {
-          setErrorMessage(
+        if (reqId === activeRequestId.current) {
+          setListingError(
             err instanceof Error ? err.message : 'Failed to load questions.'
           );
         }
       })
       .finally(() => {
-        if (mounted) setLoading(false);
+        if (reqId === activeRequestId.current) {
+          setLoading(false);
+        }
       });
-    return () => {
-      mounted = false;
-    };
   }, [filterSubject, filterTopic, filterDifficulty]);
 
   function handleOptionTextChange(id: string, text: string) {
@@ -92,34 +106,34 @@ export default function QuestionBankPage() {
     setMarks(1);
     setOptions(DEFAULT_OPTIONS);
     setCorrectAnswer('A');
-    setErrorMessage('');
+    setFormError('');
   }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setErrorMessage('');
+    setFormError('');
     setSuccessMessage('');
 
     // Client-side validations
     if (!questionText.trim()) {
-      setErrorMessage('Question text is required.');
+      setFormError('Question text is required.');
       return;
     }
     if (!subject.trim()) {
-      setErrorMessage('Subject is required.');
+      setFormError('Subject is required.');
       return;
     }
     if (!topic.trim()) {
-      setErrorMessage('Topic is required.');
+      setFormError('Topic is required.');
       return;
     }
     const emptyOption = options.find((opt) => !opt.text.trim());
     if (emptyOption) {
-      setErrorMessage(`Option ${emptyOption.id} text is required.`);
+      setFormError(`Option ${emptyOption.id} text is required.`);
       return;
     }
     if (!options.some((opt) => opt.id === correctAnswer)) {
-      setErrorMessage('Selected correct answer must match one of the options.');
+      setFormError('Selected correct answer must match one of the options.');
       return;
     }
 
@@ -138,9 +152,29 @@ export default function QuestionBankPage() {
       setSuccessMessage('MCQ question created successfully.');
       resetForm();
       setFormOpen(false);
-      await fetchQuestions();
+      // Query with the latest current filters after saving
+      const reqId = ++activeRequestId.current;
+      const current = filtersRef.current;
+      void listQuestions({
+        subject: current.subject || undefined,
+        topic: current.topic || undefined,
+        difficulty: current.difficulty || undefined
+      })
+        .then((items) => {
+          if (reqId === activeRequestId.current) {
+            setQuestions(items);
+            setListingError('');
+          }
+        })
+        .catch((err: unknown) => {
+          if (reqId === activeRequestId.current) {
+            setListingError(
+              err instanceof Error ? err.message : 'Failed to load questions.'
+            );
+          }
+        });
     } catch (err) {
-      setErrorMessage(
+      setFormError(
         err instanceof Error ? err.message : 'Failed to create question.'
       );
     } finally {
@@ -164,7 +198,7 @@ export default function QuestionBankPage() {
             className={styles.addBtn}
             onClick={() => {
               setSuccessMessage('');
-              setErrorMessage('');
+              setFormError('');
               setFormOpen(true);
             }}
           >
@@ -179,9 +213,9 @@ export default function QuestionBankPage() {
         </div>
       )}
 
-      {errorMessage && !formOpen && (
+      {listingError && !formOpen && (
         <div className={styles.errorBanner} role="alert">
-          {errorMessage}
+          {listingError}
         </div>
       )}
 
@@ -202,9 +236,9 @@ export default function QuestionBankPage() {
             </button>
           </div>
 
-          {errorMessage && (
+          {formError && (
             <div className={styles.errorBanner} role="alert" style={{ marginBottom: '1rem' }}>
-              {errorMessage}
+              {formError}
             </div>
           )}
 
