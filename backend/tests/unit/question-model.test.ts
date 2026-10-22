@@ -156,6 +156,64 @@ describe('Question model (CSMQ-22)', () => {
     await expect(singleOption.validate()).rejects.toThrow();
   });
 
+  it('UT-M2-02: rejects more than six options in the database model', async () => {
+    const sevenOptions = new Question({
+      questionText: 'What is 2 + 2?',
+      options: [
+        { id: 'A', text: '1' },
+        { id: 'B', text: '2' },
+        { id: 'C', text: '3' },
+        { id: 'D', text: '4' },
+        { id: 'E', text: '5' },
+        { id: 'F', text: '6' },
+        { id: 'G', text: '7' }
+      ],
+      correctAnswer: 'D',
+      subject: 'Math',
+      topic: 'Arithmetic',
+      difficulty: 'Easy'
+    });
+
+    await expect(sevenOptions.validate()).rejects.toThrow(
+      /Question must have between 2 and 6 options/
+    );
+  });
+
+  it('UT-M2-02: rejects fractional marks in the database model', async () => {
+    const fractionalMarks = new Question({
+      questionText: 'What is 2 + 2?',
+      options: [
+        { id: 'A', text: '3' },
+        { id: 'B', text: '4' }
+      ],
+      correctAnswer: 'B',
+      subject: 'Math',
+      topic: 'Arithmetic',
+      difficulty: 'Easy',
+      marks: 1.5
+    });
+
+    await expect(fractionalMarks.validate()).rejects.toThrow(
+      /marks must be an integer/
+    );
+  });
+
+  it('UT-M2-02: rejects option text longer than 500 characters in the database model', async () => {
+    const longOptionText = new Question({
+      questionText: 'What is 2 + 2?',
+      options: [
+        { id: 'A', text: '3' },
+        { id: 'B', text: 'x'.repeat(501) }
+      ],
+      correctAnswer: 'B',
+      subject: 'Math',
+      topic: 'Arithmetic',
+      difficulty: 'Easy'
+    });
+
+    await expect(longOptionText.validate()).rejects.toThrow();
+  });
+
   it('UT-M2-02: rejects duplicate option IDs', async () => {
     const duplicateIds = new Question({
       questionText: 'What is 2 + 2?',

@@ -276,7 +276,7 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
     expect(JSON.stringify(res.body)).not.toMatch(/"correctAnswer"/);
   });
 
-  it('IT-M2-05: student-safe question payload is directly consumable by Member 3 evaluation helper without remapping', async () => {
+  it('IT-M2-05: student responses and stored question answers map to Member 3 evaluateQuiz contract for accurate scoring', async () => {
     const adminToken = await registerAndLogin(adminCredentials, 'admin');
     const studentToken = await registerAndLogin(studentCredentials, 'student');
 
@@ -319,5 +319,31 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
       incorrect: 0,
       unanswered: 0
     });
+  });
+
+  it('supports quizId, title, and subject filters on /api/quiz-questions', async () => {
+    const adminToken = await registerAndLogin(adminCredentials, 'admin');
+    const studentToken = await registerAndLogin(studentCredentials, 'student');
+
+    await request(runtime.app)
+      .post('/api/questions')
+      .set(bearer(adminToken))
+      .send(sampleQuestion)
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quiz-questions')
+      .query({
+        quizId: 'custom-quiz-101',
+        title: 'Networks Practice Test',
+        subject: 'Computer Networks'
+      })
+      .set(bearer(studentToken))
+      .expect(200);
+
+    expect(res.body.quizId).toBe('custom-quiz-101');
+    expect(res.body.title).toBe('Networks Practice Test');
+    expect(res.body.questions).toHaveLength(1);
+    expect(res.body.questions[0].correctAnswer).toBeUndefined();
   });
 });
