@@ -45,3 +45,16 @@ This draft absorbed that reviewed main history. Resolved conflicts in material u
 The combined draft passed 118 backend tests and 33 frontend tests, type/build/lint/coverage. Scoped load smoke p90: 1,426 ms across 50 sessions and 100 protected requests. Original coverage gates remain enforced. The User repository test now waits for MongoDB indexes before asserting duplicate-email rejection, matching production startup initialization.
 
 Karan's QuizAttempt model, evaluation helper and seed-question UI are now present. A production Question/Quiz data provider, real attempt-submission/history flow and deployed HTTPS target remain outstanding; the prototype does not claim server scoring or submission persistence.
+
+## Material search and paging corrections — 22 October 2026
+
+These fixes are saved only on `PES2UG24CS185-Sprint-2`, updating draft PR #8. Keep Sprint 2 unmerged until Harshit confirms the Sprint 1 video is finished. The Sprint 1 application and recording branch are unchanged.
+
+- **H1 resolved:** the paginated client preserves `nextCursor`, sends it together with the current search, and provides **Load more materials**. A new search resets the cursor; subsequent pages append results without duplicate cards. Server-side page limits remain intact.
+- **H2 resolved:** upload refresh and retry use the last submitted search. Retrying a failed next page retains its cursor and the already displayed results. Search input edits alone do not silently change the submitted query.
+- Both material views use one guarded loader. Stale initial/search/page responses cannot overwrite newer results, requests are cancelled on replacement/unmount, and loading is finalized on success or failure. Failed downloads are reported separately from listing failures.
+- The Sprint 2 upload drawer also resets its native file picker after success, allowing the same PDF to be selected again. This correction does not change Dharani's saved Sprint 1 UI.
+
+Verification: 118 backend tests passed with typecheck/build and coverage gates (98.8% lines, 97.84% branches). All 42 frontend tests passed, including a real frontend-client/backend pagination integration with 26 matching records; frontend lint and production build passed. Six browser cases passed across Chrome, Edge and Firefox: the existing upload/download/moderation journey plus the new 26-result pagination and search-after-upload journey in each browser. Tests use disposable local MongoDB; Atlas content and roles were not changed.
+
+These corrections complete the two material-UI findings. They do not establish whole-platform Sprint 2 completion, production quiz/attempt integration, deployment readiness or resolution of the Atlas connectivity blocker.
