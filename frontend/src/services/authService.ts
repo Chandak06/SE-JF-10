@@ -47,6 +47,7 @@ export async function uploadMaterial(input: { title: string; subject: string; de
 }
 
 export type StudyMaterial = { id: string; title: string; subject: string; description: string; size: number; createdAt: string }
+// First-page convenience for older callers; paginated UIs use searchMaterials.
 export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!sessionToken) throw new Error('Please log in to view materials.')
   let response: Response
@@ -88,10 +89,18 @@ export async function removeItem(kind: ModerationKind, id: string) {
     method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true })
   })
 }
-export type MaterialSummary = ModerationItem & { subject: string; description: string; size: number; createdAt: string }
-export async function searchMaterials(query: string): Promise<MaterialSummary[]> {
-  const search = query.trim() ? '?q=' + encodeURIComponent(query.trim()) : ''
-  return ((await (await authorized('/api/materials' + search)).json()) as { materials: MaterialSummary[] }).materials
+export type MaterialSummary = StudyMaterial
+export type MaterialPage = { materials: MaterialSummary[]; nextCursor: string | null }
+export async function searchMaterials(query: string, cursor?: string, signal?: AbortSignal): Promise<MaterialPage> {
+  const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
+  if (cursor) params.set('cursor', cursor)
+  const suffix = params.size ? '?' + params.toString() : ''
+  const result = await (await authorized('/api/materials' + suffix, { signal })).json() as Partial<MaterialPage>
+  if (!Array.isArray(result.materials) || (result.nextCursor !== null && (typeof result.nextCursor !== 'string' || !/^[a-f\d]{24}$/i.test(result.nextCursor)))) {
+    throw new Error('The server returned an unexpected response.')
+  }
+  return { materials: result.materials, nextCursor: result.nextCursor }
 }
 export async function materialFile(id: string): Promise<Blob> {
   return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file')).blob()
