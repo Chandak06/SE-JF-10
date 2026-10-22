@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import type { Server } from 'node:http'
 import { fileURLToPath } from 'node:url'
 import type { Connection } from 'mongoose'
+import { Types } from 'mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { PDFDocument } from 'pdf-lib'
 import { createServer, type ViteDevServer } from 'vite'
@@ -85,4 +86,37 @@ test('student uploads, administrator confirms removal and removed content cannot
   await expect(page.getByRole('status')).toContainText('Resource removed.')
   await page.getByRole('link', { name: 'Study materials' }).click()
   await expect(page.getByText('Nothing exists yet')).toBeVisible()
+})
+
+test('student loads the 26th search match and keeps the search after another upload', async ({ page }) => {
+  const user = await runtime.auth.register({ name: 'Paging Student', email: 'paging@example.com', password: 'Paging test password!' })
+  await runtime.materials.Material.insertMany(Array.from({ length: 26 }, (_, index) => ({
+    title: 'Paging notes ' + (index + 1), subject: 'SE', description: 'Pagination metadata fixture',
+    uploadedBy: new Types.ObjectId(user.id), fileId: new Types.ObjectId(), size: 100
+  })))
+  await page.goto(url + '/login')
+  await page.getByLabel('Email', { exact: true }).fill('paging@example.com')
+  await page.getByLabel('Password', { exact: true }).fill('Paging test password!')
+  await page.getByRole('button', { name: 'Log in', exact: true }).click()
+  await expect(page).toHaveURL(url + '/materials')
+  await page.getByLabel('Search material titles').fill('Paging')
+  await page.getByRole('button', { name: 'Search', exact: true }).click()
+  await expect(page.getByRole('article')).toHaveCount(25)
+  await page.getByRole('button', { name: 'Load more materials' }).click()
+  await expect(page.getByRole('article')).toHaveCount(26)
+  await expect(page.getByRole('button', { name: 'Load more materials' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Upload a material' }).click()
+  await page.getByLabel('Material title', { exact: true }).fill('Unrelated upload')
+  await page.getByLabel('Subject', { exact: true }).fill('SE')
+  await page.getByLabel('Description', { exact: true }).fill('Outside the submitted search')
+  const document = await PDFDocument.create(); document.addPage()
+  await page.getByLabel('PDF file').setInputFiles({ name: 'unrelated.pdf', mimeType: 'application/pdf', buffer: Buffer.from(await document.save()) })
+  await page.getByRole('button', { name: 'Upload material', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('Your material has been uploaded.')
+  await expect(page.getByRole('button', { name: 'Upload material', exact: true })).toBeEnabled()
+  await page.getByRole('button', { name: 'Close upload form' }).click()
+  await expect(page.getByLabel('Search material titles')).toHaveValue('Paging')
+  await expect(page.getByRole('heading', { name: 'Unrelated upload', exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Load more materials' }).click()
+  await expect(page.getByRole('article')).toHaveCount(26)
 })
