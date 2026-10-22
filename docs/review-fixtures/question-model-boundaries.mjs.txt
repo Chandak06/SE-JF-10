@@ -1,0 +1,22 @@
+// Copy to a temporary .mjs file at the repository root after npm run build.
+import mongoose from 'mongoose';
+import { getQuestionModel } from './dist/models/question.js';
+import { createQuestionSchema } from './dist/questions/validation.js';
+const connection = mongoose.createConnection();
+const Question = getQuestionModel(connection);
+const base = {
+  questionText: 'Boundary case',
+  options: [{ id: 'A', text: 'one' }, { id: 'B', text: 'two' }],
+  correctAnswer: 'A', subject: 'Math', topic: 'Numbers', difficulty: 'Easy', marks: 1,
+};
+for (const [label, override] of [
+  ['seven options', { options: Array.from({ length: 7 }, (_, i) => ({ id: String(i), text: String(i) })), correctAnswer: '0' }],
+  ['fractional marks', { marks: 1.5 }],
+  ['501 character option', { options: [{ id: 'A', text: 'x'.repeat(501) }, { id: 'B', text: 'two' }] }],
+]) {
+  const value = { ...base, ...override };
+  let modelAccepts = true;
+  try { await new Question(value).validate(); } catch { modelAccepts = false; }
+  console.log(JSON.stringify({ case: label, apiAccepts: createQuestionSchema.safeParse(value).success, modelAccepts }));
+}
+await connection.close();
