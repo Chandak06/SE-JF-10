@@ -1,0 +1,40 @@
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, expect, it, vi } from 'vitest';
+import QuestionBankPage from './QuestionBankPage';
+import * as service from '../services/questionService';
+vi.mock('../services/questionService', () => ({ createQuestion: vi.fn(), listQuestions: vi.fn() }));
+const question = (id: string, difficulty: 'Easy' | 'Hard'): service.Question => ({
+  id, difficulty, questionText: id, subject: 'Networks', topic: 'TCP', marks: 1,
+  options: [{ id: 'A', text: 'one' }, { id: 'B', text: 'two' }], correctAnswer: 'A',
+});
+beforeEach(() => { vi.resetAllMocks(); });
+it('clears an old loading error when a later filter request succeeds', async () => {
+  vi.mocked(service.listQuestions).mockRejectedValueOnce(new Error('Temporary network failure'));
+  render(<QuestionBankPage />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('Temporary network failure');
+  vi.mocked(service.listQuestions).mockResolvedValueOnce([question('Hard result', 'Hard')]);
+  fireEvent.change(screen.getByLabelText('Filter by Difficulty'), { target: { value: 'Hard' } });
+  expect(await screen.findByRole('heading', { name: '1. Hard result' })).toBeInTheDocument();
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+it('does not let a pending create refresh overwrite newer filter results', async () => {
+  vi.mocked(service.listQuestions).mockImplementation(async filters =>
+    filters?.difficulty === 'Hard' ? [question('Hard result', 'Hard')] : [question('Old unfiltered result', 'Easy')]);
+  let finishCreate!: (value: service.Question) => void;
+  vi.mocked(service.createQuestion).mockImplementation(() => new Promise(resolve => { finishCreate = resolve; }));
+  render(<QuestionBankPage />);
+  await screen.findByRole('heading', { name: '1. Old unfiltered result' });
+  fireEvent.click(screen.getByRole('button', { name: '+ Add New MCQ' }));
+  fireEvent.change(screen.getByLabelText(/Question Text/), { target: { value: 'A new question' } });
+  fireEvent.change(screen.getByPlaceholderText('e.g. Computer Networks'), { target: { value: 'Networks' } });
+  fireEvent.change(screen.getByPlaceholderText('e.g. Transport Layer'), { target: { value: 'TCP' } });
+  for (const option of ['A', 'B', 'C', 'D']) fireEvent.change(screen.getByPlaceholderText(`Enter text for Option ${option}...`), { target: { value: option } });
+  fireEvent.submit(screen.getByRole('button', { name: 'Add Question' }).closest('form')!);
+  await waitFor(() => expect(service.createQuestion).toHaveBeenCalledTimes(1));
+  fireEvent.change(screen.getByLabelText('Filter by Difficulty'), { target: { value: 'Hard' } });
+  await screen.findByRole('heading', { name: '1. Hard result' });
+  await act(async () => { finishCreate(question('New question', 'Easy')); });
+  expect(screen.getByLabelText('Filter by Difficulty')).toHaveValue('Hard');
+  expect(screen.getByRole('heading', { name: '1. Hard result' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: '1. Old unfiltered result' })).not.toBeInTheDocument();
+});
