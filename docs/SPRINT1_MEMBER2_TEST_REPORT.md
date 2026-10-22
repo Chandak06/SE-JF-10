@@ -20,7 +20,7 @@ Per the Sprint 1 scope separation agreement, full quiz creation, quiz browsing, 
 | Jira Key | Plan Test ID | Test Type | File Location | Verified Behavior | Status |
 |---|---|---|---|---|---|
 | **CSMQ-22** | **UT-M2-01** | Unit | `backend/tests/unit/question-model.test.ts` | Question schema enforces all required fields (`questionText`, `options`, `correctAnswer`, `subject`, `topic`, `difficulty`). | Pass ✅ |
-| **CSMQ-22** | **UT-M2-02** | Unit | `backend/tests/unit/question-model.test.ts` | Options count boundary enforcement: accepts 2 to 6 options; rejects < 2 or > 6 options. | Pass ✅ |
+| **CSMQ-22** | **UT-M2-02** | Unit | `backend/tests/unit/question-model.test.ts` | Options count boundary and schema enforcement: accepts 2 to 6 options; rejects < 2 or > 6 options, fractional marks, and option text > 500 chars in database model. | Pass ✅ |
 | **CSMQ-22** | **UT-M2-03** | Unit | `backend/tests/unit/question-model.test.ts` | `correctAnswer` integrity: must match exactly one option ID in `options`; rejects non-matching values. | Pass ✅ |
 | **CSMQ-25** | **UT-M2-04** | Unit | `backend/tests/unit/question-filters.test.ts` | `buildQuestionFilter` correctly parses query params into MongoDB filters (subject, topic, difficulty, combined). | Pass ✅ |
 | **CSMQ-26** | **UT-M2-05** | Unit | `backend/tests/unit/student-safe-serializer.test.ts` | `toStudentSafeQuestion` and `toStudentSafeQuizPayload` completely strip `correctAnswer`, `correctOption`, and answer keys from payload and JSON string. | Pass ✅ |
@@ -28,7 +28,7 @@ Per the Sprint 1 scope separation agreement, full quiz creation, quiz browsing, 
 | **CSMQ-23** | **IT-M2-02** | Integration | `backend/tests/integration/questions.test.ts` | Role-based authorization: rejects unauthenticated requests (401) and student role (403) from question mutations. | Pass ✅ |
 | **CSMQ-25** | **IT-M2-03** | Integration | `backend/tests/integration/questions.test.ts` | Administrator can filter stored questions by subject, topic, and difficulty (`GET /api/questions`). | Pass ✅ |
 | **CSMQ-26** | **IT-M2-04** | Integration | `backend/tests/integration/questions.test.ts` | Authenticated students can access `GET /api/quiz-questions` and receive student-safe payload with zero answer leakage. | Pass ✅ |
-| **CSMQ-26** | **IT-M2-05** | Integration | `backend/tests/integration/questions.test.ts` | Student-safe question payload is directly consumable by Member 3's `evaluateQuiz` helper without schema remapping. | Pass ✅ |
+| **CSMQ-26** | **IT-M2-05** | Integration | `backend/tests/integration/questions.test.ts` | Verifies student responses and stored question answers map to Member 3's `evaluateQuiz` contract for accurate scoring. | Pass ✅ |
 | **CSMQ-24** | **TC-Val-01..05**| Unit | `backend/tests/unit/csmq-24-question-validation.test.ts` | Validates option uniqueness, trimmed text, mark bounds, difficulty enums, and comprehensive Zod schema parsing. | Pass ✅ |
 | **CSMQ-28** | **Consolidated** | Unit | `backend/tests/unit/csmq-28-consolidated-suite.test.ts` | End-to-end composite verification of all UT-M2 unit deliverables in a unified execution run. | Pass ✅ |
 | **CSMQ-23** | **Frontend UI** | Integration | `frontend/src/pages/QuestionBankPage.test.tsx` | Admin UI allows adding options, setting correct answers, submitting valid forms, and applying faceted search filters. | Pass ✅ |
@@ -78,8 +78,7 @@ All project quality gates (85% statements/lines/functions, 80% branches) are sub
 
 ### 4.3 Quiz Attempts & Evaluation (Member 3 — Karan Varshney)
 - Option IDs are formatted consistently as uppercase letters (`'A'`, `'B'`, `'C'`, `'D'`).
-- The student serializer (`toStudentSafeQuestions`) produces payloads matching `docs/attempt-api-contract.md`.
-- Stored questions directly supply `{ id, correctOptionId: stored.correctAnswer }` into Member 3's `evaluateQuiz` function in `backend/src/attempts/evaluate.ts`.
+- Evaluator integration: Student responses (`{ questionId, selectedOptionId }`) and stored question fields (`{ id: stored._id.toString(), correctOptionId: stored.correctAnswer }`) map to Member 3's `EvaluationQuestion` and `SubmittedResponse` types in `evaluateQuiz()`.
 
 ---
 

@@ -276,7 +276,7 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
     expect(JSON.stringify(res.body)).not.toMatch(/"correctAnswer"/);
   });
 
-  it('IT-M2-05: student-safe question payload is directly consumable by Member 3 evaluation helper without remapping', async () => {
+  it('IT-M2-05: student responses and stored question answers map to Member 3 evaluateQuiz contract for accurate scoring', async () => {
     const adminToken = await registerAndLogin(adminCredentials, 'admin');
     const studentToken = await registerAndLogin(studentCredentials, 'student');
 

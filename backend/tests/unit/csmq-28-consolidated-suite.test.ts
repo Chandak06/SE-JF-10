@@ -21,7 +21,7 @@ import {
  * - IT-M2-02: RBAC enforcement on question mutation and admin listing
  * - IT-M2-03: Query parameter filtering on GET /api/questions
  * - IT-M2-04: Student practice question access via GET /api/quiz-questions
- * - IT-M2-05: Zero-remapping integration with Member 3 evaluateQuiz contract
+ * - IT-M2-05: Student responses and stored answers map to Member 3 evaluateQuiz contract for scoring
  */
 describe('CSMQ-28: Consolidated Member 2 Test Suite Verification', () => {
   it('UT-M2-01: verifies Question model schema and required properties', () => {
@@ -44,9 +44,49 @@ describe('CSMQ-28: Consolidated Member 2 Test Suite Verification', () => {
     expect(paths.topic).toBeDefined();
     expect(paths.difficulty).toBeDefined();
     expect(paths.marks).toBeDefined();
+
+    // Verify model option validator enforces 2 to 6 options
+    const optionsValidators = paths.options.validators;
+    const optionCountValidator = optionsValidators.find(
+      (v: any) =>
+        typeof v.validator === 'function' &&
+        String(v.message).includes('between 2 and 6')
+    )?.validator;
+    expect(optionCountValidator).toBeDefined();
+    expect(
+      optionCountValidator([
+        { id: 'A', text: 'Opt 1' },
+        { id: 'B', text: 'Opt 2' }
+      ])
+    ).toBe(true);
+    // Rejects fewer than 2
+    expect(optionCountValidator([{ id: 'A', text: 'Opt 1' }])).toBe(false);
+    // Rejects more than 6
+    expect(
+      optionCountValidator([
+        { id: 'A', text: '1' },
+        { id: 'B', text: '2' },
+        { id: 'C', text: '3' },
+        { id: 'D', text: '4' },
+        { id: 'E', text: '5' },
+        { id: 'F', text: '6' },
+        { id: 'G', text: '7' }
+      ])
+    ).toBe(false);
+
+    // Verify model marks validator enforces integer
+    const marksValidators = paths.marks.validators;
+    const marksIntValidator = marksValidators.find(
+      (v: any) =>
+        typeof v.validator === 'function' &&
+        String(v.message).includes('integer')
+    )?.validator;
+    expect(marksIntValidator).toBeDefined();
+    expect(marksIntValidator(1)).toBe(true);
+    expect(marksIntValidator(1.5)).toBe(false);
   });
 
-  it('UT-M2-02: verifies 2 to 6 options requirement', () => {
+  it('UT-M2-02: verifies 2 to 6 options requirement in API validation schema', () => {
     const validMCQ = {
       questionText: 'Valid test question?',
       options: [
