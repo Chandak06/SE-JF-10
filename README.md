@@ -33,3 +33,9 @@ GitHub Actions replaces Jenkins per the updated Jira requirements and project de
 See [integration contracts](docs/INTEGRATION.md), [Sprint evidence](docs/SPRINT1_HARSHIT.md) and [CI guide](docs/GITHUB_ACTIONS.md). Independent teammate review and the user-created PR remain necessary before merging.
 
 References: [SRS](SRS.md), [SAD](SAD.pdf), [test plan](TEST_PLAN.pdf), detailed Sprint 1 work plan and updated work division in the project folder.
+
+## Sprint 2 administration and readiness
+
+The Sprint 2 contribution adds protected material search/download, administrator moderation with explicit confirmation, owner-supplied Question/Quiz moderation adapters, browser regressions and scoped concurrency/persistence tests. Removed materials are hidden from all read/download paths and retained for recovery.
+
+See docs/SPRINT2_HARSHIT.md for requirement status and docs/DEPLOYMENT.md for local administration, HTTPS containers, browser tests and teammate integration contracts. Whole-platform completion depends on the missing Question/Quiz/Attempt modules and deployment target.

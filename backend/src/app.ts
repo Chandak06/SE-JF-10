@@ -12,6 +12,7 @@ export interface FeatureRouters {
   materials?: Router;
   questions?: Router;
   attempts?: Router;
+  admin?: Router;
 }
 
 export function createApp({ config, auth, features = {}, databaseReady = () => true, logger, authLimit }: {
@@ -46,6 +47,7 @@ export function createApp({ config, auth, features = {}, databaseReady = () => t
     // Sprint 1 question management is administrator-only, including filtering.
     if (features.questions) app.use('/api/questions', requireAuth(auth), requireRole('admin'), features.questions);
     if (features.attempts) app.use('/api/attempts', requireAuth(auth), requireRole('student'), features.attempts);
+    if (features.admin) app.use('/api/admin', requireAuth(auth), requireRole('admin'), features.admin);
   }
   app.use(notFound);
   app.use(errorHandler(logger));

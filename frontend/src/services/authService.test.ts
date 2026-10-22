@@ -48,3 +48,28 @@ it('rejects an incomplete login response and shows controlled login errors', asy
   fetchMock.mockResolvedValueOnce(reply({ error: { message: 'Invalid email or password.' } }, 401))
   await expect(auth.login({ email: student.email, password: 'ExamplePassword123!' })).rejects.toThrow('Invalid email or password.')
 })
+
+it('preserves pagination metadata and sends the search, cursor and abort signal', async () => {
+  await signIn()
+  const cursor = '000000000000000000000019'
+  const nextCursor = '000000000000000000000001'
+  const page = { materials: [{ id: 'material-26', title: 'Notes' }], nextCursor }
+  fetchMock.mockResolvedValueOnce(reply(page))
+  const controller = new AbortController()
+  await expect(auth.searchMaterials('  A & B  ', cursor, controller.signal)).resolves.toEqual(page)
+  const [url, options] = fetchMock.mock.calls[1]
+  expect(new URL(url).searchParams.get('q')).toBe('A & B')
+  expect(new URL(url).searchParams.get('cursor')).toBe(cursor)
+  expect(options.signal).toBe(controller.signal)
+  expect(options.headers.Authorization).toBe('Bearer test-token')
+})
+
+it('rejects malformed pagination responses instead of silently losing the cursor', async () => {
+  await signIn()
+  for (const body of [{ materials: [], nextCursor: 'invalid' }, { materials: null, nextCursor: null }]) {
+    fetchMock.mockResolvedValueOnce(reply(body))
+    await expect(auth.searchMaterials('')).rejects.toThrow('unexpected response')
+  }
+  fetchMock.mockResolvedValueOnce(reply({ materials: [], nextCursor: null }))
+  await expect(auth.searchMaterials('')).resolves.toEqual({ materials: [], nextCursor: null })
+})

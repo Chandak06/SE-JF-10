@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import * as auth from './services/authService'
 
 const authState = vi.hoisted(() => ({ sessionToken: null as string | null, user: null as { id: string; name: string; email: string; role: string } | null }))
-vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), listMaterials: vi.fn().mockResolvedValue([]), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user }))
+vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), searchMaterials: vi.fn().mockResolvedValue({ materials: [], nextCursor: null }), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user }))
 function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></BrowserRouter></ThemeProvider>) }
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); authState.sessionToken = null; authState.user = null; vi.clearAllMocks() })
 

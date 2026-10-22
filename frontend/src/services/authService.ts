@@ -47,6 +47,7 @@ export async function uploadMaterial(input: { title: string; subject: string; de
 }
 
 export type StudyMaterial = { id: string; title: string; subject: string; description: string; size: number; createdAt: string }
+// First-page convenience for older callers; paginated UIs use searchMaterials.
 export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!sessionToken) throw new Error('Please log in to view materials.')
   let response: Response
@@ -58,4 +59,49 @@ export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!response.ok) throw new Error(result.error?.message ?? 'Unable to load materials. Please try again.')
   if (!Array.isArray(result.materials)) throw new Error('The server returned an unexpected response.')
   return result.materials
+}
+async function authorized(path: string, options: RequestInit = {}) {
+  if (!sessionToken) throw new Error('Please log in to continue.')
+  let response: Response
+  try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + sessionToken } }) }
+  catch { throw new Error('Unable to reach the server. Try again.') }
+  if (response.status === 401) { sessionToken = null; sessionUser = null }
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({})) as { error?: { message?: string } }
+    throw new Error(result.error?.message ?? 'Request failed. Try again.')
+  }
+  return response
+}
+export async function currentUser(): Promise<AuthenticatedUser> {
+  const result = await (await authorized('/api/auth/me')).json() as { authenticatedUser: AuthenticatedUser }
+  return result.authenticatedUser
+}
+export type ModerationKind = 'materials' | 'questions' | 'quizzes'
+export type ModerationItem = { id: string; title: string }
+export async function moderationKinds(): Promise<ModerationKind[]> {
+  return ((await (await authorized('/api/admin/resources')).json()) as { resources: ModerationKind[] }).resources
+}
+export async function moderationItems(kind: ModerationKind): Promise<ModerationItem[]> {
+  return ((await (await authorized('/api/admin/' + kind)).json()) as { items: ModerationItem[] }).items
+}
+export async function removeItem(kind: ModerationKind, id: string) {
+  await authorized('/api/admin/' + kind + '/' + encodeURIComponent(id), {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true })
+  })
+}
+export type MaterialSummary = StudyMaterial
+export type MaterialPage = { materials: MaterialSummary[]; nextCursor: string | null }
+export async function searchMaterials(query: string, cursor?: string, signal?: AbortSignal): Promise<MaterialPage> {
+  const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
+  if (cursor) params.set('cursor', cursor)
+  const suffix = params.size ? '?' + params.toString() : ''
+  const result = await (await authorized('/api/materials' + suffix, { signal })).json() as Partial<MaterialPage>
+  if (!Array.isArray(result.materials) || (result.nextCursor !== null && (typeof result.nextCursor !== 'string' || !/^[a-f\d]{24}$/i.test(result.nextCursor)))) {
+    throw new Error('The server returned an unexpected response.')
+  }
+  return { materials: result.materials, nextCursor: result.nextCursor }
+}
+export async function materialFile(id: string): Promise<Blob> {
+  return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file')).blob()
 }

@@ -1,4 +1,4 @@
-name: Sprint 1 security CI
+name: Integrated application CI
 on:
   push:
   pull_request:
@@ -58,3 +58,49 @@ jobs:
           name: sprint-1-backend
           path: dist/
           if-no-files-found: error
+  browsers:
+    needs: backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, edge, firefox]
+    env:
+      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/playwright
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chrome msedge firefox
+        working-directory: frontend
+      - run: npm run test:browser -- --project=${{ matrix.browser }}
+        working-directory: frontend
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: browser-evidence-${{ matrix.browser }}
+          path: |
+            frontend/playwright-report/
+            frontend/reports/browser-junit.xml
+            frontend/test-results/
+          retention-days: 14
+  containers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: docker build -f deploy/backend.Dockerfile -t se-jackfruit-backend .
+      - run: docker build -f deploy/web.Dockerfile -t se-jackfruit-web .
+      - name: Validate HTTPS gateway configuration
+        run: docker run --rm -e SITE_ADDRESS=example.com -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile

@@ -3,6 +3,7 @@ import { beforeAll, afterAll, expect, it, vi } from 'vitest'
 import type { Server } from 'node:http'
 import { fileURLToPath } from 'node:url'
 import type { Connection } from 'mongoose'
+import { Types } from 'mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { PDFDocument } from 'pdf-lib'
 import { connectDatabase } from '../../backend/src/db.js'
@@ -64,4 +65,21 @@ it('rejects an anonymous real multipart upload before storing bytes', async () =
   const response = await fetch(url + '/api/materials', { method: 'POST', body })
   expect(response.status).toBe(401)
   expect(await connection.collection('materialFiles.files').countDocuments()).toBe(1)
+})
+
+it('retrieves all 26 matching materials through the real paginated client and backend', async () => {
+  await client.login({ email: student.email, password: student.password })
+  const user = await runtime.accounts.User.findOne({ email: student.email })
+  await runtime.materials.Material.insertMany(Array.from({ length: 26 }, () => ({
+    title: 'Pagination notes', subject: 'SE', description: 'Cursor integration',
+    uploadedBy: user!._id, fileId: new Types.ObjectId(), size: 100
+  })))
+  const first = await client.searchMaterials('Pagination notes')
+  expect(first.materials).toHaveLength(25)
+  expect(first.nextCursor).toMatch(/^[a-f\d]{24}$/)
+  const second = await client.searchMaterials('Pagination notes', first.nextCursor!)
+  expect(second.materials).toHaveLength(1)
+  expect(second.nextCursor).toBeNull()
+  expect(new Set([...first.materials, ...second.materials].map(material => material.id)).size).toBe(26)
+  await client.logout()
 })
