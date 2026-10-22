@@ -312,7 +312,7 @@ The server evaluates the quiz using:
 const result = evaluateQuiz(evaluationQuestions, studentResponses);
 ```
 
-Because `Question.options[].id` matches `SubmittedResponse.selectedOptionId` and `Question.correctAnswer` matches `EvaluationQuestion.correctOptionId`, no schema translation or re-indexing is required.
+Because `Question.options[].id` matches `SubmittedResponse.selectedOptionId` and `Question.correctAnswer` maps to `EvaluationQuestion.correctOptionId`, the evaluation contract integrates cleanly with standard attempt scoring.
 
 ---
 
@@ -321,7 +321,7 @@ Because `Question.options[].id` matches `SubmittedResponse.selectedOptionId` and
 | Test ID | Type | Description | File Location | Status |
 |---|---|---|---|---|
 | **UT-M2-01** | Unit | Question schema enforces all required fields | `backend/tests/unit/question-model.test.ts` | Pass |
-| **UT-M2-02** | Unit | Rejects invalid options count (<2 or >6) | `backend/tests/unit/question-model.test.ts` | Pass |
+| **UT-M2-02** | Unit | Rejects invalid options count (<2 or >6), fractional marks, and long option text in model and API | `backend/tests/unit/question-model.test.ts` | Pass |
 | **UT-M2-03** | Unit | Rejects correctAnswer not matching any option id | `backend/tests/unit/question-model.test.ts` | Pass |
 | **UT-M2-04** | Unit | Question filter builder query logic | `backend/tests/unit/question-filters.test.ts` | Pass |
 | **UT-M2-05** | Unit | Student-safe question serializer strips correctAnswer | `backend/tests/unit/student-safe-serializer.test.ts` | Pass |
@@ -329,4 +329,4 @@ Because `Question.options[].id` matches `SubmittedResponse.selectedOptionId` and
 | **IT-M2-02** | Integration | Rejects non-admin question creation (403/401) | `backend/tests/integration/questions.test.ts` | Pass |
 | **IT-M2-03** | Integration | Admin can filter questions by subject, topic, difficulty | `backend/tests/integration/questions.test.ts` | Pass |
 | **IT-M2-04** | Integration | Student accesses GET /api/quiz-questions without answers | `backend/tests/integration/questions.test.ts` | Pass |
-| **IT-M2-05** | Integration | Payload evaluates seamlessly in Member 3's evaluateQuiz | `backend/tests/integration/questions.test.ts` | Pass |
+| **IT-M2-05** | Integration | Student responses and stored question answers map to Member 3 evaluateQuiz contract | `backend/tests/integration/questions.test.ts` | Pass |
