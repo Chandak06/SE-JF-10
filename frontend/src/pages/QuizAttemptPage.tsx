@@ -8,7 +8,7 @@ interface QuizOption {
   text: string
 }
 
-interface QuizQuestion {
+export interface QuizQuestion {
   id: string
   questionText: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
@@ -18,7 +18,7 @@ interface QuizQuestion {
 
 const QUIZ_DURATION = 20 * 60
 
-const questions: QuizQuestion[] = [
+const sampleQuestions: QuizQuestion[] = [
   {
     id: 'q1',
     questionText:
@@ -150,7 +150,7 @@ const questions: QuizQuestion[] = [
   }
 ]
 
-export default function QuizAttemptPage() {
+export default function QuizAttemptPage({ questions = sampleQuestions }: { questions?: QuizQuestion[] } = {}) {
   const draftKey = 'study-commons-quiz-responses:' + getSessionUser()!.id
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -199,7 +199,7 @@ export default function QuizAttemptPage() {
 
   const progress = useMemo(
     () => Math.round((answeredCount / questions.length) * 100),
-    [answeredCount]
+    [answeredCount, questions.length]
   )
 
   const minutes = Math.floor(timeLeft / 60)
@@ -297,7 +297,7 @@ export default function QuizAttemptPage() {
               </h1>
 
               <p className={styles.subtitle}>
-                10 sample questions · practice prototype · not sent for scoring
+                {questions.length} sample questions · practice prototype · not sent for scoring
               </p>
             </div>
 
