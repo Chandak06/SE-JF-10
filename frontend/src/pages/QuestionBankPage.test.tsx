@@ -338,4 +338,85 @@ describe('QuestionBankPage (CSMQ-23 / CSMQ-24)', () => {
       screen.queryByText('1. Unfiltered question?')
     ).not.toBeInTheDocument();
   });
+
+  it('clears loading state and displays results when an MCQ is saved while initial list is still loading', async () => {
+    const user = userEvent.setup();
+
+    let resolveInitialLoad!: (val: unknown) => void;
+    const initialLoadPromise = new Promise((resolve) => {
+      resolveInitialLoad = resolve;
+    });
+
+    // Initial listQuestions is pending
+    vi.mocked(questionService.listQuestions).mockReturnValueOnce(
+      initialLoadPromise as unknown as Promise<questionService.Question[]>
+    );
+
+    renderComponent();
+
+    expect(screen.getByText('Loading Question Bank...')).toBeInTheDocument();
+
+    // User opens form and submits an MCQ while initial load is still in-flight
+    await user.click(screen.getByRole('button', { name: '+ Add New MCQ' }));
+
+    await user.type(screen.getByLabelText(/Question Text/), 'Question saved mid-load?');
+    await user.type(screen.getByPlaceholderText('e.g. Computer Networks'), 'Math');
+    await user.type(screen.getByPlaceholderText('e.g. Transport Layer'), 'Calculus');
+    await user.type(screen.getByPlaceholderText('Enter text for Option A...'), 'Option 1');
+    await user.type(screen.getByPlaceholderText('Enter text for Option B...'), 'Option 2');
+    await user.type(screen.getByPlaceholderText('Enter text for Option C...'), 'Option 3');
+    await user.type(screen.getByPlaceholderText('Enter text for Option D...'), 'Option 4');
+
+    vi.mocked(questionService.createQuestion).mockResolvedValueOnce({
+      id: 'q-mid-load',
+      questionText: 'Question saved mid-load?',
+      subject: 'Math',
+      topic: 'Calculus',
+      difficulty: 'Easy',
+      marks: 1,
+      options: [
+        { id: 'A', text: 'Option 1' },
+        { id: 'B', text: 'Option 2' },
+        { id: 'C', text: 'Option 3' },
+        { id: 'D', text: 'Option 4' }
+      ],
+      correctAnswer: 'A',
+      createdAt: new Date().toISOString()
+    });
+
+    // The refresh triggered after saving returns the saved question
+    vi.mocked(questionService.listQuestions).mockResolvedValueOnce([
+      {
+        id: 'q-mid-load',
+        questionText: 'Question saved mid-load?',
+        subject: 'Math',
+        topic: 'Calculus',
+        difficulty: 'Easy',
+        marks: 1,
+        options: [
+          { id: 'A', text: 'Option 1' },
+          { id: 'B', text: 'Option 2' },
+          { id: 'C', text: 'Option 3' },
+          { id: 'D', text: 'Option 4' }
+        ],
+        correctAnswer: 'A'
+      }
+    ]);
+
+    await user.click(screen.getByRole('button', { name: 'Add Question' }));
+
+    // Now resolve the initial load promise with empty list
+    resolveInitialLoad([]);
+
+    // Verify loading state is cleared and questions are displayed
+    expect(
+      await screen.findByText('MCQ question created successfully.')
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('1. Question saved mid-load?')
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('Loading Question Bank...')
+    ).not.toBeInTheDocument();
+  });
 });
