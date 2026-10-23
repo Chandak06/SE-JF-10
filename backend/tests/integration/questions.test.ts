@@ -6,6 +6,7 @@ import request from 'supertest';
 import { loadConfig } from '../../src/config.js';
 import { connectDatabase } from '../../src/db.js';
 import { createRuntime } from '../../src/runtime.js';
+import { evaluateQuiz } from '../../src/attempts/evaluate.js';
 
 describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
   let mongo: MongoMemoryServer;
@@ -244,5 +245,105 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
       .set(bearer(adminToken))
       .expect(200);
     expect(emptyRes.body.questions).toEqual([]);
+  });
+
+  it('IT-M2-04: student can access /api/quiz-questions and receives student-safe payload without correctAnswer', async () => {
+    const adminToken = await registerAndLogin(adminCredentials, 'admin');
+    const studentToken = await registerAndLogin(studentCredentials, 'student');
+
+    await request(runtime.app)
+      .post('/api/questions')
+      .set(bearer(adminToken))
+      .send(sampleQuestion)
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quiz-questions')
+      .set(bearer(studentToken))
+      .expect(200);
+
+    expect(res.body.questions).toHaveLength(1);
+    const q = res.body.questions[0];
+
+    expect(q.id).toBeDefined();
+    expect(q.questionText).toBe(sampleQuestion.questionText);
+    expect(q.options).toHaveLength(4);
+    expect(q.difficulty).toBe('Medium');
+    expect(q.marks).toBe(1);
+
+    expect(q.correctAnswer).toBeUndefined();
+    expect('correctAnswer' in q).toBe(false);
+    expect(JSON.stringify(res.body)).not.toMatch(/"correctAnswer"/);
+  });
+
+  it('IT-M2-05: student responses and stored question answers map to Member 3 evaluateQuiz contract for accurate scoring', async () => {
+    const adminToken = await registerAndLogin(adminCredentials, 'admin');
+    const studentToken = await registerAndLogin(studentCredentials, 'student');
+
+    await request(runtime.app)
+      .post('/api/questions')
+      .set(bearer(adminToken))
+      .send(sampleQuestion)
+      .expect(201);
+
+    const questionsRes = await request(runtime.app)
+      .get('/api/quiz-questions')
+      .set(bearer(studentToken))
+      .expect(200);
+
+    const studentSafeQuestions = questionsRes.body.questions;
+    expect(studentSafeQuestions).toHaveLength(1);
+
+    const receivedQ = studentSafeQuestions[0];
+    const studentResponses = [
+      {
+        questionId: receivedQ.id,
+        selectedOptionId: 'B'
+      }
+    ];
+
+    const stored = await runtime.questions.Question.findById(receivedQ.id).lean();
+    const evaluationQuestions = [
+      {
+        id: stored!._id.toString(),
+        correctOptionId: stored!.correctAnswer
+      }
+    ];
+
+    const evalResult = evaluateQuiz(evaluationQuestions, studentResponses);
+    expect(evalResult).toEqual({
+      score: 1,
+      total: 1,
+      percentage: 100,
+      correct: 1,
+      incorrect: 0,
+      unanswered: 0
+    });
+  });
+
+  it('supports quizId, title, and subject filters on /api/quiz-questions', async () => {
+    const adminToken = await registerAndLogin(adminCredentials, 'admin');
+    const studentToken = await registerAndLogin(studentCredentials, 'student');
+
+    await request(runtime.app)
+      .post('/api/questions')
+      .set(bearer(adminToken))
+      .send(sampleQuestion)
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quiz-questions')
+      .query({
+        quizId: 'custom-quiz-101',
+        title: 'Networks Practice Test',
+        subject: 'Computer Networks'
+      })
+      .set(bearer(studentToken))
+      .expect(200);
+
+    expect(res.body.quizId).toBe('custom-quiz-101');
+    expect(res.body.title).toBe('Networks Practice Test');
+    expect(res.body.questions).toHaveLength(1);
+    expect(res.body.questions[0].correctAnswer).toBeUndefined();
   });
 });
