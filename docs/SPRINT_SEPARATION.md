@@ -23,6 +23,8 @@ Verification on the merged Sprint 1 source through `d4b82e0`: 175 backend tests 
 
 ## Database connection readiness
 
+The follow-up closeout fixes add responsive navigation and two actual-UI-to-evaluator contract cases. The current frontend suite has 41 passing tests; lint passes with zero warnings and the production build passes. Student and administrator navigation were checked at 320, 375, 500, 768, 900 and 1440px without overlapping controls. See [the closeout checklist](SPRINT1_CLOSEOUT.md) for the genuine teammate review and video evidence still required.
+
 Use the existing ignored `.env`; do not paste credentials into this guide, screenshots or commits. Before recording, run `npm run db:check` and require a successful authenticated ping. Tests use disposable MongoDB and do not establish live Atlas readiness.
 
 Earlier on 23 October, Atlas DNS resolved all three servers but TLS handshakes failed before authentication. The matching Atlas project reported that the current IP was absent from its access list. At the user's explicit request, a temporary `0.0.0.0/0` entry was added with a six-hour expiry. Afterward, the authenticated Atlas ping passed. The compiled production composition returned 200 for `/health` and `/ready`, and 401 for anonymous `/api/materials` and `/api/questions`. No application records were created by these checks; normal runtime indexes were initialized. TLS certificate validation remained enabled. The temporary entry permits connection attempts from all IPv4 addresses while database authentication remains required; allow-list the recording computer's current IP for future sessions after expiry. See MongoDB's official connection troubleshooting guide: https://www.mongodb.com/docs/atlas/troubleshoot-connection/.
