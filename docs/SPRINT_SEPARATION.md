@@ -25,7 +25,7 @@ Verification on the merged Sprint 1 source through `d4b82e0`: 175 backend tests 
 
 Use the existing ignored `.env`; do not paste credentials into this guide, screenshots or commits. Before recording, run `npm run db:check` and require a successful authenticated ping. Tests use disposable MongoDB and do not establish live Atlas readiness.
 
-On 23 October, Atlas DNS resolved all three configured servers, but certificate-validated TLS 1.2 and 1.3 handshakes were rejected with `ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR` before authentication. The Atlas connection check must pass after the project network/cluster configuration is corrected. Do not disable TLS verification as a workaround. MongoDB's official connection troubleshooting guide covers IP access restrictions, DNS and network checks: https://www.mongodb.com/docs/atlas/troubleshoot-connection/.
+Earlier on 23 October, Atlas DNS resolved all three servers but TLS handshakes failed before authentication. The matching Atlas project reported that the current IP was absent from its access list. At the user's explicit request, a temporary `0.0.0.0/0` entry was added with a six-hour expiry. Afterward, the authenticated Atlas ping passed. The compiled production composition returned 200 for `/health` and `/ready`, and 401 for anonymous `/api/materials` and `/api/questions`. No application records were created by these checks; normal runtime indexes were initialized. TLS certificate validation remained enabled. The temporary entry permits connection attempts from all IPv4 addresses while database authentication remains required; allow-list the recording computer's current IP for future sessions after expiry. See MongoDB's official connection troubleshooting guide: https://www.mongodb.com/docs/atlas/troubleshoot-connection/.
 
 ## Recording setup
 
@@ -67,3 +67,4 @@ Sprint 2 moderation, material search/download additions, deployment containers a
 ## After recording
 
 After explicit confirmation, integrate latest main into `PES2UG24CS185-Sprint-2`. The pre-merge check found shared-file conflicts in `backend/src/runtime.ts`, `frontend/src/App.tsx` and `frontend/src/components/Navbar.tsx`; preserve both sets of registrations, routes and navigation when resolving them. Recheck conflicts against current heads and run the integrated backend/frontend/browser/container checks before making PR #8 ready. Its previous Edge CI job was cancelled during browser installation and is not a passing hosted Edge result.
+
