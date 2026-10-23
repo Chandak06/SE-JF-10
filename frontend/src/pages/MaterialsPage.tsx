@@ -30,9 +30,17 @@ export default function MaterialsPage() {
     }
   }, [])
   useEffect(() => {
-    void refreshMaterials()
-    return () => { latestMaterialsRequest.current++ }
-  }, [refreshMaterials])
+    let mounted = true
+    const requestId = ++latestMaterialsRequest.current
+    void listMaterials().then((result) => {
+      if (mounted && requestId === latestMaterialsRequest.current) { setMaterials(result); setLoadError('') }
+    }).catch((error: unknown) => {
+      if (mounted && requestId === latestMaterialsRequest.current) setLoadError(error instanceof Error ? error.message : 'Unable to load materials.')
+    }).finally(() => {
+      if (mounted && requestId === latestMaterialsRequest.current) setLoading(false)
+    })
+    return () => { mounted = false }
+  }, [])
 
   async function submit(event: FormEvent) {
     event.preventDefault(); if (!file) { setMessage('Choose a PDF file to continue.'); return }

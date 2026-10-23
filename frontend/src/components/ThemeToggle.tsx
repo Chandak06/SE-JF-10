@@ -3,9 +3,11 @@ import styles from './ThemeToggle.module.css'
 
 type Theme = 'light' | 'dark'
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'light', toggle: () => {} })
+function readSavedTheme(): string | null {
+  try { return localStorage.getItem('study-theme') } catch { return null }
+}
 function initialTheme(): Theme {
-  let saved: string | null = null
-  try { saved = localStorage.getItem('study-theme') } catch { saved = null }
+  const saved = readSavedTheme()
   return saved === 'light' || saved === 'dark' ? saved : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 export function ThemeProvider({ children }: { children: ReactNode }) {

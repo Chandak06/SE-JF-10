@@ -260,7 +260,7 @@ The automated backend suites cover student registration and validation, duplicat
 
 JUnit reports were generated at `reports/junit.xml` and `frontend/reports/junit.xml`; backend coverage reports are in `coverage/`. The reports are ignored local artifacts. The repository's `.github/workflows/ci.yml` runs backend `npm run test:ci`, frontend `npm run test:ci`, lint, and build non-interactively on pushes and pull requests, then retains JUnit/coverage evidence in the `sprint-1-test-reports` workflow artifact for 14 days. These are local results; no new GitHub Actions run was triggered during this task.
 
-## Follow-up fixes — 23 October 2026
+## Follow-up fixes: 23 October 2026
 
 Addressed three frontend reliability issues reported against the student materials and theme flows:
 
@@ -268,4 +268,4 @@ Addressed three frontend reliability issues reported against the student materia
 - Successful uploads clear the native PDF input as well as the selected file state, allowing the same file to be selected again.
 - Theme preference reads and writes tolerate unavailable browser storage, so storage restrictions do not prevent the application from rendering.
 
-The follow-up changes are recorded in the working tree; verification results should be added after running the project checks.
+Verification: the reported root `npm run check` passed typecheck, build, and all 110 backend tests. The reported frontend run passed all 30 tests and the production build. Frontend lint passed after the follow-up lint fixes; tests and build were not rerun after those final edits.
