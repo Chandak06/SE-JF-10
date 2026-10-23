@@ -30,6 +30,6 @@ Backend tests use isolated temporary MongoDB, never the configured Atlas databas
 
 GitHub Actions replaces Jenkins per the updated Jira requirements and project decision on 10 October 2026. No Jenkins setup is needed.
 
-See [integration contracts](docs/INTEGRATION.md), [Question API contract](docs/question-api-contract.md), [Quiz attempt contract](docs/attempt-api-contract.md), [Sprint evidence](docs/SPRINT1_HARSHIT.md) and [CI guide](docs/GITHUB_ACTIONS.md). Independent teammate review and the user-created PR remain necessary before merging.
+See [integration contracts](docs/INTEGRATION.md), [Question API contract](docs/question-api-contract.md), [Quiz attempt contract](docs/attempt-api-contract.md), [Member 4 Sprint evidence](docs/SPRINT1_HARSHIT.md), [Member 2 Sprint report](docs/SPRINT1_MEMBER2_TEST_REPORT.md) and [CI guide](docs/GITHUB_ACTIONS.md). Independent teammate review and the user-created PR remain necessary before merging.
 
 References: [SRS](SRS.md), [SAD](SAD.pdf), [test plan](TEST_PLAN.pdf), detailed Sprint 1 work plan and updated work division in the project folder.
