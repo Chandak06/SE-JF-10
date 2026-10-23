@@ -172,6 +172,11 @@ export default function QuestionBankPage() {
               err instanceof Error ? err.message : 'Failed to load questions.'
             );
           }
+        })
+        .finally(() => {
+          if (reqId === activeRequestId.current) {
+            setLoading(false);
+          }
         });
     } catch (err) {
       setFormError(
