@@ -2,9 +2,10 @@
 .inner { position: relative; max-width: 1440px; height: 100%; margin: auto; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { justify-self: start; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; letter-spacing: -.3px; }
 .mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: var(--accent-contrast); }
-.centerNav { position: absolute; left: 50%; top: 0; height: 100%; display: flex; align-items: center; transform: translateX(-50%); }
-.centerNav a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 650; }
-.centerNav a:hover, .centerNav a[aria-current='page'] { color: var(--accent); }
+.centerNav { position: absolute; left: 50%; top: 0; height: 100%; display: flex; align-items: center; gap: 10px; transform: translateX(-50%); }
+.centerNav a { padding: 9px 14px; border: 1px solid var(--border); border-radius: 999px; color: var(--text-secondary); background: var(--surface-subtle); text-decoration: none; font-size: 14px; font-weight: 650; white-space: nowrap; transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease; }
+.centerNav a:hover, .centerNav a[aria-current='page'] { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+.centerNav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .actions { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
 .profile { position: relative; }
 .profileButton { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface-subtle); color: var(--text-secondary); cursor: pointer; }
@@ -16,4 +17,4 @@
 .profileMenu > button { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px; color: var(--text-primary); background: var(--surface-subtle); text-align: left; font-size: 13px; font-weight: 650; cursor: pointer; }
 .profileMenu > button:hover { border-color: var(--accent); color: var(--accent); }
 .logoutError { margin: 0 0 10px; color: var(--error); font-size: 12px; }
-@media (max-width: 500px) { .inner { padding: 0 18px; } .actions { gap: 9px; } .brand { font-size: 14px; } .centerNav a { font-size: 13px; } }
+@media (max-width: 500px) { .inner { padding: 0 18px; } .actions { gap: 9px; } .brand { font-size: 14px; } .centerNav { gap: 6px; } .centerNav a { padding: 8px 10px; font-size: 13px; } }
