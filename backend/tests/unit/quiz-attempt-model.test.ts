@@ -97,6 +97,30 @@ describe('QuizAttempt model', () => {
     await expect(attempt.validate()).rejects.toBeDefined();
   });
 
+  it('rejects fractional scores', async () => {
+    const attempt = new QuizAttempt({
+      user: new mongoose.Types.ObjectId(),
+      quiz: new mongoose.Types.ObjectId(),
+      responses: [],
+      score: 1.5,
+      percentage: 50
+    });
+
+    await expect(attempt.validate()).rejects.toBeDefined();
+  });
+
+  it('rejects infinite scores', async () => {
+    const attempt = new QuizAttempt({
+      user: new mongoose.Types.ObjectId(),
+      quiz: new mongoose.Types.ObjectId(),
+      responses: [],
+      score: Infinity,
+      percentage: 50
+    });
+
+    await expect(attempt.validate()).rejects.toBeDefined();
+  });
+
   it('stores and reads an attempt from MongoDB', async () => {
     const userId = new mongoose.Types.ObjectId();
 
