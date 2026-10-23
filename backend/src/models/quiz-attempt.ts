@@ -60,7 +60,12 @@ const quizAttemptSchema = new Schema<QuizAttemptFields>(
     score: {
       type: Number,
       required: true,
-      min: 0
+      min: 0,
+      validate: {
+        validator: (value: number) =>
+          Number.isFinite(value) && Number.isInteger(value),
+        message: 'Score must be a finite non-negative integer.'
+      }
     },
     percentage: {
       type: Number,
@@ -76,13 +81,19 @@ const quizAttemptSchema = new Schema<QuizAttemptFields>(
   }
 );
 
-export type QuizAttemptDocument = HydratedDocument<QuizAttemptFields>;
+export type QuizAttemptDocument =
+  HydratedDocument<QuizAttemptFields>;
 
 export function getQuizAttemptModel(
   connection: Connection
 ): Model<QuizAttemptFields> {
   return (
-    (connection.models.QuizAttempt as Model<QuizAttemptFields> | undefined) ??
-    connection.model<QuizAttemptFields>('QuizAttempt', quizAttemptSchema)
+    (connection.models.QuizAttempt as
+      | Model<QuizAttemptFields>
+      | undefined) ??
+    connection.model<QuizAttemptFields>(
+      'QuizAttempt',
+      quizAttemptSchema
+    )
   );
 }
