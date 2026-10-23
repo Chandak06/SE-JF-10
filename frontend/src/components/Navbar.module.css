@@ -17,4 +17,12 @@
 .profileMenu > button { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px; color: var(--text-primary); background: var(--surface-subtle); text-align: left; font-size: 13px; font-weight: 650; cursor: pointer; }
 .profileMenu > button:hover { border-color: var(--accent); color: var(--accent); }
 .logoutError { margin: 0 0 10px; color: var(--error); font-size: 12px; }
-@media (max-width: 500px) { .inner { padding: 0 18px; } .actions { gap: 9px; } .brand { font-size: 14px; } .centerNav { gap: 6px; } .centerNav a { padding: 8px 10px; font-size: 13px; } }
+@media (max-width: 900px) {
+  .header { height: auto; min-height: 76px; }
+  .inner { min-height: 75px; height: auto; padding: 16px 24px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 12px; }
+  .brand { min-width: 0; }
+  .centerNav { position: static; grid-column: 1 / -1; grid-row: 2; height: auto; transform: none; flex-wrap: wrap; justify-content: center; }
+  .centerNav:empty { display: none; }
+  .actions { grid-column: 2; grid-row: 1; margin-left: 0; }
+}
+@media (max-width: 500px) { .inner { padding: 16px 18px; } .actions { gap: 9px; } .brand { font-size: 14px; } .centerNav { gap: 6px; } .centerNav a { padding: 8px 10px; font-size: 13px; } }
