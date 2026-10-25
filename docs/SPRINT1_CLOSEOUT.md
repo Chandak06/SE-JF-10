@@ -1,6 +1,6 @@
 # Sprint 1 closeout evidence
 
-Updated 23 October 2026. This separates verified implementation from human review and recording evidence. Sprint 2 PR #8 remains a draft and must not merge before Harshit confirms the Sprint 1 recording is complete.
+Updated 25 October 2026. This separates verified implementation from human review and recording evidence. Sprint 2 PR #8 remains a draft and must not merge before Harshit confirms the Sprint 1 recording is complete.
 
 ## Implemented corrections
 
@@ -28,7 +28,7 @@ The Sprint 1 Definition of Done requires teammate review. Automated checks and a
 | Dharani | Prajwal | Register/login/logout, valid/invalid PDF upload, repeat PDF selection, stale response handling, small-screen navigation and storage exceptions | CSMQ-11–16 |
 | Prajwal | Karan | Admin-only MCQ creation, invalid input, filters, student-safe payload and save/filter race cases | CSMQ-22–28 |
 | Karan | Harshit | Prototype selection, safe-payload compatibility, known expected scores, unanswered cases and model persistence/invalid scores | CSMQ-17–21 |
-| Harshit | Dharani or Karan | Shared auth/hash/RBAC, real account/PDF integration, security/error paths and GitHub Actions | CSMQ-5, CSMQ-7 |
+| Harshit | Dharani or Karan | Shared auth/hash/RBAC, real account/PDF integration, security/error paths and GitHub Actions | CSMQ-5 and CSMQ-7 reviewed by Dharani on 25 October 2026; [review report](SPRINT1_DHARANI_REVIEW_HARSHIT.md) |
 
 Each reviewer should record the tested commit, commands/scenarios, expected and actual results, defects or pass result, and their own review identity/date in GitHub/Jira. After acceptance criteria and real review are satisfied, move the relevant work item through its actual workflow to Done. Existing Done tasks CSMQ-2/3/4/6 remain unchanged.
 
