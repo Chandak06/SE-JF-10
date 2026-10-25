@@ -1,3 +1,5 @@
+> **Historical evidence: Harshit Sprint 1 implementation/evidence report (dated entries).** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Harshit Chandak Sprint 1 evidence
 
 USN/branch: PES2UG24CS185. Jira: CSMQ-2 through CSMQ-7. Updated 10 October 2026.
