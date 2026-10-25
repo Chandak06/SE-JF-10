@@ -1,3 +1,5 @@
+> Current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). Sprint 1 is the core working increment; Sprint 2 completes all remaining approved functionality and final validation.
+
 # Question Bank & Quiz Questions API Contract
 
 **Owner**: Prajwal M (Member 2, Team 10 - SE Jackfruit)  
