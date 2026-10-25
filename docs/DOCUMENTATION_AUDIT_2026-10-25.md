@@ -11,7 +11,7 @@ The current documentation is internally consistent with: **“The Collaborative 
 
 All setup is within Sprint 1; all legitimate remaining work from the former schedules is mapped into Sprint 2. Scope and ownership are detailed in [the final plan](TWO_SPRINT_PLAN.md) and [current work division](WORK_DIVISION.md). No SRS requirement is reduced or deleted.
 
-Dedicated branch: `codex/two-sprint-documentation`; base `e13c0500fbd967b38fdbf6304002b9af5b3e329c`. Documentation changes are committed separately for review. This branch is not merged automatically. Sprint 2 draft PR #8 and its branch remain unchanged and subject to the recording gate.
+Dedicated branch: `codex/two-sprint-docs-and-jira-evidence`; base `e13c0500fbd967b38fdbf6304002b9af5b3e329c`. Documentation changes are committed separately for review. This branch is not merged automatically. Sprint 2 draft PR #8 and its branch remain unchanged and subject to the recording gate.
 
 ## Every changed or added file
 
