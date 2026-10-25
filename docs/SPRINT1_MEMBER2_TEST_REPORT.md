@@ -1,3 +1,7 @@
+> **Historical evidence: Member 2 test execution report.** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
+> Allocation correction for current planning: CSMQ-29–34 are Harshit’s Sprint 2 items; quiz creation belongs to Prajwal. The older allocation in this execution report is historical.
+
 # Member 2 (Prajwal M) — Sprint 1 Test & Verification Report
 
 **Author / Role**: Prajwal M (Member 2, Team 10 - SE Jackfruit)  
