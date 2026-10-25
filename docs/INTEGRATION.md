@@ -1,3 +1,5 @@
+> Current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). Sprint 1 is the core working increment; Sprint 2 completes all remaining approved functionality and final validation.
+
 # Shared security integration contract
 
 Owner: Harshit Chandak, PES2UG24CS185. Jira: CSMQ-2, CSMQ-3, CSMQ-4, CSMQ-5.
@@ -45,9 +47,9 @@ The rate-limit response has the same error shape; its request ID is available in
 - Question management: `/api/questions` requires authentication and admin role before Prajwal's router runs. This is the implemented Sprint 1 administrator Add/Filter contract.
 - Student-safe questions: `/api/quiz-questions` requires authentication and returns question text/options/classification without `correctAnswer`. It is registered by the production runtime and tested against MongoDB.
 - Attempts: an injected `/api/attempts` router is protected by authentication and the student role. The prototype integration router uses `req.user.id`, never a client-supplied userId. It is a test fixture, not a production submission service.
-- Exported `requireRole('admin')` can protect later moderation routes. Do not expose admin mutation routes behind authentication alone.
+- Exported `requireRole('admin')` can protect Sprint 2 moderation routes. Do not expose admin mutation routes behind authentication alone.
 
-Security contract tests retain sentinel handlers to isolate middleware behavior. Real runtime integration tests additionally verify account/PDF storage, administrator MCQ creation/filtering, student-safe payloads and the evaluation contract. The frontend prototype accepts the student-safe question shape while retaining sample questions by default. `frontend/tests/quiz-prototype.integration.test.tsx` renders the real Member 2 serializer output, selects answers in the actual UI and passes the captured selections to Member 3's actual evaluator, checking score/percentage and unanswered behavior. The production UI still uses local submission; full scoring/history remains later-sprint scope.
+Security contract tests retain sentinel handlers to isolate middleware behavior. Real runtime integration tests additionally verify account/PDF storage, administrator MCQ creation/filtering, student-safe payloads and the evaluation contract. The frontend prototype accepts the student-safe question shape while retaining sample questions by default. `frontend/tests/quiz-prototype.integration.test.tsx` renders the real Member 2 serializer output, selects answers in the actual UI and passes the captured selections to Member 3's actual evaluator, checking score/percentage and unanswered behavior. The production UI still uses local submission; full scoring/history remains Sprint 2 scope.
 
 ## Transport and failures
 
