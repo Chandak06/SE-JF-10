@@ -1,6 +1,6 @@
 # Sprint separation and recording guide
 
-Updated 25 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `codex/two-sprint-documentation` and is not automatically merged. Application baseline: `e13c050`; current status is authoritative in [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
+Updated 25 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `codex/two-sprint-docs-and-jira-evidence` and is not automatically merged. Application baseline: `e13c050`; current status is authoritative in [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
 
 - `main`: the integrated Sprint 1 product, including Prajwal's PRs #9–15, Dharani's fixes in PR #18 and Karan's score validation in PR #19.
 - `PES2UG24CS185-Sprint-1`: synchronized recording branch with the same Sprint 1 application and this guide. Before recording, compare the actual application trees and synchronize approved documentation deliberately; this isolated documentation branch currently differs from main. Do not assume synchronization without checking.
