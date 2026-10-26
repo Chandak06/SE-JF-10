@@ -15,7 +15,7 @@ The merged Sprint 1 increment includes Dharani's registration/login/logout and v
 
 ## Run locally
 
-Use Node.js 24.15 or newer within the supported Node 24 series. Run `npm ci`. If no `.env` exists, copy `.env.example` to `.env`; preserve your configured Atlas connection and never commit credentials.
+Use Node.js 24.15 or newer within the supported Node 24 series (`.nvmrc`: 24.19.0). Run `npm ci`. If no `.env` exists, copy `.env.example` to `.env`; preserve your configured Atlas connection and never commit credentials.
 
 - `npm run db:check`: compile and verify MongoDB with an authenticated ping without changing records. Recheck live connectivity before recording.
 - `npm run dev`: backend on port 5000 by default.
@@ -34,3 +34,5 @@ Run `npm run check` at the root. In `frontend`, run `npm run test:ci`, `npm run 
 Keep draft Sprint 2 PR #8 separate until Harshit confirms the Sprint 1 recording is complete. Follow the [recording/separation guide](docs/SPRINT_SEPARATION.md). This documentation branch is for review and is not merged automatically.
 
 References: [SRS](SRS.md), [SAD](SAD.pdf), editable [Test Plan](TEST_PLAN.md), generated [Test Plan PDF](TEST_PLAN.pdf), [historical references](docs/historical/README.md) and [documentation audit](docs/DOCUMENTATION_AUDIT_2026-10-25.md).
+
+For the 27 October Sprint 1 evaluation, follow the [current readiness checklist](docs/SPRINT1_EVALUATION_READINESS.md) and [one-minute video outline](demos/README.md). On Windows, run `./scripts/start-sprint1.ps1 -Service backend` and `./scripts/start-sprint1.ps1 -Service frontend` in separate terminals. The launcher uses a compatible installed Node or the available bundled runtime without changing global settings.
