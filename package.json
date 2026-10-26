@@ -8,6 +8,7 @@
     "node": ">=24.15 <25"
   },
   "scripts": {
+    "seed:admin": "tsx backend/scripts/seed-admin.ts",
     "dev": "tsx watch backend/src/server.ts",
     "start": "node dist/server.js",
     "db:check": "npm run build && node scripts/check-database.mjs",
