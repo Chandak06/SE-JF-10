@@ -15,6 +15,8 @@ The merged Sprint 1 increment includes Dharani's registration/login/logout and v
 
 ## Run locally
 
+Public registration creates Students only. To set up the first authorized development Admin, use the explicitly confirmed `npm run seed:admin` procedure in [Admin setup](docs/ADMIN_SETUP.md). Use the common login page, then **Question Bank** or `/questions`. No Admin account is created automatically.
+
 Use Node.js 24.15 or newer within the supported Node 24 series (`.nvmrc`: 24.19.0). Run `npm ci`. If no `.env` exists, copy `.env.example` to `.env`; preserve your configured Atlas connection and never commit credentials.
 
 - `npm run db:check`: compile and verify MongoDB with an authenticated ping without changing records. Recheck live connectivity before recording.
