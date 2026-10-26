@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Harshit Chandak (PES2UG24CS185) Sprint 1 shared backend and security foundation",
   "engines": {
-    "node": ">=22 <25"
+    "node": ">=24.15 <25"
   },
   "scripts": {
     "dev": "tsx watch backend/src/server.ts",
