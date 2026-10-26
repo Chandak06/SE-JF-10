@@ -3,3 +3,5 @@
 *.json text eol=lf
 *.yml text eol=lf
 *.md text diff
+*.pdf binary
+*.docx binary

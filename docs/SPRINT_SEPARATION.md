@@ -1,9 +1,9 @@
 # Sprint separation and recording guide
 
-Updated 23 October 2026 after the Sprint 1 fixes were merged.
+Updated 26 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `two-sprint-docs-and-jira-evidence` and is not automatically merged. Application baseline: `e13c050`; the preparation branch now also includes compatible security updates and evaluation runtime/test fixes. See [current evaluation readiness](SPRINT1_EVALUATION_READINESS.md) and authoritative [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
 
 - `main`: the integrated Sprint 1 product, including Prajwal's PRs #9–15, Dharani's fixes in PR #18 and Karan's score validation in PR #19.
-- `PES2UG24CS185-Sprint-1`: synchronized recording branch with the same Sprint 1 application and this guide. Check `git diff main...PES2UG24CS185-Sprint-1` before recording; it should be empty after the documentation PR is merged and branches synchronized.
+- `PES2UG24CS185-Sprint-1`: synchronized recording branch with the same Sprint 1 application and this guide. Before recording, compare the actual application trees and synchronize approved documentation deliberately; this isolated documentation branch currently differs from main. Do not assume synchronization without checking.
 - `PES2UG24CS185-Sprint-2`: saved Sprint 2 work in draft PR #8. It remains separate and does not yet incorporate the latest Sprint 1 merges.
 
 Keep PR #8 as a draft until Harshit explicitly confirms the final Sprint 1 video is complete. Preserve its branch and commits.
@@ -27,16 +27,16 @@ The follow-up closeout fixes add responsive navigation and two actual-UI-to-eval
 
 Use the existing ignored `.env`; do not paste credentials into this guide, screenshots or commits. Before recording, run `npm run db:check` and require a successful authenticated ping. Tests use disposable MongoDB and do not establish live Atlas readiness.
 
-Earlier on 23 October, Atlas DNS resolved all three servers but TLS handshakes failed before authentication. The matching Atlas project reported that the current IP was absent from its access list. At the user's explicit request, a temporary `0.0.0.0/0` entry was added with a six-hour expiry. Afterward, the authenticated Atlas ping passed. The compiled production composition returned 200 for `/health` and `/ready`, and 401 for anonymous `/api/materials` and `/api/questions`. No application records were created by these checks; normal runtime indexes were initialized. TLS certificate validation remained enabled. The temporary entry permits connection attempts from all IPv4 addresses while database authentication remains required; allow-list the recording computer's current IP for future sessions after expiry. See MongoDB's official connection troubleshooting guide: https://www.mongodb.com/docs/atlas/troubleshoot-connection/.
+Historical database check (23 October; the six-hour entry has since expired and current connectivity is unverified): Atlas DNS resolved all three servers but TLS handshakes failed before authentication. The matching Atlas project reported that the current IP was absent from its access list. At the user's explicit request, a temporary `0.0.0.0/0` entry was added with a six-hour expiry. Afterward, the authenticated Atlas ping passed. The compiled production composition returned 200 for `/health` and `/ready`, and 401 for anonymous `/api/materials` and `/api/questions`. No application records were created by these checks; normal runtime indexes were initialized. TLS certificate validation remained enabled. The temporary entry permits connection attempts from all IPv4 addresses while database authentication remains required; allow-list the recording computer's current IP for future sessions after expiry. See MongoDB's official connection troubleshooting guide: https://www.mongodb.com/docs/atlas/troubleshoot-connection/.
 
 ## Recording setup
 
-Use `PES2UG24CS185-Sprint-1` after synchronization, or the matching `main`. Stop and restart existing app servers after changing branches. Rebuild because ignored dist folders can contain output from a different branch.
+Use `two-sprint-docs-and-jira-evidence` for the newly verified security/runtime fixes, or `PES2UG24CS185-Sprint-1`/`main` after the preparation PR is accepted and branches are synchronized. Stop and restart existing app servers after changing branches. Rebuild because ignored dist folders can contain output from a different branch.
 
 From the repository root:
 
 ```powershell
-git switch PES2UG24CS185-Sprint-1
+git switch two-sprint-docs-and-jira-evidence
 npm ci
 npm run check
 npm run db:check
@@ -69,4 +69,3 @@ Sprint 2 moderation, material search/download additions, deployment containers a
 ## After recording
 
 After explicit confirmation, integrate latest main into `PES2UG24CS185-Sprint-2`. The pre-merge check found shared-file conflicts in `backend/src/runtime.ts`, `frontend/src/App.tsx` and `frontend/src/components/Navbar.tsx`; preserve both sets of registrations, routes and navigation when resolving them. Recheck conflicts against current heads and run the integrated backend/frontend/browser/container checks before making PR #8 ready. Its previous Edge CI job was cancelled during browser installation and is not a passing hosted Edge result.
-

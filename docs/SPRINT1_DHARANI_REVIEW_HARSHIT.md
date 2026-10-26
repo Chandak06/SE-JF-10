@@ -1,3 +1,5 @@
+> **Historical evidence: Dharani review recorded on 25 October 2026.** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Sprint 1 peer review — Harshit’s security and integration work
 
 **Reviewer:** Dharani S

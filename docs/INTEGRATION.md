@@ -1,3 +1,5 @@
+> Current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). Sprint 1 is the core working increment; Sprint 2 completes all remaining approved functionality and final validation.
+
 # Shared security integration contract
 
 Owner: Harshit Chandak, PES2UG24CS185. Jira: CSMQ-2, CSMQ-3, CSMQ-4, CSMQ-5.
@@ -27,7 +29,7 @@ The executable composition root is backend/src/runtime.ts. It connects Dharani's
 
 `authenticatedUser` contains only id, name, email, role. Public registration rejects client role/active/passwordHash fields. Emails are trimmed/lowercased. Names are trimmed, 1–100 characters, with control characters and markup delimiters rejected. Passwords are 12 characters minimum, 72 UTF-8 bytes maximum, with no NUL; they are never trimmed. The byte limit prevents bcrypt truncation. Defaults: bcrypt cost 12, 60-minute absolute session lifetime.
 
-Send the token in the Authorization header only. Do not put it in URLs, logs or form fields. Keep it in frontend memory; page reload can require re-login for this sprint. Clear it and the UI authentication state on logout or 401. Auth responses use `Cache-Control: no-store`.
+Send the token in the Authorization header only. Do not put it in URLs, logs or form fields. The frontend retains it in memory and tab-scoped sessionStorage for refresh. Before restoring a protected route, `/api/auth/me` validates the session and returns the current server role; no stored browser role is trusted. Clear the token and UI authentication state on logout or 401. Failed restoration requires login again. Auth responses use `Cache-Control: no-store`. See [trusted initial Admin setup](ADMIN_SETUP.md).
 
 Tokens are opaque 256-bit random values. Only a SHA-256 digest is stored in MongoDB. Expiry is checked per request independently of MongoDB TTL cleanup. Logout deletes the current session; concurrent sessions remain valid. User deletion/deactivation and role changes take effect on the next request. Client claims never set authorization.
 
@@ -45,9 +47,9 @@ The rate-limit response has the same error shape; its request ID is available in
 - Question management: `/api/questions` requires authentication and admin role before Prajwal's router runs. This is the implemented Sprint 1 administrator Add/Filter contract.
 - Student-safe questions: `/api/quiz-questions` requires authentication and returns question text/options/classification without `correctAnswer`. It is registered by the production runtime and tested against MongoDB.
 - Attempts: an injected `/api/attempts` router is protected by authentication and the student role. The prototype integration router uses `req.user.id`, never a client-supplied userId. It is a test fixture, not a production submission service.
-- Exported `requireRole('admin')` can protect later moderation routes. Do not expose admin mutation routes behind authentication alone.
+- Exported `requireRole('admin')` can protect Sprint 2 moderation routes. Do not expose admin mutation routes behind authentication alone.
 
-Security contract tests retain sentinel handlers to isolate middleware behavior. Real runtime integration tests additionally verify account/PDF storage, administrator MCQ creation/filtering, student-safe payloads and the evaluation contract. The frontend prototype accepts the student-safe question shape while retaining sample questions by default. `frontend/tests/quiz-prototype.integration.test.tsx` renders the real Member 2 serializer output, selects answers in the actual UI and passes the captured selections to Member 3's actual evaluator, checking score/percentage and unanswered behavior. The production UI still uses local submission; full scoring/history remains later-sprint scope.
+Security contract tests retain sentinel handlers to isolate middleware behavior. Real runtime integration tests additionally verify account/PDF storage, administrator MCQ creation/filtering, student-safe payloads and the evaluation contract. The frontend prototype accepts the student-safe question shape while retaining sample questions by default. `frontend/tests/quiz-prototype.integration.test.tsx` renders the real Member 2 serializer output, selects answers in the actual UI and passes the captured selections to Member 3's actual evaluator, checking score/percentage and unanswered behavior. The production UI still uses local submission; full scoring/history remains Sprint 2 scope.
 
 ## Transport and failures
 

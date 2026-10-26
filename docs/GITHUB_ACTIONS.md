@@ -6,8 +6,8 @@ The workflow `.github/workflows/ci.yml` runs automatically on push and pull_requ
 
 Artifacts: `sprint-1-test-reports` (backend JUnit/coverage plus frontend JUnit), `sprint-1-backend`, and `sprint-1-frontend`. Reports are retained even on failure; build packages are retained after successful checks. Atlas credentials are unnecessary for CI because integration tests use disposable MongoDB.
 
-Do not commit `.env` values. For future deployment, supply credentials through GitHub environment secrets and specify the actual hosting target; no hosted deployment is claimed for this sprint.
+Do not commit `.env` values. For Sprint 2 deployment, supply credentials through GitHub environment secrets and specify the actual hosting target; no hosted deployment is claimed for this sprint.
 
-The main contribution is branch `PES2UG24CS185`. The October 12 user request authorizes the agent to open and merge its PR after passing checks. Obtain Member 1 or Member 3 review as required by the work division before merging. The CI failure demonstration uses a separate, non-merge branch; its intentional assertion must never enter the contribution branch.
+Sprint 1 is integrated on `main` and the recording branch `PES2UG24CS185-Sprint-1`. Earlier PR authorization/status statements are historical; use the [closeout](SPRINT1_CLOSEOUT.md) for actual review/Jira state. Saved Sprint 2 draft PR #8 remains separate pending the recording gate. Keep intentional CI failure demonstrations off product branches.
 
-Current execution links and test results are recorded in `docs/SPRINT1_HARSHIT.md`.
+Dated execution links are retained in [Harshit’s historical report](SPRINT1_HARSHIT.md). The [final plan](TWO_SPRINT_PLAN.md) assigns all remaining delivery and validation to Sprint 2; workflow configuration itself is unchanged by this documentation update.

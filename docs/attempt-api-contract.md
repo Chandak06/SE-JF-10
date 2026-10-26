@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the Sprint 1 integration contract between the Question Bank, Quiz Attempt UI, evaluation logic, authentication layer, and QuizAttempt persistence.
+This document defines shared Question/Attempt payloads and the intended production API. Sprint 1 verifies the student-safe serializer → actual UI → evaluator boundary using fixtures, model tests and a local-submit sample-question prototype. Production submission, server evaluation, results, history and performance integration belong to Sprint 2. Endpoint examples below are contract targets, not claims that production routes are mounted in Sprint 1.
 
 The student-facing frontend must never receive the correct answer before submission.
 
@@ -326,7 +326,7 @@ Responsible for storing:
 
 ---
 
-## 11. Sprint 1 Integration Flow
+## 11. Sprint 2 Production Integration Target
 
 ```text
 Question Bank
@@ -350,16 +350,6 @@ Quiz Attempt UI
 
 ---
 
-## 12. Sprint 1 Limitations
+## 12. Sprint boundary
 
-Sprint 1 may use agreed mock or seed questions until the complete quiz-creation workflow is available.
-
-The following are outside the current Sprint 1 scope:
-
-- complete quiz history
-- long-term performance analytics
-- leaderboards
-- complete result-history screens
-- adaptive quiz recommendations
-
-These features can build on the same API contract in later sprints.
+Sprint 1 uses sample/fixture questions and local submission. Sprint 2 completes the production flow above, approved results/history screens, persistence and subject-wise performance. Leaderboards and adaptive recommendations mentioned in older planning are not added as requirements by this schedule change; implement only approved SRS functionality. See the [final plan](TWO_SPRINT_PLAN.md).

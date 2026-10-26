@@ -1,3 +1,5 @@
+> **Historical evidence: Sprint 1 development log (dated entries).** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Sprint 1 Authentication Implementation Reports
 
 ## CSMQ-11 Registration UI and API Implementation and Verification

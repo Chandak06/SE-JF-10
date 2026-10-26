@@ -1,3 +1,5 @@
+> **Historical evidence: earlier PR integration review.** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Teammate PR integration review — 17 October 2026
 
 Reviewed PR #7 (Dharani, CSMQ-12–16) and PR #6 (Karan, Sprint 1 QuizAttempt/evaluation prototype) against main 8beb3b6. Original teammate commits and authorship are preserved through merge commits.

@@ -1,3 +1,5 @@
+> **Historical evidence: 22 October 2026 review.** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Sprint 1 review — 22 October 2026
 
 Reviewed repository `Chandak06/SE-JF-10` against the detailed Sprint 1 work plan, SRS and the current Sprint 1 separation agreement. GitHub Actions replaces Jenkins by the team's decision. This report is for the user to share with teammates; no review messages were sent to teammates.
