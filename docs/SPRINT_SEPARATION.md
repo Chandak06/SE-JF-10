@@ -1,6 +1,6 @@
 # Sprint separation and recording guide
 
-Updated 25 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `two-sprint-docs-and-jira-evidence` and is not automatically merged. Application baseline: `e13c050`; current status is authoritative in [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
+Updated 26 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `two-sprint-docs-and-jira-evidence` and is not automatically merged. Application baseline: `e13c050`; the preparation branch now also includes compatible security updates and evaluation runtime/test fixes. See [current evaluation readiness](SPRINT1_EVALUATION_READINESS.md) and authoritative [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
 
 - `main`: the integrated Sprint 1 product, including Prajwal's PRs #9–15, Dharani's fixes in PR #18 and Karan's score validation in PR #19.
 - `PES2UG24CS185-Sprint-1`: synchronized recording branch with the same Sprint 1 application and this guide. Before recording, compare the actual application trees and synchronize approved documentation deliberately; this isolated documentation branch currently differs from main. Do not assume synchronization without checking.
@@ -31,12 +31,12 @@ Historical database check (23 October; the six-hour entry has since expired and 
 
 ## Recording setup
 
-Use `PES2UG24CS185-Sprint-1` after synchronization, or the matching `main`. Stop and restart existing app servers after changing branches. Rebuild because ignored dist folders can contain output from a different branch.
+Use `two-sprint-docs-and-jira-evidence` for the newly verified security/runtime fixes, or `PES2UG24CS185-Sprint-1`/`main` after the preparation PR is accepted and branches are synchronized. Stop and restart existing app servers after changing branches. Rebuild because ignored dist folders can contain output from a different branch.
 
 From the repository root:
 
 ```powershell
-git switch PES2UG24CS185-Sprint-1
+git switch two-sprint-docs-and-jira-evidence
 npm ci
 npm run check
 npm run db:check
