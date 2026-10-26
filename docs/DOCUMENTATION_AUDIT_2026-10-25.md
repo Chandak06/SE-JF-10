@@ -1,3 +1,5 @@
+> **Historical documentation-only audit snapshot, 25 October 2026.** Its file list, dependency counts and unchanged-source assertions describe that audit. The preparation branch later received genuine dependency/runtime/test-configuration fixes on 26 October. Use the [current evaluation readiness report](SPRINT1_EVALUATION_READINESS.md) and [closeout](SPRINT1_CLOSEOUT.md) for current results; the original audit below is retained as dated evidence.
+
 # Documentation audit — 25 October 2026
 
 ## Verdict and final mapping
