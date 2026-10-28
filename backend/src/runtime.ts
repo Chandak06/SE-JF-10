@@ -29,7 +29,7 @@ export async function createRuntime(connection: Connection, config: Config, opti
       questions: options.features?.questions ?? questions.router,
       quizQuestions: options.features?.quizQuestions ?? questions.studentRouter,
       ...options.features,
-      admin: createModerationRouter({ materials: materials.moderation, ...options.moderation })
+      admin: createModerationRouter({ materials: materials.moderation, questions: questions.moderation, ...options.moderation })
     },
     databaseReady: () => connection.readyState === 1, logger: options.logger
   });
