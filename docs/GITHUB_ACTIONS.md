@@ -1,3 +1,5 @@
+> Active Sprint 2 branch: the workflow is now Integrated application CI, with integrated test/build artifacts, browser jobs and an isolated local container release smoke check. Older Sprint 1 run names below describe historical evidence; use [deployment](DEPLOYMENT.md) and [current status](SPRINT2_HARSHIT.md) for this branch.
+
 # Sprint 1 GitHub Actions
 
 GitHub Actions is the required pipeline for CSMQ-6 and CSMQ-7. The October 10 Jira update supersedes references to Jenkins in the original planning documents.
