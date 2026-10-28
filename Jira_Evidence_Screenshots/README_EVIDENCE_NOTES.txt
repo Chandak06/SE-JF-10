@@ -1,3 +1,5 @@
+HISTORICAL SCREENSHOT EVIDENCE: images retain their original capture states; they do not assert current Jira status. No images were altered or manufactured. Current 25 October 2026 status is in docs/SPRINT1_CLOSEOUT.md; the final schedule is docs/TWO_SPRINT_PLAN.md. Obtain real new Testing/Done and review screenshots where needed; missing evidence is not filled synthetically.
+
 CURATED JIRA EVIDENCE NOTES - UPDATED 22 OCTOBER 2026
 
 This evidence set retains the relevant Jira project setup, workflow configuration, story-point configuration, sprint planning and task evidence.

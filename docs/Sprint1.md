@@ -1,3 +1,5 @@
+> **Historical evidence: Sprint 1 development log (dated entries).** Findings, test counts, branch names and pending-work/PR statements below describe their original snapshots, not current status. The final plan uses exactly two implementation sprints. Current status: [Sprint 1 closeout](SPRINT1_CLOSEOUT.md); current scope: [two-sprint plan](TWO_SPRINT_PLAN.md). GitHub Actions supersedes the original Jenkins proposal. Original findings are intentionally preserved.
+
 # Sprint 1 Authentication Implementation Reports
 
 ## CSMQ-11 Registration UI and API Implementation and Verification
@@ -260,5 +262,12 @@ The automated backend suites cover student registration and validation, duplicat
 
 JUnit reports were generated at `reports/junit.xml` and `frontend/reports/junit.xml`; backend coverage reports are in `coverage/`. The reports are ignored local artifacts. The repository's `.github/workflows/ci.yml` runs backend `npm run test:ci`, frontend `npm run test:ci`, lint, and build non-interactively on pushes and pull requests, then retains JUnit/coverage evidence in the `sprint-1-test-reports` workflow artifact for 14 days. These are local results; no new GitHub Actions run was triggered during this task.
 
-The test results and report locations are recorded here for CSMQ-16. Jira attachment/linking remains pending because no Atlassian connection is currently available in this session.
+## Follow-up fixes: 23 October 2026
 
+Addressed three frontend reliability issues reported against the student materials and theme flows:
+
+- Material-list requests now use latest-request ordering, so an older response cannot replace the refreshed list after an upload.
+- Successful uploads clear the native PDF input as well as the selected file state, allowing the same file to be selected again.
+- Theme preference reads and writes tolerate unavailable browser storage, so storage restrictions do not prevent the application from rendering.
+
+Verification: the reported root `npm run check` passed typecheck, build, and all 110 backend tests. The reported frontend run passed all 30 tests and the production build. Frontend lint passed after the follow-up lint fixes; tests and build were not rerun after those final edits.

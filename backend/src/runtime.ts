@@ -8,22 +8,30 @@ import { createMongoSessionStore } from './security/sessions.js';
 import type { SafeLogger } from './errors.js';
 import { createModerationRouter, type ModerationResources } from './admin/moderation.js';
 
+import { createQuestionsRouter } from './questions/router.js';
+
 export async function createRuntime(connection: Connection, config: Config, options: {
-  logger?: SafeLogger; authLimit?: number; features?: Pick<FeatureRouters, 'questions' | 'attempts'>;
+  logger?: SafeLogger; authLimit?: number; features?: Pick<FeatureRouters, 'questions' | 'quizQuestions' | 'attempts'>;
   moderation?: Pick<ModerationResources, 'questions' | 'quizzes'>;
 } = {}) {
   const accounts = createMongoAccountRepository(connection);
   const materials = createMaterialUpload(connection, config.MAX_UPLOAD_BYTES);
   const sessions = createMongoSessionStore(connection);
-  await Promise.all([accounts.initialize(), materials.initialize(), sessions.initialize()]);
+  const questions = createQuestionsRouter(connection);
+  await Promise.all([accounts.initialize(), materials.initialize(), sessions.initialize(), questions.initialize()]);
   const auth = await createAuthService({
     accounts: accounts.accounts, sessions, rounds: config.BCRYPT_ROUNDS, ttlMinutes: config.SESSION_TTL_MINUTES
   });
   const app = createApp({
     config, auth, authLimit: options.authLimit,
-    features: { materials: materials.router, ...options.features,
-      admin: createModerationRouter({ materials: materials.moderation, ...options.moderation }) },
+    features: {
+      materials: materials.router,
+      questions: options.features?.questions ?? questions.router,
+      quizQuestions: options.features?.quizQuestions ?? questions.studentRouter,
+      ...options.features,
+      admin: createModerationRouter({ materials: materials.moderation, ...options.moderation })
+    },
     databaseReady: () => connection.readyState === 1, logger: options.logger
   });
-  return { app, accounts, materials, sessions, auth };
+  return { app, accounts, materials, sessions, auth, questions };
 }

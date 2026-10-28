@@ -5,7 +5,7 @@ const student = { id: 'user-1', name: 'Student', email: 'student@example.com', r
 const file = new File(['PDF bytes'], 'notes.pdf', { type: 'application/pdf' })
 const input = { title: 'Notes', subject: 'SE', description: 'Sprint notes', file }
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body })
-beforeEach(async () => { vi.resetModules(); fetchMock.mockReset(); vi.stubGlobal('fetch', fetchMock); auth = await import('./authService') })
+beforeEach(async () => { sessionStorage.clear(); vi.resetModules(); fetchMock.mockReset(); vi.stubGlobal('fetch', fetchMock); auth = await import('./authService') })
 afterEach(() => vi.unstubAllGlobals())
 async function signIn() {
   fetchMock.mockResolvedValueOnce(reply({ authenticatedUser: student, token: 'test-token' }))
@@ -47,6 +47,53 @@ it('rejects an incomplete login response and shows controlled login errors', asy
   expect(auth.getSessionToken()).toBeNull()
   fetchMock.mockResolvedValueOnce(reply({ error: { message: 'Invalid email or password.' } }, 401))
   await expect(auth.login({ email: student.email, password: 'ExamplePassword123!' })).rejects.toThrow('Invalid email or password.')
+})
+it('restores only a token after refresh and obtains the current role from the server', async () => {
+  await signIn()
+  expect(sessionStorage.getItem('study-commons-session-token')).toBe('test-token')
+  vi.resetModules()
+  const restored = await import('./authService')
+  fetchMock.mockResolvedValueOnce(reply({ authenticatedUser: { ...student, role: 'admin' } }))
+  await restored.restoreSession()
+  expect(restored.getSessionUser()?.role).toBe('admin')
+  expect(fetchMock.mock.calls[1][0]).toMatch(/\/api\/auth\/me$/)
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  expect([...Array(sessionStorage.length)].map((_, i) => sessionStorage.key(i))).toEqual(['study-commons-session-token'])
+})
+it.each([401, 503])('fails closed on rejected restoration and clears stored credentials (%s)', async status => {
+  sessionStorage.setItem('study-commons-session-token', 'expired-token')
+  fetchMock.mockResolvedValueOnce(reply({}, status))
+  await auth.restoreSession()
+  expect(auth.getSessionToken()).toBeNull()
+  expect(auth.getSessionUser()).toBeNull()
+  expect(auth.hasStoredSession()).toBe(false)
+})
+it('fails closed on offline restoration', async () => {
+  sessionStorage.setItem('study-commons-session-token', 'saved-token')
+  fetchMock.mockRejectedValueOnce(new Error('offline'))
+  await auth.restoreSession()
+  expect(auth.getSessionToken()).toBeNull()
+  expect(auth.hasStoredSession()).toBe(false)
+})
+it('deduplicates restoration and does not resurrect a session after logout during restoration', async () => {
+  sessionStorage.setItem('study-commons-session-token', 'saved-token')
+  let resolve!: (value: ReturnType<typeof reply>) => void
+  fetchMock.mockReturnValueOnce(new Promise(done => { resolve = done }))
+  const first = auth.restoreSession(); const second = auth.restoreSession()
+  expect(fetchMock).toHaveBeenCalledTimes(1)
+  fetchMock.mockResolvedValueOnce(reply(null, 204))
+  await auth.logout()
+  resolve(reply({ authenticatedUser: student }))
+  await Promise.all([first, second])
+  expect(auth.getSessionToken()).toBeNull()
+  expect(auth.hasStoredSession()).toBe(false)
+})
+it('retains in-memory login if browser session storage is unavailable', async () => {
+  vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked') })
+  await signIn()
+  expect(auth.getSessionUser()?.role).toBe('student')
+  expect(auth.getSessionToken()).toBe('test-token')
+  vi.restoreAllMocks()
 })
 
 it('preserves pagination metadata and sends the search, cursor and abort signal', async () => {

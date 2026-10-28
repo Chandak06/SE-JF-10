@@ -1,3 +1,5 @@
+HISTORICAL SCREENSHOT EVIDENCE: images retain their original capture states; they do not assert current Jira status. No images were altered or manufactured. Current 25 October 2026 status is in docs/SPRINT1_CLOSEOUT.md; the final schedule is docs/TWO_SPRINT_PLAN.md. Obtain real new Testing/Done and review screenshots where needed; missing evidence is not filled synthetically.
+
 SPRINT 1 REAL WORKFLOW EVIDENCE - UPDATED 22 OCTOBER 2026
 
 The earlier staged per-task workflow screenshots have been removed and replaced by the latest dependency-aware Sprint 1 board snapshots supplied by the user.

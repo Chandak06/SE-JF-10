@@ -3,13 +3,19 @@ import styles from './ThemeToggle.module.css'
 
 type Theme = 'light' | 'dark'
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'light', toggle: () => {} })
+function readSavedTheme(): string | null {
+  try { return localStorage.getItem('study-theme') } catch { return null }
+}
 function initialTheme(): Theme {
-  const saved = localStorage.getItem('study-theme')
+  const saved = readSavedTheme()
   return saved === 'light' || saved === 'dark' ? saved : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(initialTheme)
-  useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('study-theme', theme) }, [theme])
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    try { localStorage.setItem('study-theme', theme) } catch { return }
+  }, [theme])
   return <ThemeContext.Provider value={{ theme, toggle: () => setTheme((value) => value === 'light' ? 'dark' : 'light') }}>{children}</ThemeContext.Provider>
 }
 export default function ThemeToggle() {

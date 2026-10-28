@@ -1,0 +1,32 @@
+[
+  {
+    "original": "TEST_PLAN.pdf",
+    "archive": "docs/historical/HISTORICAL_TEST_PLAN_2026-09-13.pdf",
+    "sha256": "88b341e5f7e722d4b5b4d102cfb4212bf5eb5255e76a460dd3427a4e8d4f9c85"
+  },
+  {
+    "original": "TEST_PLAN.docx",
+    "archive": "docs/historical/HISTORICAL_TEST_PLAN_2026-09-13.docx",
+    "sha256": "2be9400433e93fac1e7db4045122b89bee4a0bed8e69413d7ef4686559a58608"
+  },
+  {
+    "original": "Collaborative_Study_Quiz_Platform_4_Member_Work_Division.docx",
+    "archive": "docs/historical/HISTORICAL_WORK_DIVISION.docx",
+    "sha256": "39f115c4d2ea45545ca5164327f165ff7bfd784839bdb927048a051d79d33d7d"
+  },
+  {
+    "original": "Collaborative_Study_Quiz_Platform_4_Member_Work_Division_Updated.pdf",
+    "archive": "docs/historical/HISTORICAL_WORK_DIVISION.pdf",
+    "sha256": "c4b30f3d34aca7b4e8aa51d1c944134d6a5f2733231837d2d102723dddd59058"
+  },
+  {
+    "original": "Sprint_1_Detailed_Work_Plan_Collaborative_Study_Quiz_Platform.pdf",
+    "archive": "docs/historical/HISTORICAL_SPRINT1_DETAILED_PLAN.pdf",
+    "sha256": "8dcc4d86689c44df022849952a9940e1b2bfe6244dde6f1f1a70f24c9c683075"
+  },
+  {
+    "original": "JACKFRUIT -SE MINI-PROJECT GUIDELINES 2026.docx",
+    "archive": "docs/historical/HISTORICAL_FACULTY_GUIDELINES_2026.docx",
+    "sha256": "e1316ec0793f9c28d2a97d8489e37cb5714f529236ab0eca19401229c73c16e0"
+  }
+]
