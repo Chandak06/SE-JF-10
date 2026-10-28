@@ -35,6 +35,10 @@ jobs:
           npm run test:ci
           npm run lint
           npm run build
+      - name: Build and verify local Node release without Docker or Atlas
+        run: |
+          npm run demo:build
+          npm run demo:verify
       - name: Retain test and coverage evidence
         if: always()
         uses: actions/upload-artifact@v7
