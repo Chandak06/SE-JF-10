@@ -8,6 +8,37 @@ Run root `npm ci`, `npm run check`, `npm run db:check` and the backend; in front
 
 On 28 October configuration and DNS checks passed but all three Atlas TLS handshakes failed before authentication. The operator must verify the actual cluster/network environment. Credentials/access settings were not changed and certificate validation stays enabled. Disposable test passes do not prove live Atlas reachability.
 
+## Local Node demo on this Windows machine (no Docker or Atlas)
+
+Install the locked root and frontend dependencies first (`npm ci` in each directory). From the repository root run:
+
+```powershell
+./scripts/start-sprint2.ps1
+```
+
+This selects supported Node 24, builds a separate same-origin frontend and starts the available integrated application at `http://127.0.0.1:8080`. It never loads `.env`, uses Atlas, changes your existing frontend build, or creates an account automatically. The MongoDB binary manager from the locked development dependencies starts real standalone MongoDB on loopback; first use can require downloading that binary. This is a local development environment, not production hosting. Keep access to this computer trusted: local MongoDB has no database authentication and listens only on loopback.
+
+Data is saved under ignored `.local/sprint2-demo/database`, using WiredTiger. Ctrl+C stops the application and flushes database writes without deleting data. Restart with the same command to retain accounts, PDFs, questions and removal records. Keep that folder if you need the demonstration data. Do not run a second launcher against that directory while the first is active.
+
+For the first Admin, follow the secure environment-input prompt in [Admin setup](ADMIN_SETUP.md), with `ADMIN_PROVISION_CONFIRM=development`, and replace its `npm run seed:admin` invocation with:
+
+```powershell
+./scripts/start-sprint2.ps1 -ProvisionAdmin
+```
+
+This explicit option provisions only the launcher's separate local database. It refuses Student promotion, disabled accounts and password resets. Clear the setup variables afterward as documented. Public registration still creates Students. Normal subsequent starts need no provisioning option.
+
+For supported-Node shells on other platforms, the equivalent is:
+
+```text
+npm run demo:build
+npm run demo:local -- --confirm-local-development
+```
+
+`npm run demo:verify` checks the actual build/assets and gateway registration/login/RBAC/logout against a freshly allocated disposable MongoDB directory, then stops and removes only that test directory. It never writes to the saved local demo or Atlas. Integration tests also restart real MongoDB and verify persisted sessions and Question moderation. GitHub Actions executes both the normal tests and built-demo verification.
+
+This resolves the Docker/Atlas prerequisite for demonstrating the available modules. It does not supply missing teammates' business modules or establish Atlas/public HTTPS readiness.
+
 ## Explicit persistent local Docker demo (no Atlas)
 
 With Docker Compose installed, explicitly choose a separate development database and loopback web environment:
