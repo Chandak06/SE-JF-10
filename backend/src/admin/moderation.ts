@@ -19,7 +19,12 @@ export function createModerationRouter(resources: ModerationResources) {
   router.get('/resources', (_req, res) => { res.json({ resources: Object.keys(resources).filter(key => resources[key as keyof ModerationResources]) }); });
   for (const kind of ['materials', 'questions', 'quizzes'] as const) {
     const resource = resources[kind];
-    if (!resource) continue;
+    if (!resource) {
+      router.all(['/' + kind, '/' + kind + '/:id'], () => {
+        throw new AppError(503, 'MODULE_UNAVAILABLE', 'This content module is not integrated yet.');
+      });
+      continue;
+    }
     router.get('/' + kind, async (req, res) => {
       const parsed = z.strictObject({ limit: z.coerce.number().int().min(1).max(50).default(25) }).safeParse(req.query);
       if (!parsed.success) throw new AppError(400, 'INVALID_QUERY', 'Use a limit between 1 and 50.');
