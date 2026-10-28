@@ -1,6 +1,7 @@
 .git
 **/node_modules
 **/dist
+**/dist-local-demo
 **/.env
 **/.env.*
 .local
