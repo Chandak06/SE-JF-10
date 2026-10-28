@@ -1,33 +1,57 @@
 # Sprint 2 deployment and demonstration
 
-Use current Node 24 (24.15+) and the locked dependencies. The local .env contains the Atlas URI; never copy it into source control, images, screenshots or reports.
+Use supported Node 24.15+ and locked dependencies. Keep credentials/environment files out of Git, images, screenshots and logs. This branch packages available modules; missing production modules, public deployment and final freeze are not claimed complete.
 
-## Local demonstration
-1. Run npm ci and npm run build at the repository root.
-2. Verify Atlas with npm run db:check; start the backend with npm start.
-3. In frontend, run npm ci and npm run dev. Set VITE_API_BASE_URL if the backend is elsewhere.
-4. Register and log in as a student; upload/search/download a PDF.
-5. For an existing account you deliberately choose as the administrator, a trusted operator can run: node scripts/promote-admin.mjs EMAIL --confirm. This command changes that account's role in the configured database. It is never a public registration option and was not run against your Atlas accounts by this implementation.
-6. Log in as that administrator, follow Content moderation, choose an item, cancel once, then explicitly confirm removal. The item disappears from student search/download. Removal retains the original file and an audit tombstone for recovery.
-7. Log out; replayed credentials must fail.
+## Existing local configuration / Atlas
 
-## HTTPS container deployment
-The repository supplies backend/web Dockerfiles, compose.yaml, and a Caddy gateway. Only the gateway exposes ports 80/443; the backend is reachable on the private application network and trusts exactly the gateway IP.
+Run root `npm ci`, `npm run check`, `npm run db:check` and the backend; in frontend run `npm ci`, tests/lint/build and the development server. The supported-runtime Windows launcher remains available. The exact configured URI selects the database; no database name is guessed.
 
-The host must have Docker Compose, public DNS pointing to the host, reachable ports 80/443, and an Atlas IP access rule for the host. Set SITE_ADDRESS to the public hostname and MONGODB_URI through an ignored deployment environment file or managed environment; do not put credentials in command history or committed files. Start with docker compose up --build -d. If 172.31.0.0/24 conflicts with an existing network, change the subnet and both service addresses together with TRUST_PROXY.
+On 28 October configuration and DNS checks passed but all three Atlas TLS handshakes failed before authentication. The operator must verify the actual cluster/network environment. Credentials/access settings were not changed and certificate validation stays enabled. Disposable test passes do not prove live Atlas reachability.
 
-Caddy obtains/renews public certificates for eligible domains and redirects HTTP to HTTPS. It replaces forwarded scheme/client-IP headers. See [automatic HTTPS](https://caddyserver.com/docs/automatic-https) and [reverse proxy behavior](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy).
+## Explicit persistent local Docker demo (no Atlas)
 
-Verify a real deployment using the public HTTPS URL, browser registration/login/upload/moderation/logout, actual certificate validity, and Atlas persistence after backend restart. Record the URL and results in the Sprint report. No host/domain was supplied, so no public deployment, live certificate or release freeze is claimed yet. Docker is absent locally; CI builds the images and validates the gateway configuration.
+With Docker Compose installed, explicitly choose a separate development database and loopback web environment:
 
-## Browser and regression evidence
-Root npm run check verifies backend types/build/tests/coverage, including 50 concurrent authenticated sessions and reconnect/removal persistence. Frontend npm run test:ci, npm run build and npm run lint verify regression.
+```powershell
+docker compose -f compose.local.yaml up --build -d
+```
 
-Frontend npm run test:browser runs Google Chrome, Microsoft Edge and Playwright Firefox. Install Firefox into an ignored project cache with PLAYWRIGHT_BROWSERS_PATH configured; Chrome/Edge use installed stable channels. CI installs all three on its disposable runners. Browser tests start isolated MongoDB and temporary frontend/backend servers, never the configured Atlas database. [Playwright browser channels](https://playwright.dev/docs/browsers).
+Open `http://localhost:8080`. MongoDB has no published host port; the named `development-data` volume persists across normal restarts. Local Compose uses its literal development URI, not Atlas. Only the web port binds to loopback. Development HTTP is permitted by the SRS; production HTTPS configuration is separate and unchanged.
 
-## Feature-owner handoff
-Question/Quiz owners pass ModerationResource adapters via createRuntime options.moderation. list(limit) returns id/title only. remove(id, administratorId) must remove or tombstone the owned resource and ensure its read, quiz creation and attempt routes exclude removed data. Do not expose correctAnswer in student payloads. The shared /api/admin router handles auth, current-role checks, confirmation, ID validation and safe errors.
+To stop without deleting saved development data:
 
-Question/Quiz/Attempt business code is absent on origin. Adapters are tested with explicitly labelled isolated contract fixtures. Those tests are not evidence of actual quiz creation, evaluation/history/performance integration.
+```powershell
+docker compose -f compose.local.yaml down
+```
 
-Do not freeze/tag a final release until actual teammate integrations, deployment smoke checks and independent cross-testing are complete.
+Do not use `down -v` on data you need.
+
+### First local Docker Admin
+
+The `setup` profile never executes automatically. First read [Admin setup](ADMIN_SETUP.md) and explicitly authorize creation in this **local Compose development database**. Set `ADMIN_PROVISION_CONFIRM=development`, optional `ADMIN_NAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` using the secure prompt documented there. Then run:
+
+```powershell
+docker compose -f compose.local.yaml --profile setup run --rm seed-admin
+```
+
+Clear setup environment variables afterward. Do not put a password literally in command history. The existing trusted CLI refuses Student emails and never resets an existing Admin password. The legacy `scripts/promote-admin.mjs` shortcut is disabled.
+
+Use common login. Admins land on `/admin`, with the existing Question Bank and moderation categories. Cancel/confirm removal separately; audit metadata and saved references remain. Quiz moderation is unavailable until its real owner adapter is registered. Student materials and prototype navigation remain functional.
+
+## Production HTTPS packaging
+
+Existing `compose.yaml`, Dockerfiles and `deploy/Caddyfile` expose only the gateway and trust only its backend-network IP. Supply a selected public hostname/URI through ignored or managed configuration. DNS, HTTPS ports, approved database access and separately authorized production Admin bootstrap are operator requirements.
+
+Caddy redirects HTTP to HTTPS and manages eligible domain certificates; the backend enforces production HTTPS. No public host/domain/certificate or production provisioning/password-reset procedure is invented. No cloud deployment or global Docker installation was attempted here.
+
+## CI and evidence
+
+GitHub Actions runs backend types/build/coverage, frontend tests/lint/build, Chrome/Edge/Firefox journeys, Docker image builds and production Caddy validation. The containers job starts an isolated `sprint2-ci` local deployment, then runs `scripts/check-local-release.mjs` through the gateway to verify the built frontend, readiness, registration/login, Student RBAC and logout. Cleanup deletes only that disposable CI project's volumes.
+
+The smoke script requires `RELEASE_SMOKE_CONFIRM=disposable-local`, accepts loopback HTTP only and never loads `.env`. Do not run it on a real database whose records must remain unchanged. Docker is unavailable on this workstation; use the pushed-head CI result for actual container execution evidence.
+
+Artifacts: `integrated-test-reports`, `integrated-backend`, `integrated-frontend` and per-browser evidence. Local logs are under ignored `.local/sprint2-2026-10-28/`. See [current status](SPRINT2_HARSHIT.md) and [RTM](SPRINT2_RTM.md) for actual results and acceptance limits.
+
+## Owner handoff and final freeze
+
+Follow the [owner handoff](SPRINT2_HANDOFF.md). Real Question moderation is integrated; fixture Quiz adapters are not production Quiz/Attempt/results/history/performance, folders or Student Dashboard modules. Freeze/tag only after real integrations, full-system tests, selected environment verification, final demo and genuine cross-testing.
