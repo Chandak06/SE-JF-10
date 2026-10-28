@@ -83,6 +83,8 @@ The smoke script requires `RELEASE_SMOKE_CONFIRM=disposable-local`, accepts loop
 
 Artifacts: `integrated-test-reports`, `integrated-backend`, `integrated-frontend` and per-browser evidence. Local logs are under ignored `.local/sprint2-2026-10-28/`. See [current status](SPRINT2_HARSHIT.md) and [RTM](SPRINT2_RTM.md) for actual results and acceptance limits.
 
+The container CI job uses Ubuntu 22.04 because current `ubuntu-latest` Azure kernels cause `mongo:8` to exit with MongoDB startup error 12257600. The actual job logs reproduced [GitHub runner issue #15005](https://github.com/actions/runner-images/issues/15005) and [MongoDB's kernel detection issue](https://jira.mongodb.org/browse/SERVER-136848). This follows GitHub's documented compatible-host workaround without downgrading a database or bypassing MongoDB's startup protection. Container failure logs are retained in job output before disposable cleanup. Local Docker installations need a host kernel supported by their MongoDB image; the Windows Node launcher provides a separately tested alternative.
+
 ## Owner handoff and final freeze
 
 Follow the [owner handoff](SPRINT2_HANDOFF.md). Real Question moderation is integrated; fixture Quiz adapters are not production Quiz/Attempt/results/history/performance, folders or Student Dashboard modules. Freeze/tag only after real integrations, full-system tests, selected environment verification, final demo and genuine cross-testing.
