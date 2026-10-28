@@ -40,7 +40,7 @@ Tests use disposable MongoDB. No Atlas application records, roles, access settin
 | CSMQ-34 | Local run/release packaging, environment and demo instructions supplied; CI release smoke prepared | Atlas connectivity or selected local environment, all final modules, actual final demonstration/review and release freeze |
 | CSMQ-55 | Admin Dashboard and role navigation implemented and tested | Genuine peer review; Quiz card honestly identifies unavailable owner integration |
 
-Jira currently lists these seven tasks as To Do at audit time. This implementation does not claim all acceptance criteria are Done, fabricate reviews, or transition missing integrations to Done.
+Jira was initially To Do at audit time. The verified evidence is now linked: CSMQ-29/55 are Code Review and CSMQ-30–34 are In Progress. These states were rechecked against Jira on 28 October; missing integrations are not marked Done and independent reviews are not invented.
 
 ## Branch and integration audit
 
@@ -51,6 +51,12 @@ See [all-branch audit](SPRINT2_BRANCH_INTEGRATION.md), [requirement/test matrix]
 Read-only Atlas ping failed on 28 October. Configuration validates and DNS resolves three servers, but each TLS handshake fails with `ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR` before database authentication. This is not proof of an application-password defect. The operator must verify Atlas cluster/network access and approved environment settings; no TLS verification was disabled or network access widened. Do not claim live deployment/demo readiness from disposable tests.
 
 For a separate local Docker environment that does not require Atlas, follow [deployment/demo instructions](DEPLOYMENT.md). Docker must be installed by the operator; no global software installation or cloud deployment was attempted.
+
+### Follow-up local release completion
+
+The available product can now run on this workstation without either Docker or Atlas: `./scripts/start-sprint2.ps1`. The launcher selects supported Node, builds a separate same-origin frontend and starts loopback-only real MongoDB with persistent WiredTiger data under `.local/sprint2-demo/database`. It never loads the Atlas `.env` or seeds users automatically. Explicit first-Admin setup uses the existing trusted helper; no promotion/reset shortcut is added. Windows shutdown flushes database writes before stopping MongoDB.
+
+Follow-up verification passed 209 backend tests in 22 files (types/build/coverage), the dedicated frontend build and a real built-gateway release smoke. The new integration test fully stops/restarts MongoDB, verifies saved sessions and Question-removal metadata, confirms Student exclusion, and verifies logout revocation. CI also executes the built local Node demo smoke on every change. This completes an available-module local demonstration path; missing production owner modules, independent cross-testing and final release freeze remain acceptance dependencies.
 
 ## Delivery
 
