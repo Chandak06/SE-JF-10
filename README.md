@@ -22,6 +22,8 @@ On `PES2UG24CS185-Sprint-2`, Admin login opens the Administrator Dashboard with 
 
 For a separate persistent local Docker demo, use `docker compose -f compose.local.yaml up --build -d`, then open `http://localhost:8080`. This explicit local environment uses its own MongoDB volume, does not use Atlas, and exposes only a loopback web port. Follow [setup and Admin provisioning instructions](docs/DEPLOYMENT.md); it is not a public HTTPS deployment.
 
+Without Docker or Atlas on Windows, run `./scripts/start-sprint2.ps1` after installing the locked root/frontend dependencies. It builds the available Sprint 2 application and serves it at `http://127.0.0.1:8080` with persistent separate local MongoDB. See [local setup and explicit Admin provisioning](docs/DEPLOYMENT.md). It does not create an Admin automatically.
+
 ## Run locally
 
 Public registration creates Students only. To set up the first authorized development Admin, use the explicitly confirmed `npm run seed:admin` procedure in [Admin setup](docs/ADMIN_SETUP.md). Use the common login page, then **Question Bank** or `/questions`. No Admin account is created automatically.
