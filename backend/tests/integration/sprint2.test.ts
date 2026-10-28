@@ -110,9 +110,9 @@ it('handles missing PDF storage safely and makes revoked administrator access in
   await runtime.accounts.User.updateOne({ email: 'admin@example.com' }, { role: 'student' });
   await request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true }).expect(403);
 });
-it('keeps normal protected operations within three seconds for 50 concurrent authenticated sessions', async () => {
-  await runtime.accounts.User.create(Array.from({ length: 50 }, (_, index) => ({ name: 'Load Student', email: 'load' + index + '@example.com', passwordHash: hash })));
-  const sessions = await Promise.all(Array.from({ length: 50 }, (_, index) => request(runtime.app).post('/api/auth/login').send({ email: 'load' + index + '@example.com', password: 'Sprint two password!' })));
+it.each([10, 50])('keeps normal protected operations within three seconds for %i concurrent authenticated sessions', async count => {
+  await runtime.accounts.User.create(Array.from({ length: count }, (_, index) => ({ name: 'Load Student', email: 'load' + index + '@example.com', passwordHash: hash })));
+  const sessions = await Promise.all(Array.from({ length: count }, (_, index) => request(runtime.app).post('/api/auth/login').send({ email: 'load' + index + '@example.com', password: 'Sprint two password!' })));
   expect(sessions.every(row => row.status === 200)).toBe(true);
   const latencies = await Promise.all(sessions.map(async session => {
     const start = performance.now();
@@ -122,7 +122,7 @@ it('keeps normal protected operations within three seconds for 50 concurrent aut
   }));
   latencies.sort((a, b) => a - b);
   expect(latencies[Math.ceil(latencies.length * 0.9) - 1]).toBeLessThan(3000);
-  console.info('NFR scoped smoke: 50 sessions, 100 authenticated requests; p90=' + latencies[44]!.toFixed(0) + 'ms');
+  console.info('NFR scoped smoke: ' + count + ' sessions, ' + (count * 2) + ' authenticated requests; p90=' + latencies[Math.ceil(count * 0.9) - 1]!.toFixed(0) + 'ms');
 }, 30000);
 it('persists removal and existing authentication after runtime recreation and database reconnect', async () => {
   const id = await upload();
@@ -133,6 +133,6 @@ it('persists removal and existing authentication after runtime recreation and da
     await request(recreated.app).get('/api/auth/me').set(bearer(student)).expect(200);
     await request(recreated.app).get('/api/materials/' + id + '/file').set(bearer(student)).expect(404);
     expect((await recreated.materials.Material.findById(id))?.removedAt).toBeInstanceOf(Date);
-    expect((await request(recreated.app).get('/api/admin/resources').set(bearer(admin)).expect(200)).body.resources).toEqual(['materials']);
+    expect((await request(recreated.app).get('/api/admin/resources').set(bearer(admin)).expect(200)).body.resources).toEqual(['materials', 'questions']);
   } finally { await next.close(); }
 });
