@@ -13,6 +13,13 @@ beforeEach(() => {
   vi.mocked(auth.removeItem).mockResolvedValue(undefined)
 })
 const show = () => render(<MemoryRouter><AdminPage /></MemoryRouter>)
+it('opens the moderation category selected from the dashboard', async () => {
+  vi.mocked(auth.moderationKinds).mockResolvedValue(['materials', 'questions'])
+  render(<MemoryRouter initialEntries={['/admin/moderation?kind=questions']}><AdminPage /></MemoryRouter>)
+  await screen.findByRole('button', { name: 'Remove Notes' })
+  expect(auth.moderationItems).toHaveBeenCalledWith('questions')
+  expect(screen.getByLabelText('Content type')).toHaveValue('questions')
+})
 it('blocks student moderation before loading resources', async () => {
   vi.mocked(auth.currentUser).mockResolvedValue({ id: 'student', name: 'Student', email: 'student@example.com', role: 'student' }); show()
   expect(await screen.findByText('Administrator access is required.')).toBeInTheDocument()
