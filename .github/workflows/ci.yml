@@ -98,7 +98,9 @@ jobs:
             frontend/test-results/
           retention-days: 14
   containers:
-    runs-on: ubuntu-latest
+    # mongo:8 rejects newer Azure kernels (actions/runner-images#15005).
+    # Retain the database version; use the upstream-recommended compatible host.
+    runs-on: ubuntu-22.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
