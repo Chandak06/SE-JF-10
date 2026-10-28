@@ -3,6 +3,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['backend/tests/**/*.test.ts'],
+    // Bound disposable MongoDB processes and bcrypt work on developer/CI machines.
+    maxWorkers: 2,
     testTimeout: 15_000,
     hookTimeout: 180_000,
     reporters: ['default', 'junit'],
