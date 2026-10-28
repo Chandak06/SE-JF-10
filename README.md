@@ -15,6 +15,13 @@ Sprint 2 is planned to complete the entire application; it is not claimed comple
 
 The merged Sprint 1 increment includes Dharani's registration/login/logout and validated PDF upload; Prajwal's Question Bank, Add MCQ, filters and student-safe endpoint; Karan's attempt model/UI and scoring prototype; and Harshit's shared authentication, hashing, authorization, integration/security tests and CI. The attempt page uses sample questions and local submission rather than production server scoring.
 
+
+## Current Sprint 2 development
+
+On `PES2UG24CS185-Sprint-2`, Admin login opens the Administrator Dashboard with links to the existing Question Bank and confirmed material/question moderation. Protected material search, paging and PDF downloads are integrated. Production Quiz/Attempt/history/performance and other unpublished owner modules remain explicit integration dependencies; see [current Sprint 2 status](docs/SPRINT2_HARSHIT.md).
+
+For a separate persistent local Docker demo, use `docker compose -f compose.local.yaml up --build -d`, then open `http://localhost:8080`. This explicit local environment uses its own MongoDB volume, does not use Atlas, and exposes only a loopback web port. Follow [setup and Admin provisioning instructions](docs/DEPLOYMENT.md); it is not a public HTTPS deployment.
+
 ## Run locally
 
 Public registration creates Students only. To set up the first authorized development Admin, use the explicitly confirmed `npm run seed:admin` procedure in [Admin setup](docs/ADMIN_SETUP.md). Use the common login page, then **Question Bank** or `/questions`. No Admin account is created automatically.
