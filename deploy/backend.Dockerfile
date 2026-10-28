@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 RUN npm ci
 COPY backend/src ./backend/src
+COPY backend/scripts ./backend/scripts
 RUN npm run build
 
 FROM node:24-bookworm-slim
