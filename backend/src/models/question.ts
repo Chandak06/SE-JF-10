@@ -24,6 +24,8 @@ export interface QuestionFields {
   creator?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
+  removedAt?: Date | null;
+  removedBy?: Types.ObjectId;
 }
 
 const optionSchema = new Schema<QuestionOption>(
@@ -48,6 +50,8 @@ const optionSchema = new Schema<QuestionOption>(
 
 export const questionSchema = new Schema<QuestionFields>(
   {
+    removedAt: { type: Date, default: null, index: true },
+    removedBy: { type: Schema.Types.ObjectId, ref: 'User', select: false },
     questionText: {
       type: String,
       required: true,
