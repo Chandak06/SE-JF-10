@@ -1,60 +1,57 @@
-# Harshit Chandak Sprint 2 implementation
+# Harshit Chandak — Sprint 2 status, 28 October 2026
 
-Owner: PES2UG24CS185. Branch: PES2UG24CS185. Jira CSMQ-29–34. Reference date: 12 October 2026.
+Branch: `PES2UG24CS185-Sprint-2`. Owner: Harshit Chandak / PES2UG24CS185. Jira scope: CSMQ-29–34 and new Administrator Dashboard CSMQ-55. This is the current report; [earlier execution records](historical/HISTORICAL_SPRINT2_HARSHIT_2026-10-22.md) remain historical evidence.
 
-Sprint 1's shared contribution was merged in PR #3 with green push, PR and main CI. The entire team's missing Question Bank/Attempt work and independent review are not retroactively represented as complete.
+## Implemented and integrated
 
-Updated Jira defines the six Sprint 2 issues below. It supersedes the older four-sprint sequencing in the work-division document. Feature-specific schemas/controllers remain assigned to their owners.
+- Integrated latest main `0e73b37` with preserved authorship and unchanged Sprint 1 video. Resolved shared runtime, routes, authentication/session tests, navbar, material loader, Vite and README conflicts. Main was not modified.
+- CSMQ-29: existing confirmed material removal, protected search/paging/download and recoverable tombstones remain functional.
+- CSMQ-30: wired the real Question model into Admin moderation. Atomic soft removal records timestamp/administrator, excludes both administrator and student-facing question reads, and preserves original Question/QuizAttempt references. Quiz moderation retains the owner adapter contract; absent production Quiz modules return a controlled unavailable response rather than fixture results.
+- CSMQ-55: responsive `/admin` Administrator Dashboard; Admin login redirects there; Question Bank and moderation links reuse existing implementations. `/admin/moderation?kind=...` opens the selected category. Anonymous/Student routes are rejected. Loading, error/retry, confirmation, cancellation and unavailable-module states are visible.
+- CSMQ-31: retained current-role backend RBAC, validated tab-session restoration, controlled errors, confirmed deletion, safe Question query validation and answer-key filtering. Fixed protected-client 401 cleanup and stale account-response handling. Disabled the old Student-promotion script in favor of explicitly confirmed initial Admin provisioning.
+- CSMQ-32: connected all actually published Material/User/Question modules and the attempt prototype to shared runtime conventions. Kept material request ordering, pagination and PDF picker reset while incorporating current main's security/session fixes.
+- CSMQ-33/34: regression/browser/NFR evidence and deployable packaging updated; added explicit local Docker demo with persistent local MongoDB and a guarded disposable release smoke test in CI. This is development HTTP on loopback, separate from the existing production HTTPS configuration; it does not use Atlas.
 
-| Issue | Implemented and verified here | Required external completion evidence |
+## Verification completed locally
+
+| Check | Result |
+| --- | --- |
+| Backend types/build/coverage | 207 tests in 21 files passed; 98.87% lines, 95.57% branches, 98.33% statements, 98.23% functions |
+| Frontend tests | 71 tests in 11 files passed |
+| Frontend lint/build | Passed with zero lint errors/warnings |
+| Real browser journeys | 9 passed: three each in Chrome, Edge and Firefox |
+| Dashboard usability | 320, 375, 768, 1024 and 1440px; no horizontal overflow or overlapping navigation; mobile/desktop screenshots visually inspected |
+| Dashboard timing | All three browsers passed a 3-second bounded single-user login/dashboard-content check after application startup; attachment records conditions |
+| Load smoke | 10 sessions/20 protected requests: p90 348ms; 50 sessions/100 protected requests: p90 999ms |
+| Persistence | Real PDF/question removal and sessions survive runtime recreation/database reconnect; persisted attempt references remain |
+| Local container release | Docker unavailable on this machine; CI builds images, validates production Caddy, starts isolated local Compose and tests the gateway; check pushed-head CI for its actual result |
+
+Tests use disposable MongoDB. No Atlas application records, roles, access settings or credentials were changed. Frontend locked installation reported zero known dependency vulnerabilities. Scoped page/load figures are not whole-platform performance evidence for absent modules. Existing assertions, coverage gates and 3-second limits remain; worker counts/startup budgets bound infrastructure resource use.
+
+## Current Jira acceptance boundaries
+
+| Jira | Coding/validation status | Remaining acceptance |
 | --- | --- | --- |
-| CSMQ-29 material removal | Admin-only list/removal; two-step UI confirmation; atomic recoverable tombstone; removed content excluded from protected search/download; invalid/missing/repeated IDs and role changes tested | PR link and independent cross-test |
-| CSMQ-30 question/quiz removal | Shared admin API/UI and owner-supplied moderation adapter contract; both adapter types tested with labelled fixtures | Actual Question/Quiz models/controllers and their removed-data exclusion rules |
-| CSMQ-31 security | Shared auth/current RBAC, strict queries/body/IDs, protected downloads, confirmation and safe errors; frontend/backend regression; production HTTPS enforcement and gateway configuration | Correct-answer disclosure checks on real Quiz/Attempt modules; actual deployment certificate/HTTPS |
-| CSMQ-32 integration | Real existing Material and User modules integrated; search/download/moderation and login/logout browser flow tested | Real Question Bank/Quiz/Attempt/evaluation/history/subject-performance code |
-| CSMQ-33 NFR/regression | 50 authenticated concurrent sessions, 100 protected operations; p90 510 ms in initial scoped Windows run; removal/auth persistence after reconnect; Chrome/Edge/Firefox real-browser flow | Full-platform/page timing, all high-priority team functions, independent review and final RTM |
-| CSMQ-34 readiness | Setup/admin-provisioning/deployment instructions; Docker images, HTTPS gateway, CI browser/container checks; secrets excluded from images/source | Hosting target/domain, deployed smoke/demo/video, all modules and final freeze |
+| CSMQ-29 | Material moderation implemented and regression/browser tested | Genuine peer review and Jira PR/evidence closeout |
+| CSMQ-30 | Real Question moderation complete; shared Quiz adapter endpoint/confirmation/RBAC tested with explicit fixtures | Owner's production Quiz model/routes and removed-data exclusion before actual Quiz integration can pass |
+| CSMQ-31 | Security enforced for integrated modules; production HTTPS configuration retained | Correct-answer security on real Quiz/Attempt flow; actual deployment/network checks and independent review |
+| CSMQ-32 | All published owner modules integrated consistently | Missing production Quiz/Attempt/results/history/performance, folder management and Student Dashboard modules |
+| CSMQ-33 | Available-module regression, 10/50-session load, three-browser and persistence checks pass | Full-platform RTM/NFR/system/UAT and independent cross-testing once owner modules exist |
+| CSMQ-34 | Local run/release packaging, environment and demo instructions supplied; CI release smoke prepared | Atlas connectivity or selected local environment, all final modules, actual final demonstration/review and release freeze |
+| CSMQ-55 | Admin Dashboard and role navigation implemented and tested | Genuine peer review; Quiz card honestly identifies unavailable owner integration |
 
-The initial automated run passed 87 backend tests and 22 frontend tests. Chrome and Edge passed the actual register/login/PDF upload/download/admin cancellation/confirmation flow; Firefox passed the same flow. A further reconnect case is included in final verification. The load measurement covers existing authentication/material routes only, not absent quiz operations or hosted performance.
+Jira currently lists these seven tasks as To Do at audit time. This implementation does not claim all acceptance criteria are Done, fabricate reviews, or transition missing integrations to Done.
 
-Moderation retains PDF bytes and recorded removedAt/removedBy fields; this is a recoverable removal, not an untested permanent purge. All student reads and downloads exclude tombstones. Question/quiz adapters must provide the same exclusion guarantee in their own business routes.
+## Branch and integration audit
 
-See docs/DEPLOYMENT.md for the runbook and adapter contract. Tests use disposable MongoDB; no Atlas account roles or production content were changed. No hosting target was provided. The user's reply confirmed proceeding with Harshit's scope but did not identify missing module paths or a host.
+See [all-branch audit](SPRINT2_BRANCH_INTEGRATION.md), [requirement/test matrix](SPRINT2_RTM.md) and [owner handoff contract](SPRINT2_HANDOFF.md). Every published teammate branch was inspected, including merged Question Bank branches and Karan/Dharani branches. Their available contributions are already in main; no production Quiz creation, real submission/history/performance, material folders or Student Dashboard was found on any published branch or open owner PR. The old prototype is not substituted for those modules.
 
-Status: available-module implementation ready for verified integration; whole Sprint 2 cannot be marked complete until the external evidence in the table is supplied.
+## Live environment issue
 
-## Final local verification
-88 backend tests and 22 frontend tests passed; all three browser projects passed (Chrome, Edge, Firefox). Backend type/build/coverage and frontend lint/build passed. Final coverage: 97.88% statements, 97.72% branches, 97.43% functions, 98.69% lines. The final concurrent smoke run, overlapping browser/regression work, measured p90 1,433 ms for the same 50-session/100-request scope; the earlier run measured 510 ms. These are development smoke measurements, not hosted or full-platform performance evidence.
+Read-only Atlas ping failed on 28 October. Configuration validates and DNS resolves three servers, but each TLS handshake fails with `ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR` before database authentication. This is not proof of an application-password defect. The operator must verify Atlas cluster/network access and approved environment settings; no TLS verification was disabled or network access widened. Do not claim live deployment/demo readiness from disposable tests.
 
-## Audit after branch relocation — 12 October 2026
+For a separate local Docker environment that does not require Atlas, follow [deployment/demo instructions](DEPLOYMENT.md). Docker must be installed by the operator; no global software installation or cloud deployment was attempted.
 
-Sprint 1 (Harshit's CSMQ-2–7 implementation): hashing, authentication/logout, RBAC, real Member 1 registration/PDF integration, validation/security tests and GitHub Actions are implemented. PR #3 was merged after green checks. Independent peer sign-off is not recorded and the Jira tasks remain To Do; the entire team's Sprint 1 cannot be marked complete without the missing Question Bank/Attempt deliverables.
+## Delivery
 
-Sprint 2: CSMQ-29 material moderation is implemented/tested. CSMQ-30 has shared adapters and fixture evidence only; actual Question/Quiz removal is not integrated. CSMQ-31–34 remain partial until real quiz/attempt integration, full-platform performance/RTM, deployed HTTPS/demo and independent review are verified. Container configuration is build-validated, not a live deployment.
-
-The latest relocated-branch CI (38266371714 and 38266311868) exposed a Chrome test navigation race, while backend/frontend, containers, Edge and Firefox passed. The error context showed an empty login email: the test could fill a registration field while the SPA switched to login, because both forms share labels. The test now waits for the actual login heading before filling credentials and verifies the email value. No sleeps, retries or relaxed assertions were added. Fresh CI must pass before treating the current PR as green.
-
-All Sprint 2 work is on PES2UG24CS185 and replacement draft PR #5; draft #4 was closed when its old source branch was removed. main remains at the verified Sprint 1 merge.
-
-## Teammate integration — 17 October 2026
-
-Reviewed and integrated Dharani's PR #7 and Karan's PR #6 into main, preserving their original commits. Main's reviewed integration commit 86f6bf8 passed Actions run 38993489669 (110 backend tests and 30 frontend tests, builds, lint and coverage).
-
-This draft absorbed that reviewed main history. Resolved conflicts in material upload/listing, application routes, login navigation, the materials page/tests and shared session helpers. Preserved bounded search, removed-material exclusions, protected PDF downloads and administrator moderation while retaining Dharani's upload drawer/profile/logout and Karan's authenticated student quiz prototype. Browser tests now use the actual redirect, upload drawer and profile menu.
-
-The combined draft passed 118 backend tests and 33 frontend tests, type/build/lint/coverage. Scoped load smoke p90: 1,426 ms across 50 sessions and 100 protected requests. Original coverage gates remain enforced. The User repository test now waits for MongoDB indexes before asserting duplicate-email rejection, matching production startup initialization.
-
-Karan's QuizAttempt model, evaluation helper and seed-question UI are now present. A production Question/Quiz data provider, real attempt-submission/history flow and deployed HTTPS target remain outstanding; the prototype does not claim server scoring or submission persistence.
-
-## Material search and paging corrections — 22 October 2026
-
-These fixes are saved only on `PES2UG24CS185-Sprint-2`, updating draft PR #8. Keep Sprint 2 unmerged until Harshit confirms the Sprint 1 video is finished. The Sprint 1 application and recording branch are unchanged.
-
-- **H1 resolved:** the paginated client preserves `nextCursor`, sends it together with the current search, and provides **Load more materials**. A new search resets the cursor; subsequent pages append results without duplicate cards. Server-side page limits remain intact.
-- **H2 resolved:** upload refresh and retry use the last submitted search. Retrying a failed next page retains its cursor and the already displayed results. Search input edits alone do not silently change the submitted query.
-- Both material views use one guarded loader. Stale initial/search/page responses cannot overwrite newer results, requests are cancelled on replacement/unmount, and loading is finalized on success or failure. Failed downloads are reported separately from listing failures.
-- The Sprint 2 upload drawer also resets its native file picker after success, allowing the same PDF to be selected again. This correction does not change Dharani's saved Sprint 1 UI.
-
-Verification: 118 backend tests passed with typecheck/build and coverage gates (98.8% lines, 97.84% branches). All 42 frontend tests passed, including a real frontend-client/backend pagination integration with 26 matching records; frontend lint and production build passed. Six browser cases passed across Chrome, Edge and Firefox: the existing upload/download/moderation journey plus the new 26-result pagination and search-after-upload journey in each browser. Tests use disposable local MongoDB; Atlas content and roles were not changed.
-
-These corrections complete the two material-UI findings. They do not establish whole-platform Sprint 2 completion, production quiz/attempt integration, deployment readiness or resolution of the Atlas connectivity blocker.
+All work stays on the requested branch and existing draft [PR #8](https://github.com/Chandak06/SE-JF-10/pull/8). Push/PR Actions validate the actual head and retain integrated test/build/browser artifacts. The PR stays unmerged; the two-sprint scope, approved SRS/SAD and Sprint 1 evidence are preserved. Whole Sprint 2 is not release-complete until the dependencies and genuine human evidence above are resolved.
