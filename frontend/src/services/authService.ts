@@ -95,10 +95,11 @@ export async function listMaterials(): Promise<StudyMaterial[]> {
 }
 async function authorized(path: string, options: RequestInit = {}) {
   if (!sessionToken) throw new Error('Please log in to continue.')
+  const token = sessionToken
   let response: Response
   try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + sessionToken } }) }
   catch { throw new Error('Unable to reach the server. Try again.') }
-  if (response.status === 401) { sessionToken = null; sessionUser = null }
+  if (response.status === 401 && sessionToken === token) clearSession()
   if (!response.ok) {
     const result = await response.json().catch(() => ({})) as { error?: { message?: string } }
     throw new Error(result.error?.message ?? 'Request failed. Try again.')
@@ -106,7 +107,9 @@ async function authorized(path: string, options: RequestInit = {}) {
   return response
 }
 export async function currentUser(): Promise<AuthenticatedUser> {
+  const version = sessionVersion
   const result = await (await authorized('/api/auth/me')).json() as { authenticatedUser: AuthenticatedUser }
+  if (version === sessionVersion) sessionUser = result.authenticatedUser
   return result.authenticatedUser
 }
 export type ModerationKind = 'materials' | 'questions' | 'quizzes'
