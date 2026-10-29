@@ -4,9 +4,6 @@ import styles from './StudentDashboardPage.module.css'
 
 type DashboardDestination = { title: string; description: string; icon: string; href?: string; action?: string; unavailable?: boolean }
 const destinations: DashboardDestination[] = [
-  { title: 'Study Materials', description: 'Search, view, and download shared course materials.', href: '/materials', action: 'Open Study Materials', icon: 'PDF' },
-  { title: 'Quiz Creation', description: 'Build a quiz from questions in the shared Question Bank.', href: '/create-quiz', action: 'Create a Quiz', icon: '+' },
-  { title: 'Quiz Search', description: 'Find and review quizzes shared by students.', href: '/quizzes', action: 'Search Quizzes', icon: '⌕' },
   { title: 'Quiz Attempt History', description: 'Review your completed quiz attempts.', unavailable: true, icon: '↺' },
   { title: 'Performance Dashboard', description: 'Track results and performance across subjects.', unavailable: true, icon: '▥' }
 ]

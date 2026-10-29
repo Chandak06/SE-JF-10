@@ -151,9 +151,9 @@ describe('Study Commons routes and forms', () => {
     window.history.pushState({}, '', '/dashboard')
     renderApp()
     expect(screen.getByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Open Study Materials' })).toHaveAttribute('href', '/materials')
-    expect(screen.getByRole('link', { name: 'Create a Quiz' })).toHaveAttribute('href', '/create-quiz')
-    expect(screen.getByRole('link', { name: 'Search Quizzes' })).toHaveAttribute('href', '/quizzes')
+    expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Quiz Attempt History' }).parentElement).toHaveTextContent('This section is not available yet.')
     expect(screen.getByRole('heading', { name: 'Performance Dashboard' }).parentElement).toHaveTextContent('This section is not available yet.')
     expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
@@ -174,7 +174,7 @@ describe('Study Commons routes and forms', () => {
 
     expect(await screen.findByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
     expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Open Study Materials' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Materials' })).not.toBeInTheDocument()
   })
 
