@@ -44,8 +44,8 @@ beforeEach(async () => {
 });
 afterAll(async () => { await connection?.close(); await mongo?.stop(); });
 const bearer = (token: string) => ({ Authorization: 'Bearer ' + token });
-async function upload(title = 'Sprint notes') {
-  return (await request(runtime.app).post('/api/materials').set(bearer(student)).field({ title, subject: 'SE', description: 'Notes' }).attach('file', pdf, 'notes.pdf').expect(201)).body.material.id as string;
+async function upload(title = 'Sprint notes', subject = 'SE', description = 'Notes') {
+  return (await request(runtime.app).post('/api/materials').set(bearer(student)).field({ title, subject, description }).attach('file', pdf, 'notes.pdf').expect(201)).body.material.id as string;
 }
 it('lists only enabled moderation resources and rejects student/anonymous administration', async () => {
   expect((await request(runtime.app).get('/api/admin/resources').set(bearer(admin)).expect(200)).body.resources).toEqual(['materials', 'questions', 'quizzes']);
@@ -79,6 +79,21 @@ it('requires explicit confirmation and validates identifiers, missing/repeated r
   await request(runtime.app).delete('/api/admin/materials/' + id).send({ confirmed: true }).expect(401);
   const results = await Promise.all([1, 2].map(() => request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true })));
   expect(results.map(row => row.status).sort()).toEqual([204, 404]);
+});
+it('searches all material metadata and combines keyword with a subject filter', async () => {
+  const byTitle = await upload('Graph algorithms', 'CS', 'Lecture handout');
+  const bySubject = await upload('Week 4 notes', 'Algorithms', 'Exam prep');
+  const byDescription = await upload('Reference sheet', 'CS', 'Algorithms and graph theory');
+  const titleResult = await request(runtime.app).get('/api/materials?q=graph').set(bearer(student)).expect(200);
+  expect(titleResult.body.materials.map((item: { id: string }) => item.id)).toContain(byTitle);
+  const subjectResult = await request(runtime.app).get('/api/materials?q=algorithms&subject=cs').set(bearer(student)).expect(200);
+  expect(subjectResult.body.materials.map((item: { id: string }) => item.id)).toEqual([byDescription]);
+  const descriptionResult = await request(runtime.app).get('/api/materials?q=theory&subject=CS').set(bearer(student)).expect(200);
+  expect(descriptionResult.body.materials.map((item: { id: string }) => item.id)).toEqual([byDescription]);
+  const exactSubject = await request(runtime.app).get('/api/materials?subject=cs').set(bearer(student)).expect(200);
+  expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).toContain(byTitle);
+  expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).toContain(byDescription);
+  expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).not.toContain(bySubject);
 });
 it('validates safe searches and download options, escapes regex and paginates', async () => {
   const first = await upload('A.*'); await upload('B notes');

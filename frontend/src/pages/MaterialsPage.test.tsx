@@ -45,7 +45,7 @@ function fillUpload() {
   fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Notes' } })
 }
 function submitSearch(query: string) {
-  fireEvent.change(screen.getByLabelText('Search material titles'), { target: { value: query } })
+  fireEvent.change(screen.getByLabelText('Search study materials'), { target: { value: query } })
   fireEvent.submit(screen.getByRole('button', { name: 'Search' }).closest('form')!)
 }
 
@@ -58,12 +58,12 @@ it('loads the 26th material and resets pagination when a new search is submitted
   fireEvent.click(await screen.findByRole('button', { name: 'Load more materials' }))
   await screen.findByRole('heading', { name: 'Notes 26' })
   expect(screen.getAllByRole('article')).toHaveLength(26)
-  expect(auth.searchMaterials).toHaveBeenLastCalledWith('', cursor, expect.any(AbortSignal))
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('', cursor, expect.any(AbortSignal), '')
   expect(screen.queryByRole('button', { name: 'Load more materials' })).not.toBeInTheDocument()
   submitSearch('Beta')
   await screen.findByRole('heading', { name: 'Beta notes' })
   expect(screen.getAllByRole('article')).toHaveLength(1)
-  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Beta', undefined, expect.any(AbortSignal))
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Beta', undefined, expect.any(AbortSignal), '')
 })
 
 it('retries a failed next page with the same search and cursor, keeping existing results', async () => {
@@ -80,7 +80,7 @@ it('retries a failed next page with the same search and cursor, keeping existing
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
   await screen.findByRole('heading', { name: 'Alpha two' })
   expect(screen.getByRole('heading', { name: 'Alpha one' })).toBeInTheDocument()
-  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', cursor, expect.any(AbortSignal))
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', cursor, expect.any(AbortSignal), '')
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
 
@@ -96,7 +96,7 @@ it('preserves the submitted search after upload and resets the native PDF picker
   fireEvent.submit(screen.getByRole('button', { name: 'Upload material' }).closest('form')!)
   await screen.findByText('Your material has been uploaded.')
   await waitFor(() => expect(screen.getByRole('button', { name: 'Upload material' })).not.toBeDisabled())
-  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', undefined, expect.any(AbortSignal))
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', undefined, expect.any(AbortSignal), '')
   expect(screen.queryByRole('heading', { name: 'Beta notes' })).not.toBeInTheDocument()
   expect((screen.getByLabelText('PDF file') as HTMLInputElement).files).toHaveLength(0)
   fillUpload(); await user.upload(screen.getByLabelText('PDF file'), file)
@@ -141,5 +141,14 @@ it('retries a failed first-page search with the same query', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('Temporary search failure')
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
   await screen.findByRole('heading', { name: 'Alpha notes' })
-  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', undefined, expect.any(AbortSignal))
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('Alpha', undefined, expect.any(AbortSignal), '')
+})
+
+it('combines keyword and subject filters and explains unmatched results', async () => {
+  show(); await screen.findByText('Nothing exists yet')
+  fireEvent.change(screen.getByLabelText('Search study materials'), { target: { value: 'algorithms' } })
+  fireEvent.change(screen.getByLabelText('Filter by subject'), { target: { value: 'CS' } })
+  fireEvent.submit(screen.getByRole('button', { name: 'Search' }).closest('form')!)
+  expect(await screen.findByText('No matching materials')).toBeInTheDocument()
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('algorithms', undefined, expect.any(AbortSignal), 'CS')
 })
