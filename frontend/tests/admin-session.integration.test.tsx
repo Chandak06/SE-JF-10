@@ -27,14 +27,15 @@ it('waits for server validation before restoring Admin navigation and Question B
   expect(screen.getByRole('link', { name: 'Question Bank' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: '+ Add New MCQ' })).toBeInTheDocument()
 })
-it('ignores a forged browser role and redirects a server-identified Student away from Question Bank', async () => {
+it('ignores a forged browser role and redirects a server-identified Student to their dashboard', async () => {
   sessionStorage.setItem('study-commons-session-token', 'student-session')
   sessionStorage.setItem('role', 'admin'); localStorage.setItem('user', JSON.stringify(user))
   fetchMock.mockResolvedValueOnce(reply({ authenticatedUser: { ...user, role: 'student' } })).mockResolvedValue(reply({ materials: [] }))
   show()
-  expect(await screen.findByRole('button', { name: 'Upload a material' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Welcome, Demo User' })).toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Question Bank' })).not.toBeInTheDocument()
-  expect(screen.getByRole('link', { name: 'Practice quiz' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Practice Quiz' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Open Study Materials' })).toBeInTheDocument()
 })
 it('redirects an expired stored session to the common login page after refresh', async () => {
   sessionStorage.setItem('study-commons-session-token', 'expired-session')

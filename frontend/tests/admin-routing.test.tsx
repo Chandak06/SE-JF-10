@@ -19,10 +19,11 @@ it('redirects unauthenticated dashboard access to common login', async () => {
   show('/admin'); expect(await screen.findByRole('heading', { name: 'Log in', exact: true })).toBeInTheDocument()
   expect(screen.queryByRole('heading', { name: 'Administrator Dashboard' })).not.toBeInTheDocument()
 })
-it.each(['/admin', '/admin/moderation'])('keeps Students away from %s and retains student navigation', async path => {
+it.each(['/admin', '/admin/moderation'])('keeps Students away from %s and opens the student dashboard', async path => {
   state.token = 'student-token'; state.user = { ...account, role: 'student' }; show(path)
-  expect(await screen.findByRole('button', { name: 'Upload a material' })).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: 'Practice quiz' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Welcome, Admin' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Practice Quiz' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Open Study Materials' })).toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
 })
 it('routes successful Admin login to the dashboard with Question Bank and moderation links', async () => {

@@ -139,7 +139,27 @@ describe('Study Commons routes and forms', () => {
     expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument()
   })
 
-  it('navigates to materials after a successful login and updates navigation', async () => {
+  it('redirects anonymous dashboard access to login', async () => {
+    window.history.pushState({}, '', '/dashboard')
+    renderApp()
+    expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+  })
+
+  it('shows student navigation destinations and marks owner pages that are not integrated', () => {
+    authState.sessionToken = 'test-token'
+    authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
+    window.history.pushState({}, '', '/dashboard')
+    renderApp()
+    expect(screen.getByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open Study Materials' })).toHaveAttribute('href', '/materials')
+    expect(screen.getByRole('link', { name: 'Create a Quiz' })).toHaveAttribute('href', '/create-quiz')
+    expect(screen.getByRole('link', { name: 'Search Quizzes' })).toHaveAttribute('href', '/quizzes')
+    expect(screen.getByRole('heading', { name: 'Quiz Attempt History' }).parentElement).toHaveTextContent('This section is not available yet.')
+    expect(screen.getByRole('heading', { name: 'Performance Dashboard' }).parentElement).toHaveTextContent('This section is not available yet.')
+    expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
+  })
+
+  it('navigates to the student dashboard after successful login', async () => {
     const user = userEvent.setup()
     vi.mocked(auth.login).mockImplementationOnce(async () => {
       authState.sessionToken = 'test-token'
@@ -152,8 +172,9 @@ describe('Study Commons routes and forms', () => {
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
     await user.click(screen.getByRole('button', { name: 'Log in' }))
 
-    expect(await screen.findByText('Nothing exists yet')).toBeInTheDocument()
-    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Materials' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open Study Materials' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Materials' })).not.toBeInTheDocument()
   })
 
