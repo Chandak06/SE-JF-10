@@ -120,3 +120,16 @@ it('rejects malformed pagination responses instead of silently losing the cursor
   fetchMock.mockResolvedValueOnce(reply({ materials: [], nextCursor: null }))
   await expect(auth.searchMaterials('')).resolves.toEqual({ materials: [], nextCursor: null })
 })
+
+it('requests inline and attachment PDFs through the authenticated material endpoint', async () => {
+  await signIn()
+  const pdf = new Blob(['PDF bytes'], { type: 'application/pdf' })
+  fetchMock.mockResolvedValueOnce({ ok: true, status: 200, blob: async () => pdf })
+  await expect(auth.materialFile('material-1', 'inline')).resolves.toBe(pdf)
+  fetchMock.mockResolvedValueOnce({ ok: true, status: 200, blob: async () => pdf })
+  await expect(auth.materialFile('material-1')).resolves.toBe(pdf)
+  expect(fetchMock.mock.calls[1][0]).toContain('/api/materials/material-1/file?disposition=inline')
+  expect(fetchMock.mock.calls[2][0]).toContain('/api/materials/material-1/file?disposition=attachment')
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  expect(fetchMock.mock.calls[2][1].headers.Authorization).toBe('Bearer test-token')
+})

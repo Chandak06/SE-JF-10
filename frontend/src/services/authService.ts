@@ -150,6 +150,6 @@ export async function getMaterialDetails(id: string): Promise<MaterialDetails> {
   }
   return material as MaterialDetails
 }
-export async function materialFile(id: string): Promise<Blob> {
-  return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file')).blob()
+export async function materialFile(id: string, disposition: 'inline' | 'attachment' = 'attachment'): Promise<Blob> {
+  return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file?disposition=' + disposition)).blob()
 }
