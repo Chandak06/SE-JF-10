@@ -102,3 +102,28 @@ Test commands and results are recorded here for Jira evidence.
 - `b157ef8` Sprint:2 CSMQ:38 Request PDFs with authenticated disposition
 - `4a0ffcd` Sprint:2 CSMQ:38 Add PDF viewing and named download actions
 - `ab1861c` Sprint:2 CSMQ:38 Test PDF viewing and titled download
+
+## CSMQ-54: Student Dashboard and Navigation
+
+**Sprint:** 2
+**Owner:** Dharani S
+**SRS:** Section 3.1, CSMQ-NF-005
+
+### Implementation
+
+Added the protected `/dashboard` student landing page and made successful student login redirect there. The dashboard links to Materials, Quiz Creation, and Quiz Search. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place. The responsive card layout and student navigation use the shared React Router and Navbar.
+
+The handoff review found no Quiz History or Performance page or API in Karan’s available branches. Those dashboard cards state that the sections are unavailable. The dashboard does not replace them with the local attempt prototype. Acceptance criterion 6 remains dependent on Karan’s route and page exports.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| Frontend suite | 97 tests passed |
+| Backend unit suite | 171 tests passed |
+| Backend integration suite | 89 passed; 1 local-demo test failed when MongoMemoryServer stopped with `mongod internal error (fassert() failure)` |
+| Backend typecheck and build | Passed |
+| Frontend lint and production build | Passed |
+| Browser suite | Not run; `@playwright/test` is missing from this workspace |
+
+The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px. GitHub Actions and Jira evidence still need to be recorded through the project workflow.

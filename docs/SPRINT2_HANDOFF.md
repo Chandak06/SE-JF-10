@@ -19,3 +19,7 @@ Without an owner Quiz adapter, discovery exposes only integrated resources, the 
 The current backend account/session is authoritative. Never trust browser roles, client user IDs or Student-supplied answer keys. Verify per-user history/performance authorization and expose correct answers only after successful authorized submission/evaluation.
 
 Final acceptance requires real modules, cross-module security/regression/browser/load/persistence and RTM checks, genuine cross-testing, a verified deployment/demo and an agreed freeze. No Done state or final release tag is invented by this handoff.
+
+## CSMQ-54 owner update, 29 October 2026
+
+Available refs now include Prajwal's `CSMQ-47` through `CSMQ-53` Quiz model, API, create, search, list, and view work. These routes are integrated for Student Dashboard navigation. The available Karan `CSMQ-40` ref supplies an attempt submission API, but no Quiz History or Performance page or API was found in the fetched refs. CSMQ-54 keeps those dashboard sections visibly unavailable until Karan supplies the real page and route exports. Do not replace them with the sample-question attempt prototype.
