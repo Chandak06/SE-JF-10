@@ -151,6 +151,7 @@ describe('Study Commons routes and forms', () => {
     window.history.pushState({}, '', '/dashboard')
     renderApp()
     expect(screen.getByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Study Commons student dashboard' })).toHaveAttribute('href', '/dashboard')
     expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
@@ -173,6 +174,7 @@ describe('Study Commons routes and forms', () => {
     await user.click(screen.getByRole('button', { name: 'Log in' }))
 
     expect(await screen.findByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Study Commons student dashboard' })).toHaveAttribute('href', '/dashboard')
     expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Materials' })).not.toBeInTheDocument()

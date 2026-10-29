@@ -9,6 +9,8 @@ export default function Navbar() {
   const location = useLocation()
   const authenticated = getSessionToken()
   const user = authenticated ? getSessionUser() : null
+  const brandDestination = !authenticated ? '/' : user?.role === 'admin' ? '/admin' : '/dashboard'
+  const brandLabel = !authenticated ? 'Study Commons home' : user?.role === 'admin' ? 'Study Commons admin dashboard' : 'Study Commons student dashboard'
   const [profileOpen, setProfileOpen] = useState(false)
   const [logoutError, setLogoutError] = useState('')
   async function signOut() {
@@ -17,7 +19,7 @@ export default function Navbar() {
   }
   return <header className={styles.header} data-route={location.pathname}>
     <div className={styles.inner}>
-      <Link className={styles.brand} to="/" aria-label="Study Commons home"><span className={styles.mark}>S</span><span>Study Commons</span></Link>
+      <Link className={styles.brand} to={brandDestination} aria-label={brandLabel}><span className={styles.mark}>S</span><span>Study Commons</span></Link>
       <nav className={styles.centerNav} aria-label="Main navigation">
         {authenticated && user?.role === 'student' && <>
           <NavLink to="/dashboard">Dashboard</NavLink>
