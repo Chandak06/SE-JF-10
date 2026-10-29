@@ -144,3 +144,4 @@ export async function softDeleteQuizById(
   ).exec();
   return result.modifiedCount === 1;
 }
+
