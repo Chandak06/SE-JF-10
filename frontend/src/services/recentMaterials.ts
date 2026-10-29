@@ -11,7 +11,10 @@ export function getRecentMaterials(userId: string): RecentMaterial[] {
     return saved.filter((item): item is RecentMaterial => Boolean(item)
       && typeof item === 'object'
       && typeof (item as RecentMaterial).id === 'string'
-      && typeof (item as RecentMaterial).openedAt === 'number')
+      && typeof (item as RecentMaterial).openedAt === 'number'
+      && Number.isFinite((item as RecentMaterial).openedAt)
+      && (item as RecentMaterial).openedAt >= 0
+      && Number.isFinite(new Date((item as RecentMaterial).openedAt).getTime()))
       .slice(0, maximumRecentMaterials)
   } catch { return [] }
 }
