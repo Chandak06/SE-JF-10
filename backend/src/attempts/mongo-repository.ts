@@ -53,7 +53,7 @@ export function createMongoAttemptRepository(
       );
 
       const questions = await Question.find({
-        _id: { $in: ids }
+        _id: { $in: ids }, removedAt: null
       })
         .lean()
         .exec();
