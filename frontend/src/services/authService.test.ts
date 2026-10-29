@@ -95,3 +95,51 @@ it('retains in-memory login if browser session storage is unavailable', async ()
   expect(auth.getSessionToken()).toBe('test-token')
   vi.restoreAllMocks()
 })
+
+it('preserves pagination metadata and sends the search, cursor and abort signal', async () => {
+  await signIn()
+  const cursor = '000000000000000000000019'
+  const nextCursor = '000000000000000000000001'
+  const page = { materials: [{ id: 'material-26', title: 'Notes' }], nextCursor }
+  fetchMock.mockResolvedValueOnce(reply(page))
+  const controller = new AbortController()
+  await expect(auth.searchMaterials('  A & B  ', cursor, controller.signal)).resolves.toEqual(page)
+  const [url, options] = fetchMock.mock.calls[1]
+  expect(new URL(url).searchParams.get('q')).toBe('A & B')
+  expect(new URL(url).searchParams.get('cursor')).toBe(cursor)
+  expect(options.signal).toBe(controller.signal)
+  expect(options.headers.Authorization).toBe('Bearer test-token')
+})
+
+it('rejects malformed pagination responses instead of silently losing the cursor', async () => {
+  await signIn()
+  for (const body of [{ materials: [], nextCursor: 'invalid' }, { materials: null, nextCursor: null }]) {
+    fetchMock.mockResolvedValueOnce(reply(body))
+    await expect(auth.searchMaterials('')).rejects.toThrow('unexpected response')
+  }
+  fetchMock.mockResolvedValueOnce(reply({ materials: [], nextCursor: null }))
+  await expect(auth.searchMaterials('')).resolves.toEqual({ materials: [], nextCursor: null })
+})
+
+it('loads validated available material subjects using the authenticated endpoint', async () => {
+  await signIn()
+  fetchMock.mockResolvedValueOnce(reply({ subjects: ['Computer Science', 'Mathematics'] }))
+  await expect(auth.getMaterialSubjects()).resolves.toEqual(['Computer Science', 'Mathematics'])
+  expect(fetchMock.mock.calls[1][0]).toContain('/api/materials/subjects')
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  fetchMock.mockResolvedValueOnce(reply({ subjects: ['CS', 42] }))
+  await expect(auth.getMaterialSubjects()).rejects.toThrow('unexpected subject list')
+})
+
+it('requests inline and attachment PDFs through the authenticated material endpoint', async () => {
+  await signIn()
+  const pdf = new Blob(['PDF bytes'], { type: 'application/pdf' })
+  fetchMock.mockResolvedValueOnce({ ok: true, status: 200, blob: async () => pdf })
+  await expect(auth.materialFile('material-1', 'inline')).resolves.toBe(pdf)
+  fetchMock.mockResolvedValueOnce({ ok: true, status: 200, blob: async () => pdf })
+  await expect(auth.materialFile('material-1')).resolves.toBe(pdf)
+  expect(fetchMock.mock.calls[1][0]).toContain('/api/materials/material-1/file?disposition=inline')
+  expect(fetchMock.mock.calls[2][0]).toContain('/api/materials/material-1/file?disposition=attachment')
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  expect(fetchMock.mock.calls[2][1].headers.Authorization).toBe('Bearer test-token')
+})

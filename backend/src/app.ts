@@ -13,6 +13,8 @@ export interface FeatureRouters {
   questions?: Router;
   quizQuestions?: Router;
   attempts?: Router;
+  quizzes?: Router;
+  admin?: Router;
 }
 
 export function createApp({ config, auth, features = {}, databaseReady = () => true, logger, authLimit }: {
@@ -49,6 +51,8 @@ export function createApp({ config, auth, features = {}, databaseReady = () => t
     // Student-safe question endpoint for practice quiz attempts (never exposes correctAnswer).
     if (features.quizQuestions) app.use('/api/quiz-questions', requireAuth(auth), features.quizQuestions);
     if (features.attempts) app.use('/api/attempts', requireAuth(auth), requireRole('student'), features.attempts);
+    if (features.quizzes) app.use('/api/quizzes', requireAuth(auth), features.quizzes);
+    if (features.admin) app.use('/api/admin', requireAuth(auth), requireRole('admin'), features.admin);
   }
   app.use(notFound);
   app.use(errorHandler(logger));

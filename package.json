@@ -8,6 +8,9 @@
     "node": ">=24.15 <25"
   },
   "scripts": {
+    "demo:build": "node scripts/build-local-demo.mjs",
+    "demo:local": "tsx backend/scripts/local-demo.ts",
+    "demo:verify": "tsx backend/scripts/verify-local-demo.ts",
     "seed:admin": "tsx backend/scripts/seed-admin.ts",
     "dev": "tsx watch backend/src/server.ts",
     "start": "node dist/server.js",

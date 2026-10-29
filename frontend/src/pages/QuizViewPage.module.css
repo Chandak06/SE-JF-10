@@ -1,0 +1,199 @@
+.page {
+  padding: 2.5rem 1.5rem 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.headerCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(224, 122, 95, 0.12);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+  line-height: 1.3;
+}
+
+.metaRow {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.questionsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.securityNote {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.questionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.questionCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.questionNumber {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.tagGroup {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.difficultyBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.badgeEasy {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.badgeMedium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badgeHard {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.marksBadge {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.questionText {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.optionsList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+.optionItem {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.65rem 0.9rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.optionId {
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 1.25rem;
+}
+
+.status {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.alertError {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}

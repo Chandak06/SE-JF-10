@@ -1,0 +1,59 @@
+# Explicit local development/demo environment; does not use Atlas or expose MongoDB.
+services:
+  mongo:
+    image: mongo:8
+    volumes:
+      - development-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+  backend:
+    build:
+      context: .
+      dockerfile: deploy/backend.Dockerfile
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongo:27017/study_commons_development
+      CLIENT_ORIGIN: http://localhost:8080
+      BCRYPT_ROUNDS: '12'
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+    ports:
+      - '127.0.0.1:8080:8080'
+    volumes:
+      - ./deploy/Caddy.localfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+  seed-admin:
+    profiles: [setup]
+    build:
+      context: .
+      dockerfile: deploy/backend.Dockerfile
+      target: build
+    user: node
+    command: [npm, run, 'seed:admin']
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongo:27017/study_commons_development
+      ADMIN_PROVISION_CONFIRM: ${ADMIN_PROVISION_CONFIRM:-}
+      ADMIN_NAME: ${ADMIN_NAME:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    depends_on:
+      mongo:
+        condition: service_healthy
+volumes:
+  development-data:

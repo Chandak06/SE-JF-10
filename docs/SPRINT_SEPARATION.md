@@ -1,5 +1,7 @@
 # Sprint separation and recording guide
 
+**29 October 2026:** Harshit explicitly requested reviewed Sprint 2 integration into **main**. That supersedes the separation instructions below for the current integration PR. The saved `PES2UG24CS185-Sprint-1` branch and original video remain preserved for Sprint 1 reproduction. See [current review/integration](SPRINT2_TEAM_REVIEW_2026-10-29.md); no whole-Sprint-2 completion is claimed.
+
 Updated 26 October 2026. The [final plan](TWO_SPRINT_PLAN.md) contains exactly two implementation sprints. This documentation update is isolated on `two-sprint-docs-and-jira-evidence` and is not automatically merged. Application baseline: `e13c050`; the preparation branch now also includes compatible security updates and evaluation runtime/test fixes. See [current evaluation readiness](SPRINT1_EVALUATION_READINESS.md) and authoritative [Sprint 1 closeout](SPRINT1_CLOSEOUT.md).
 
 - `main`: the integrated Sprint 1 product, including Prajwal's PRs #9–15, Dharani's fixes in PR #18 and Karan's score validation in PR #19.

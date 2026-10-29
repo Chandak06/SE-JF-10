@@ -15,7 +15,7 @@ let mongo: MongoMemoryServer;
 let connection: Awaited<ReturnType<typeof connectDatabase>>;
 let runtime: Awaited<ReturnType<typeof createRuntime>>;
 beforeAll(async () => {
-  mongo = await MongoMemoryServer.create({ instance: { dbName: 'admin_provisioning_spec' } });
+  mongo = await MongoMemoryServer.create({ instance: { dbName: 'admin_provisioning_spec', launchTimeout: 60_000 } });
   connection = await connectDatabase(mongo.getUri('admin_provisioning_spec'));
   runtime = await createRuntime(connection, loadConfig({ NODE_ENV: 'test', MONGODB_URI: mongo.getUri('admin_provisioning_spec'), BCRYPT_ROUNDS: '10' }), { authLimit: 100 });
 });

@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import * as auth from './services/authService'
 
 const authState = vi.hoisted(() => ({ sessionToken: null as string | null, user: null as { id: string; name: string; email: string; role: string } | null }))
-vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), listMaterials: vi.fn().mockResolvedValue([]), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user, hasStoredSession: () => false, restoreSession: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), listMaterials: vi.fn().mockResolvedValue([]), searchMaterials: vi.fn().mockResolvedValue({ materials: [], nextCursor: null }), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user, hasStoredSession: () => false, restoreSession: vi.fn().mockResolvedValue(undefined) }))
 function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></BrowserRouter></ThemeProvider>) }
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); authState.sessionToken = null; authState.user = null; vi.clearAllMocks() })
 
@@ -139,7 +139,28 @@ describe('Study Commons routes and forms', () => {
     expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument()
   })
 
-  it('navigates to materials after a successful login and updates navigation', async () => {
+  it('redirects anonymous dashboard access to login', async () => {
+    window.history.pushState({}, '', '/dashboard')
+    renderApp()
+    expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
+  })
+
+  it('shows student navigation destinations and marks owner pages that are not integrated', () => {
+    authState.sessionToken = 'test-token'
+    authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
+    window.history.pushState({}, '', '/dashboard')
+    renderApp()
+    expect(screen.getByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Study Commons student dashboard' })).toHaveAttribute('href', '/dashboard')
+    expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Quiz Attempt History/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Performance Dashboard/ })).toBeDisabled()
+    expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
+  })
+
+  it('navigates to the student dashboard after successful login', async () => {
     const user = userEvent.setup()
     vi.mocked(auth.login).mockImplementationOnce(async () => {
       authState.sessionToken = 'test-token'
@@ -152,8 +173,10 @@ describe('Study Commons routes and forms', () => {
     await user.type(screen.getByLabelText('Password'), 'ExamplePassword123!')
     await user.click(screen.getByRole('button', { name: 'Log in' }))
 
-    expect(await screen.findByText('Nothing exists yet')).toBeInTheDocument()
-    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Materials' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Welcome, Student' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Study Commons student dashboard' })).toHaveAttribute('href', '/dashboard')
+    expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Materials' })).not.toBeInTheDocument()
   })
 
