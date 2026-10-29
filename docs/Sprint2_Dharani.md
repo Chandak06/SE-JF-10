@@ -9,7 +9,7 @@
 
 Extended the authenticated `GET /api/materials` listing to accept `q` and `subject`. The keyword is matched case-insensitively against title, subject, and description. Subject filtering matches the complete subject name case-insensitively and combines with the keyword using AND semantics. Both inputs use the existing bounded, safe query validation; keyword and subject text is escaped before regex matching. Existing pagination is retained, and the `removedAt: null` condition excludes moderated materials.
 
-Added a keyword search and filter icon to the student Materials page. The icon opens a searchable picker populated by authenticated `GET /api/materials/subjects`, which returns distinct subjects from active materials only. Selecting a subject immediately combines it with the current keyword, highlights the filter icon, and shows a clear-filter chip. An unmatched search displays “No matching materials.” Existing upload and default listing flows remain in place.
+Added a keyword search with the filter icon at the right edge of the search field. The icon opens a searchable picker populated by authenticated `GET /api/materials/subjects`, which returns distinct subjects from active materials only. Selecting a subject immediately combines it with the current keyword, uses a muted active icon state, and shows a clear-filter chip. An unmatched search displays “No matching materials.” Existing upload and default listing flows remain in place.
 
 ## Acceptance Criteria Evidence
 
@@ -112,7 +112,7 @@ Test commands and results are recorded here for Jira evidence.
 
 ### Implementation
 
-Added the protected `/dashboard` student landing page and made successful student login redirect there. Removed the student eyebrow and reduced the welcome heading size. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
+Added the protected `/dashboard` student landing page and made successful student login redirect there. Removed the student eyebrow, reduced the welcome heading size, and changed the two unavailable destinations to compact list rows. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
 
 The handoff review found no Quiz History or Performance page or API in Karan’s available branches. Those dashboard cards state that the sections are unavailable. The dashboard does not replace them with the local attempt prototype. Acceptance criterion 6 remains dependent on Karan’s route and page exports.
 

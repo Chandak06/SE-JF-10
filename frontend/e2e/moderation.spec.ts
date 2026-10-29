@@ -63,7 +63,7 @@ test('student uploads, administrator confirms removal and removed content cannot
   await expect(page.getByRole('link', { name: 'Materials', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Create Quiz', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Quiz Search', exact: true })).toBeVisible()
-  await expect(page.getByText('This section is not available yet.')).toHaveCount(2)
+  await expect(page.getByText('Coming soon')).toHaveCount(2)
   await page.getByRole('link', { name: 'Create Quiz', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Create New Quiz' })).toBeVisible()
   await page.getByRole('link', { name: 'Quiz Search' }).click()

@@ -1,14 +1,14 @@
-.page { max-width: 1160px; min-height: calc(100vh - 76px); margin: auto; padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 4vw, 3.5rem); color: var(--text-primary); }
+.page { max-width: 1160px; min-height: calc(100vh - 76px); margin: auto; padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 3.5rem); color: var(--text-primary); }
 .eyebrow { margin: 0 0 .8rem; color: var(--accent); font-size: .75rem; font-weight: 750; letter-spacing: .13em; }
 .page h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -.035em; font-weight: 650; }
 .intro { margin: .8rem 0 0; color: var(--text-secondary); font-size: 1.05rem; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 1rem; margin: 2.25rem 0 0; }
-.card { display: flex; min-height: 235px; flex-direction: column; align-items: flex-start; padding: 1.4rem; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
-.icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 12px; color: var(--accent); background: var(--surface-subtle); font-size: 1.15rem; font-weight: 750; }
-.card h2 { margin: 1rem 0 0; font-size: 1.2rem; }
-.card > p { margin: .5rem 0 1.2rem; color: var(--text-secondary); line-height: 1.5; }
+.grid { display: flex; max-width: 780px; flex-direction: column; margin: 1.5rem 0 0; }
+.card { display: grid; min-height: 94px; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem .5rem; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
+.icon { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--border); border-radius: 11px; color: var(--accent); background: var(--surface-subtle); font-size: 1.05rem; font-weight: 750; }
+.card h2 { margin: 0; font-size: 1rem; font-weight: 650; }
+.cardCopy p { margin: .3rem 0 0; color: var(--text-secondary); font-size: .9rem; line-height: 1.45; }
 .card > a { display: inline-flex; min-height: 42px; align-items: center; margin-top: auto; padding: 0 1rem; border-radius: 8px; color: var(--accent-contrast); background: var(--accent); font-weight: 650; text-decoration: none; }
 .card > a:hover { background: var(--accent-hover); }
 .card > a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.card .unavailable { margin-top: auto; color: var(--text-tertiary); font-size: .9rem; }
-@media (max-width: 520px) { .page { padding-top: 2rem; } .grid { gap: .8rem; margin-top: 1.5rem; } .card { min-height: 205px; } }
+.card .unavailable { color: var(--text-tertiary); font-size: .78rem; white-space: nowrap; }
+@media (max-width: 520px) { .page { padding-top: 1rem; } .grid { margin-top: 1.25rem; } .card { min-height: 88px; grid-template-columns: 36px minmax(0, 1fr); gap: .8rem; padding: .85rem 0; } .icon { width: 34px; height: 34px; } .card .unavailable { grid-column: 2; margin-top: -.4rem; } }

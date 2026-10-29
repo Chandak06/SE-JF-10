@@ -1,21 +1,20 @@
-.page { min-height: calc(100vh - 76px); max-width: 1320px; margin: 0 auto; padding: 40px 56px 110px; }
+.page { min-height: calc(100vh - 76px); max-width: 1320px; margin: 0 auto; padding: 12px 56px 110px; }
 .kicker { margin: 0 0 9px; color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.5px; }
-.library { min-height: 440px; padding: 34px 0; }
+.library { min-height: 440px; padding: 4px 0; }
 .searchForm { display: flex; align-items: center; gap: 10px; margin: 0 0 26px; }
 .searchControl { display: flex; min-width: 0; min-height: 50px; flex: 1; align-items: center; gap: 11px; padding: 0 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
 .searchControl svg { width: 19px; height: 19px; flex: 0 0 19px; color: var(--text-tertiary); }
 .searchControl input { width: 100%; min-width: 0; height: 46px; border: 0; outline: 0; color: var(--text-primary); background: transparent; font: inherit; font-size: 14px; }
-.searchControl input:first-of-type { flex: 1.6; }
-.searchControl input:last-of-type { flex: .8; }
+.searchControl input:first-of-type { flex: 1; }
 .searchControl input::placeholder { color: var(--text-tertiary); }
 .controlDivider { width: 1px; height: 25px; flex: 0 0 1px; background: var(--border); }
 .filterWrap { position: relative; display: flex; align-items: center; }
 .filterButton { display: grid; width: 38px; height: 38px; place-items: center; border: 0; border-radius: 9px; color: var(--text-tertiary); background: transparent; cursor: pointer; }
 .filterButton:hover { color: var(--text-primary); background: var(--surface-subtle); }
 .filterButton svg { width: 20px; height: 20px; }
-.filterActive { color: var(--accent-contrast); background: var(--accent); }
+.filterActive { border: 1px solid var(--accent); color: var(--accent); background: var(--surface-subtle); }
 .filterActive svg path { fill: currentColor; }
-.filterActive:hover { color: var(--accent-contrast); background: var(--accent-hover); }
+.filterActive:hover { color: var(--text-primary); background: var(--page-bg); }
 .subjectPicker { position: absolute; z-index: 20; top: calc(100% + 12px); right: 0; width: min(320px, calc(100vw - 48px)); overflow: hidden; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); box-shadow: 0 18px 48px rgba(20, 15, 17, .24); }
 .subjectSearch { display: flex; height: 48px; align-items: center; gap: 10px; padding: 0 13px; border-bottom: 1px solid var(--border); }
 .subjectSearch svg { width: 17px; height: 17px; flex: 0 0 17px; color: var(--text-tertiary); }
@@ -98,4 +97,4 @@
 .submit { border: 0; color: var(--accent-contrast); background: var(--accent); }
 .submit:hover { background: var(--accent-hover); }
 .submit:disabled, .cancel:disabled { opacity: .6; cursor: wait; }
-@media (max-width: 650px) { .page { padding: 28px 22px 100px; } .library { min-height: 350px; } .empty { min-height: 300px; } .uploadFab { right: 20px; bottom: 20px; width: 56px; height: 56px; } .drawer { padding: 31px 22px; } .fields { grid-template-columns: 1fr; gap: 18px; } .full { grid-column: auto; } .searchForm { align-items: stretch; } .searchControl { flex-wrap: wrap; gap: 7px; padding: 8px 11px; } .searchControl input:first-of-type { flex: 1 1 calc(100% - 35px); } .searchControl input:last-of-type { flex: 1 1 calc(100% - 35px); } .searchControl .controlDivider { display: none; } .searchButton { min-width: 46px; padding: 0 12px; } .material { min-height: 150px; padding: 15px; gap: 11px; } .materialIcon { flex-basis: 40px; height: 44px; } .materialActions { gap: 7px; } .iconAction { min-width: 40px; height: 40px; padding: 0 9px; } .viewAction { flex: 1; } .pdfDrawer { padding: 12px; } .pdfFullScreen { padding: 8px; } }
+@media (max-width: 650px) { .page { padding: 8px 22px 100px; } .library { min-height: 350px; padding-top: 2px; } .empty { min-height: 300px; } .uploadFab { right: 20px; bottom: 20px; width: 56px; height: 56px; } .drawer { padding: 31px 22px; } .fields { grid-template-columns: 1fr; gap: 18px; } .full { grid-column: auto; } .searchForm { align-items: stretch; } .searchControl { gap: 7px; padding: 5px 9px; } .searchControl input:first-of-type { flex: 1; } .searchControl .controlDivider { height: 22px; } .searchButton { min-width: 46px; padding: 0 12px; } .material { min-height: 150px; padding: 15px; gap: 11px; } .materialIcon { flex-basis: 40px; height: 44px; } .materialActions { gap: 7px; } .iconAction { min-width: 40px; height: 40px; padding: 0 9px; } .viewAction { flex: 1; } .pdfDrawer { padding: 12px; } .pdfFullScreen { padding: 8px; } }

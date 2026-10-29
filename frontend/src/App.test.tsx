@@ -154,8 +154,8 @@ describe('Study Commons routes and forms', () => {
     expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Quiz Attempt History' }).parentElement).toHaveTextContent('This section is not available yet.')
-    expect(screen.getByRole('heading', { name: 'Performance Dashboard' }).parentElement).toHaveTextContent('This section is not available yet.')
+    expect(screen.getAllByRole('status').map(status => status.textContent)).toContain('Coming soon')
+    expect(screen.getAllByRole('status').map(status => status.textContent)).toHaveLength(2)
     expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
   })
 

@@ -16,10 +16,9 @@ export default function StudentDashboardPage() {
     <div className={styles.grid}>
       {destinations.map(destination => <article className={styles.card} key={destination.title}>
         <span className={styles.icon} aria-hidden="true">{destination.icon}</span>
-        <h2>{destination.title}</h2>
-        <p>{destination.description}</p>
+        <div className={styles.cardCopy}><h2>{destination.title}</h2><p>{destination.description}</p></div>
         {destination.unavailable
-          ? <p className={styles.unavailable} role="status">This section is not available yet.</p>
+          ? <span className={styles.unavailable} role="status">Coming soon</span>
           : <Link to={destination.href!}>{destination.action}</Link>}
       </article>)}
     </div>
