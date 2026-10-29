@@ -12,13 +12,16 @@ export default function MaterialsPage() {
   const [downloadError, setDownloadError] = useState('')
   const fileInput = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
+  const [subjectFilter, setSubjectFilter] = useState('')
+  const [hasSearched, setHasSearched] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [title, setTitle] = useState(''); const [subject, setSubject] = useState(''); const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false)
 
   async function search(event: FormEvent) {
     event.preventDefault(); setDownloadError('')
-    await searchLibrary(query)
+    setHasSearched(Boolean(query.trim() || subjectFilter.trim()))
+    await searchLibrary(query, subjectFilter)
   }
   async function download(material: StudyMaterial) {
     setBusy(true); setDownloadError('')
@@ -41,10 +44,10 @@ export default function MaterialsPage() {
     finally { setBusy(false) }
   }
   return <div className={styles.page}>
-    <section className={styles.library} aria-label="Study materials"><form onSubmit={search}><label>Search material titles<input maxLength={100} value={query} onChange={event => setQuery(event.target.value)} /></label><button disabled={loading || busy}>Search</button></form>
+    <section className={styles.library} aria-label="Study materials"><form onSubmit={search}><label>Search study materials<input aria-label="Search study materials" placeholder="Title, subject, or description" maxLength={100} value={query} onChange={event => setQuery(event.target.value)} /></label><label>Filter by subject<input aria-label="Filter by subject" placeholder="Any subject" maxLength={100} value={subjectFilter} onChange={event => setSubjectFilter(event.target.value)} /></label><button disabled={loading || busy}>Search</button></form>
       {loadError && <div role="alert"><p>{loadError}</p><button disabled={loading || loadingMore || busy} onClick={() => void retry()}>Try again</button></div>}
       {downloadError && <p role="alert">{downloadError}</p>}
-      {loading ? <p className={styles.status}>Loading materials…</p> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>Nothing exists yet</p><p>Shared notes and study resources will appear here.</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p><button disabled={busy} onClick={() => void download(material)}>Download {material.title}</button></div></article>)}</div>}
+      {loading ? <p className={styles.status}>Loading materials…</p> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>{hasSearched ? 'No matching materials' : 'Nothing exists yet'}</p><p>{hasSearched ? 'Try different keywords or clear the subject filter.' : 'Shared notes and study resources will appear here.'}</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p><button disabled={busy} onClick={() => void download(material)}>Download {material.title}</button></div></article>)}</div>}
       {!loading && nextCursor && !loadError && <button disabled={loadingMore || busy} onClick={() => void loadMore()}>{loadingMore ? 'Loading more…' : 'Load more materials'}</button>}
     </section>
     {getSessionUser()?.role === 'student' && <button className={styles.uploadFab} type="button" aria-label="Upload a material" onClick={() => { setMessage(''); setUploadOpen(true) }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>}
