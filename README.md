@@ -18,6 +18,8 @@ The merged Sprint 1 increment includes Dharani's registration/login/logout and v
 
 ## Current Sprint 2 development
 
+**29 October:** Reviewed team Sprint 2 contributions are combined in a PR targeting **main**, as requested. Real Quiz creation/search, trusted submission API, Student Dashboard and enhanced PDF workflows are now connected to shared authentication and Admin Quiz moderation. See the [name-wise review, fixes, tests and remaining deliverables](docs/SPRINT2_TEAM_REVIEW_2026-10-29.md). The separation notes below describe the earlier plan; the saved Sprint 1 branch/video remain available.
+
 On `PES2UG24CS185-Sprint-2`, Admin login opens the Administrator Dashboard with links to the existing Question Bank and confirmed material/question moderation. Protected material search, paging and PDF downloads are integrated. Production Quiz/Attempt/history/performance and other unpublished owner modules remain explicit integration dependencies; see [current Sprint 2 status](docs/SPRINT2_HARSHIT.md).
 
 For a separate persistent local Docker demo, use `docker compose -f compose.local.yaml up --build -d`, then open `http://localhost:8080`. This explicit local environment uses its own MongoDB volume, does not use Atlas, and exposes only a loopback web port. Follow [setup and Admin provisioning instructions](docs/DEPLOYMENT.md); it is not a public HTTPS deployment.
