@@ -60,8 +60,11 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     if (!parsed.success) throw new AppError(400, 'INVALID_QUERY', 'Invalid material search fields.');
     const { q, subject, limit, cursor } = parsed.data;
     const escaped = q?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const keyword = escaped ? { $regex: escaped, $options: 'i' } : undefined;
+    const escapedSubject = subject?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const items = await Material.find({ removedAt: null,
-      ...(subject ? { subject } : {}), ...(escaped ? { title: { $regex: escaped, $options: 'i' } } : {}),
+      ...(escapedSubject ? { subject: { $regex: '^' + escapedSubject + '$', $options: 'i' } } : {}),
+      ...(keyword ? { $or: [{ title: keyword }, { subject: keyword }, { description: keyword }] } : {}),
       ...(cursor ? { _id: { $lt: new Types.ObjectId(cursor) } } : {})
     }).sort({ _id: -1 }).limit(limit).select('title subject description size createdAt uploadedBy').lean();
     res.json({ materials: items.map(item => ({ id: item._id.toString(), title: item.title, subject: item.subject,
