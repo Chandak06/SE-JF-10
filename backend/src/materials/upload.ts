@@ -86,7 +86,9 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     if (!id.success || !query.success) throw new AppError(400, 'INVALID_REQUEST', 'Invalid material identifier or download option.');
     const material = await Material.findOne({ _id: id.data, removedAt: null });
     if (!material || !await bucket.find({ _id: material.fileId }).hasNext()) throw new AppError(404, 'NOT_FOUND', 'Material is unavailable.');
-    res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': query.data.disposition + '; filename="' + material._id.toString() + '.pdf"',
+    const filename = material.title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^[.-]+|[.-]+$/g, '') || 'study-material';
+    res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': query.data.disposition + '; filename="' + filename + '.pdf"',
       'Content-Security-Policy': "default-src 'none'; sandbox", 'Content-Length': String(material.size) });
     await pipeline(bucket.openDownloadStream(material.fileId), res);
   });

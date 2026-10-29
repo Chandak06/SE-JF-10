@@ -60,7 +60,7 @@ it('removes material atomically and closes both search and download while retain
   expect(found.body.materials[0].id).toBe(id);
   const download = await request(runtime.app).get('/api/materials/' + id + '/file').set(bearer(student)).expect(200);
   expect(Buffer.from(download.body)).toEqual(pdf);
-  expect(download.headers['content-disposition']).toContain('attachment');
+  expect(download.headers['content-disposition']).toContain('attachment; filename="Sprint-notes.pdf"');
   const list = await request(runtime.app).get('/api/admin/materials').set(bearer(admin)).expect(200);
   expect(list.body.items).toEqual([{ id, title: 'Sprint notes' }]);
   await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
@@ -123,9 +123,12 @@ it('validates safe searches and download options, escapes regex and paginates', 
   expect(next.materials[0].id).toBe(first);
   for (const query of ['limit=0', 'q=<script>', 'subject[$ne]=x', 'cursor=invalid', 'unknown=x']) await request(runtime.app).get('/api/materials?' + query).set(bearer(student)).expect(400);
   await request(runtime.app).get('/api/materials/invalid/file').set(bearer(student)).expect(400);
-  await request(runtime.app).get('/api/materials/' + first + '/file?disposition=evil').set(bearer(student)).expect(400);
+  await request(runtime.app).get('/api/materials/' + first + '/file').expect(401);
   await request(runtime.app).get('/api/materials/' + new Types.ObjectId() + '/file').set(bearer(student)).expect(404);
-  expect((await request(runtime.app).get('/api/materials/' + first + '/file?disposition=inline').set(bearer(student)).expect(200)).headers['content-disposition']).toContain('inline');
+  await request(runtime.app).get('/api/materials/' + first + '/file?disposition=evil').set(bearer(student)).expect(400);
+  const inline = await request(runtime.app).get('/api/materials/' + first + '/file?disposition=inline').set(bearer(student)).expect(200);
+  expect(inline.headers['content-disposition']).toContain('inline; filename="A.pdf"');
+  expect(Buffer.from(inline.body)).toEqual(pdf);
 });
 it('uses owner-supplied question and quiz moderation adapters behind the same admin gate', async () => {
   for (const kind of ['questions', 'quizzes']) {
