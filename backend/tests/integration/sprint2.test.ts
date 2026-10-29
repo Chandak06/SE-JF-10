@@ -178,6 +178,6 @@ it('persists removal and existing authentication after runtime recreation and da
     await request(recreated.app).get('/api/auth/me').set(bearer(student)).expect(200);
     await request(recreated.app).get('/api/materials/' + id + '/file').set(bearer(student)).expect(404);
     expect((await recreated.materials.Material.findById(id))?.removedAt).toBeInstanceOf(Date);
-    expect((await request(recreated.app).get('/api/admin/resources').set(bearer(admin)).expect(200)).body.resources).toEqual(['materials', 'questions']);
+    expect((await request(recreated.app).get('/api/admin/resources').set(bearer(admin)).expect(200)).body.resources).toEqual(['materials', 'questions', 'quizzes']);
   } finally { await next.close(); }
 });
