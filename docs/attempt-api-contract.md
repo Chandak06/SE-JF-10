@@ -353,3 +353,59 @@ Quiz Attempt UI
 ## 12. Sprint boundary
 
 Sprint 1 uses sample/fixture questions and local submission. Sprint 2 completes the production flow above, approved results/history screens, persistence and subject-wise performance. Leaderboards and adaptive recommendations mentioned in older planning are not added as requirements by this schedule change; implement only approved SRS functionality. See the [final plan](TWO_SPRINT_PLAN.md).
+
+---
+
+## 13. Sprint 2 Quiz Retrieval Contract (`GET /api/quizzes/:id`)
+
+**Owner**: Prajwal M (Member 2, Team 10)  
+**Jira Story**: CSMQ-52 (Integrate student-safe quiz retrieval with attempts)  
+**Requirements**: SRS CSMQ-F-030, CSMQ-F-032, CSMQ-F-033
+
+### Endpoint
+
+```http
+GET /api/quizzes/:id
+Authorization: Bearer <student-or-admin-token>
+```
+
+### Response Payload
+
+The endpoint returns both top-level attempt fields and a `quiz` object:
+
+```json
+{
+  "quizId": "65f000000000000000000010",
+  "title": "Computer Networks Midterm",
+  "subject": "Computer Networks",
+  "questionCount": 1,
+  "questions": [
+    {
+      "id": "65f000000000000000000001",
+      "questionText": "What protocol operates at Layer 4 and provides reliable delivery?",
+      "options": [
+        { "id": "A", "text": "UDP" },
+        { "id": "B", "text": "TCP" },
+        { "id": "C", "text": "IP" },
+        { "id": "D", "text": "Ethernet" }
+      ],
+      "difficulty": "Easy",
+      "marks": 1
+    }
+  ],
+  "quiz": {
+    "id": "65f000000000000000000010",
+    "quizId": "65f000000000000000000010",
+    "title": "Computer Networks Midterm",
+    "subject": "Computer Networks",
+    "questionCount": 1,
+    "questions": [ ... ]
+  }
+}
+```
+
+### Invariants & Cross-Module Compatibility
+1. **Zero Answer Leakage**: Reuses Sprint 1's `toStudentSafeQuestions` serializer. No `correctAnswer` or answer keys are ever exposed in this response.
+2. **Strict Question Reference**: Returns *only* the active questions referenced by the requested quiz.
+3. **Stable Option & Question IDs**: Option identifiers match the stable IDs (`'A'`, `'B'`, `'C'`, `'D'`) expected by Karan's evaluation helper (`evaluateQuiz`) and attempt submission (`POST /api/attempts`).
+4. **No Remapping Required**: The payload matches the Attempt UI input structure directly.

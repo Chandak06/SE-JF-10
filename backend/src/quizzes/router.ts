@@ -110,18 +110,26 @@ export function createQuizzesRouter(connection: Connection) {
       }>
     );
 
+    const quizResponse = {
+      id: quiz._id.toString(),
+      quizId: quiz._id.toString(),
+      title: quiz.title,
+      subject: quiz.subject,
+      questionCount: safeQuestions.length,
+      questions: safeQuestions,
+      creator: quiz.creator ? quiz.creator.toString() : undefined,
+      createdAt: quiz.createdAt
+        ? (quiz.createdAt as Date).toISOString()
+        : undefined
+    };
+
     res.json({
-      quiz: {
-        id: quiz._id.toString(),
-        title: quiz.title,
-        subject: quiz.subject,
-        questionCount: safeQuestions.length,
-        questions: safeQuestions,
-        creator: quiz.creator ? quiz.creator.toString() : undefined,
-        createdAt: quiz.createdAt
-          ? (quiz.createdAt as Date).toISOString()
-          : undefined
-      }
+      quizId: quiz._id.toString(),
+      title: quiz.title,
+      subject: quiz.subject,
+      questionCount: safeQuestions.length,
+      questions: safeQuestions,
+      quiz: quizResponse
     });
   });
 

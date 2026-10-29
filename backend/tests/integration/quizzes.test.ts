@@ -299,6 +299,11 @@ describe('Quiz API integration (CSMQ-48 / SRS CSMQ-F-030)', () => {
     expect(getRes.body.quiz.questionCount).toBe(2);
     expect(getRes.body.quiz.questions).toHaveLength(2);
 
+    // Verify top-level attempt integration contract fields (CSMQ-52)
+    expect(getRes.body.quizId).toBe(quizId);
+    expect(getRes.body.title).toBe('Secure Student Quiz');
+    expect(getRes.body.questions).toHaveLength(2);
+
     // Verify student-safe projection
     const firstQ = getRes.body.quiz.questions[0];
     expect(firstQ.id).toBe(q1._id.toString());
