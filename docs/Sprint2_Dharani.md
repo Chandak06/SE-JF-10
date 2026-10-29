@@ -66,7 +66,6 @@ Added a “View details” action to each material card. It loads details by ID 
 - `09e25ce` Sprint:2 CSMQ:36 Show selected material details
 - `98713a2` Sprint:2 CSMQ:36 Test selected details and unavailable state
 
-All four commits are local and have not been pushed.
 
 ## CSMQ-38: Study Material PDF Viewing and Download
 
@@ -92,7 +91,7 @@ Added View PDF and Download PDF actions to each material card. View PDF requests
 | GridFS response bytes and dispositions | Verified for inline and attachment responses |
 | Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
 
-The test commands and results are recorded here for Jira evidence. No Jira attachment or PR evidence was submitted because these commits remain local and unpushed.
+Test commands and results are recorded here for Jira evidence.
 
 ### Commits
 
@@ -100,5 +99,3 @@ The test commands and results are recorded here for Jira evidence. No Jira attac
 - `b157ef8` Sprint:2 CSMQ:38 Request PDFs with authenticated disposition
 - `4a0ffcd` Sprint:2 CSMQ:38 Add PDF viewing and named download actions
 - `ab1861c` Sprint:2 CSMQ:38 Test PDF viewing and titled download
-
-All four commits are local and have not been pushed.
