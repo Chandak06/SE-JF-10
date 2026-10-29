@@ -8,6 +8,8 @@ import MaterialsPage from './pages/MaterialsPage'
 import QuizAttemptPage from './pages/QuizAttemptPage'
 import QuestionBankPage from './pages/QuestionBankPage'
 import CreateQuizPage from './pages/CreateQuizPage'
+import QuizListPage from './pages/QuizListPage'
+import QuizViewPage from './pages/QuizViewPage'
 import styles from './App.module.css'
 import { getSessionToken, getSessionUser, hasStoredSession, restoreSession } from './services/authService'
 
@@ -25,6 +27,12 @@ function QuestionsRoute() {
 function CreateQuizRoute() {
   return getSessionToken() ? <CreateQuizPage /> : <Navigate to="/login" replace />
 }
+function QuizzesRoute() {
+  return getSessionToken() ? <QuizListPage /> : <Navigate to="/login" replace />
+}
+function QuizViewRoute() {
+  return getSessionToken() ? <QuizViewPage /> : <Navigate to="/login" replace />
+}
 export default function App() {
   const [ready, setReady] = useState(() => !!getSessionToken() || !hasStoredSession())
   useEffect(() => {
@@ -40,6 +48,8 @@ export default function App() {
     <Route path="/login" element={<LoginPage />} />
     <Route path="/materials" element={<MaterialsRoute />} />
     <Route path="/quiz-attempt" element={<AttemptRoute />} />
+    <Route path="/quizzes" element={<QuizzesRoute />} />
+    <Route path="/quizzes/:id" element={<QuizViewRoute />} />
     <Route path="/create-quiz" element={<CreateQuizRoute />} />
     <Route path="/questions" element={<QuestionsRoute />} />
     <Route path="*" element={<Navigate to="/" replace />} />
