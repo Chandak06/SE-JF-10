@@ -67,7 +67,7 @@ docker compose -f compose.local.yaml --profile setup run --rm seed-admin
 
 Clear setup environment variables afterward. Do not put a password literally in command history. The existing trusted CLI refuses Student emails and never resets an existing Admin password. The legacy `scripts/promote-admin.mjs` shortcut is disabled.
 
-Use common login. Admins land on `/admin`, with the existing Question Bank and moderation categories. Cancel/confirm removal separately; audit metadata and saved references remain. Quiz moderation is unavailable until its real owner adapter is registered. Student materials and prototype navigation remain functional.
+Use common login. Admins land on `/admin`, with the existing Question Bank and real material/Question/Quiz moderation. Cancel/confirm removal separately; audit metadata and saved references remain. Students land on `/dashboard` and can use materials and real Quiz creation/search/view. The production submission API is integrated; the old attempt page is still a labelled prototype until CSMQ-41/42 supplies production Attempt/Result screens.
 
 ## Production HTTPS packaging
 
@@ -87,4 +87,4 @@ The container CI job uses Ubuntu 22.04 because current `ubuntu-latest` Azure ker
 
 ## Owner handoff and final freeze
 
-Follow the [owner handoff](SPRINT2_HANDOFF.md). Real Question moderation is integrated; fixture Quiz adapters are not production Quiz/Attempt/results/history/performance, folders or Student Dashboard modules. Freeze/tag only after real integrations, full-system tests, selected environment verification, final demo and genuine cross-testing.
+Follow the [current team integration report](SPRINT2_TEAM_REVIEW_2026-10-29.md) and [owner handoff](SPRINT2_HANDOFF.md). Real Quiz, Question, material and Student Dashboard modules plus the production submission API are integrated. Production Attempt/Result screens, history/performance and folders remain pending. Freeze/tag only after the remaining real integrations, full-system tests, selected environment verification, final demo and genuine cross-testing.
