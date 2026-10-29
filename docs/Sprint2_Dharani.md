@@ -90,6 +90,9 @@ Added View PDF and Download PDF actions to each material card. View PDF requests
 | Sprint 2 backend integration suite | 11 tests passed |
 | GridFS response bytes and dispositions | Verified for inline and attachment responses |
 | Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
+| Frontend lint and production build | Passed |
+
+Updated the Playwright selectors to match the current search and download labels. The browser flow now checks material details and opens the PDF viewer before downloading. The browser suite could not be run in this workspace because `@playwright/test` is not installed; the CI run should verify the selector changes.
 
 Test commands and results are recorded here for Jira evidence.
 
