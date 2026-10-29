@@ -71,6 +71,15 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
       description: item.description, size: item.size, createdAt: item.createdAt, uploadedBy: item.uploadedBy.toString() })),
       nextCursor: items.length === limit ? items[items.length - 1]!._id.toString() : null });
   });
+  router.get('/:id', async (req, res) => {
+    const id = objectId.safeParse(req.params.id);
+    if (!id.success) throw new AppError(400, 'INVALID_ID', 'Invalid material identifier.');
+    const material = await Material.findOne({ _id: id.data, removedAt: null })
+      .select('title subject description uploadedBy createdAt').lean();
+    if (!material) throw new AppError(404, 'NOT_FOUND', 'Material is unavailable.');
+    res.json({ material: { id: material._id.toString(), title: material.title, subject: material.subject,
+      description: material.description, uploadedBy: material.uploadedBy.toString(), createdAt: material.createdAt.toISOString() } });
+  });
   router.get('/:id/file', async (req, res) => {
     const id = objectId.safeParse(req.params.id);
     const query = z.strictObject({ disposition: z.enum(['inline', 'attachment']).default('attachment') }).safeParse(req.query);

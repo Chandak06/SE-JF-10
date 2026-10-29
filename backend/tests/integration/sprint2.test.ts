@@ -63,9 +63,11 @@ it('removes material atomically and closes both search and download while retain
   expect(download.headers['content-disposition']).toContain('attachment');
   const list = await request(runtime.app).get('/api/admin/materials').set(bearer(admin)).expect(200);
   expect(list.body.items).toEqual([{ id, title: 'Sprint notes' }]);
+  await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
   await request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true }).expect(204);
   expect((await request(runtime.app).get('/api/materials').set(bearer(student)).expect(200)).body.materials).toEqual([]);
   expect((await request(runtime.app).get('/api/materials?q=notes&subject=SE').set(bearer(student)).expect(200)).body.materials).toEqual([]);
+  await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(404);
   await request(runtime.app).get('/api/materials/' + id + '/file').set(bearer(student)).expect(404);
   expect((await runtime.materials.Material.findById(id))?.removedAt).toBeInstanceOf(Date);
   expect(await connection.collection('materialFiles.files').countDocuments()).toBe(1);
@@ -97,6 +99,19 @@ it('searches all material metadata and combines keyword with a subject filter', 
   expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).toContain(byTitle);
   expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).toContain(byDescription);
   expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).not.toContain(bySubject);
+});
+it('returns selected material metadata by identifier and rejects invalid or unavailable identifiers', async () => {
+  const id = await upload('Selected notes', 'CS', 'Details for a selected material');
+  const response = await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
+  expect(response.body.material).toMatchObject({
+    id, title: 'Selected notes', subject: 'CS', description: 'Details for a selected material',
+    uploadedBy: expect.any(String), createdAt: expect.any(String)
+  });
+  expect(response.body.material.uploadedBy).toBe((await runtime.accounts.User.findOne({ email: 'student@example.com' }))!._id.toString());
+  expect(Number.isNaN(Date.parse(response.body.material.createdAt))).toBe(false);
+  await request(runtime.app).get('/api/materials/not-an-id').set(bearer(student)).expect(400);
+  await request(runtime.app).get('/api/materials/' + new Types.ObjectId()).set(bearer(student)).expect(404);
+  await request(runtime.app).get('/api/materials/' + id).expect(401);
 });
 it('validates safe searches and download options, escapes regex and paginates', async () => {
   const first = await upload('A.*'); await upload('B notes');
