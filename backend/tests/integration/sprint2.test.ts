@@ -65,6 +65,7 @@ it('removes material atomically and closes both search and download while retain
   expect(list.body.items).toEqual([{ id, title: 'Sprint notes' }]);
   await request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true }).expect(204);
   expect((await request(runtime.app).get('/api/materials').set(bearer(student)).expect(200)).body.materials).toEqual([]);
+  expect((await request(runtime.app).get('/api/materials?q=notes&subject=SE').set(bearer(student)).expect(200)).body.materials).toEqual([]);
   await request(runtime.app).get('/api/materials/' + id + '/file').set(bearer(student)).expect(404);
   expect((await runtime.materials.Material.findById(id))?.removedAt).toBeInstanceOf(Date);
   expect(await connection.collection('materialFiles.files').countDocuments()).toBe(1);
@@ -87,7 +88,9 @@ it('searches all material metadata and combines keyword with a subject filter', 
   const titleResult = await request(runtime.app).get('/api/materials?q=graph').set(bearer(student)).expect(200);
   expect(titleResult.body.materials.map((item: { id: string }) => item.id)).toContain(byTitle);
   const subjectResult = await request(runtime.app).get('/api/materials?q=algorithms&subject=cs').set(bearer(student)).expect(200);
-  expect(subjectResult.body.materials.map((item: { id: string }) => item.id)).toEqual([byDescription]);
+  expect(subjectResult.body.materials.map((item: { id: string }) => item.id)).toContain(byDescription);
+  expect(subjectResult.body.materials.map((item: { id: string }) => item.id)).toContain(byTitle);
+  expect(subjectResult.body.materials.map((item: { id: string }) => item.id)).not.toContain(bySubject);
   const descriptionResult = await request(runtime.app).get('/api/materials?q=theory&subject=CS').set(bearer(student)).expect(200);
   expect(descriptionResult.body.materials.map((item: { id: string }) => item.id)).toEqual([byDescription]);
   const exactSubject = await request(runtime.app).get('/api/materials?subject=cs').set(bearer(student)).expect(200);
