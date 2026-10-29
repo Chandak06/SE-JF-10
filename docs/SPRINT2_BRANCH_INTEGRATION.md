@@ -1,5 +1,7 @@
 # All-branch consistency and integration audit — 28 October 2026
 
+**29 October:** New owner branches and PRs #25–33 are available and reviewed in the [current team integration report](SPRINT2_TEAM_REVIEW_2026-10-29.md). The table below is the earlier dated snapshot, not today's availability list. The integration target is now main by Harshit's explicit instruction.
+
 All published remote branches were fetched and inspected, plus all open PRs. The only open PR was the existing Sprint 2 draft #8. Branches below were examined rather than merged indiscriminately. Already-integrated feature branches add no missing Sprint 2 business module. Latest main/video baseline is `0e73b37`; Sprint 2 base before this work was `d0a1513`.
 
 | Branch | Inspected head | Already ancestor of latest main at audit | Available business models |
