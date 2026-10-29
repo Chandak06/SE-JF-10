@@ -176,3 +176,32 @@ it('shows an unavailable message when selected material details cannot be loaded
   fireEvent.click(screen.getByRole('button', { name: 'View details for Removed notes' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Material is unavailable.')
 })
+
+it('opens the selected PDF inline and releases its object URL when closed', async () => {
+  const blob = new Blob(['PDF content'], { type: 'application/pdf' })
+  vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [item('pdf-1', 'Lecture Notes')], nextCursor: null })
+  vi.mocked(auth.materialFile).mockResolvedValue(blob)
+  const objectUrl = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:lecture-notes')
+  const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+  show()
+  fireEvent.click(await screen.findByRole('button', { name: 'View PDF Lecture Notes' }))
+  expect(await screen.findByTitle('Lecture Notes PDF')).toHaveAttribute('src', 'blob:lecture-notes')
+  expect(auth.materialFile).toHaveBeenCalledWith('pdf-1', 'inline')
+  fireEvent.click(screen.getByRole('button', { name: 'Close PDF viewer' }))
+  await waitFor(() => expect(revokeUrl).toHaveBeenCalledWith('blob:lecture-notes'))
+  expect(objectUrl).toHaveBeenCalledWith(blob)
+})
+
+it('downloads the selected PDF with a title based PDF filename', async () => {
+  const blob = new Blob(['PDF content'], { type: 'application/pdf' })
+  vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [item('pdf-2', 'Éxam Notes 2')], nextCursor: null })
+  vi.mocked(auth.materialFile).mockResolvedValue(blob)
+  vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:download')
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+    expect(this.download).toBe('Exam-Notes-2.pdf')
+  })
+  show()
+  fireEvent.click(await screen.findByRole('button', { name: 'Download PDF Éxam Notes 2' }))
+  await waitFor(() => expect(auth.materialFile).toHaveBeenCalledWith('pdf-2'))
+  expect(click).toHaveBeenCalledOnce()
+})
