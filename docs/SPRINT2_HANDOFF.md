@@ -1,5 +1,7 @@
 # Sprint 2 feature-owner handoff
 
+**29 October update:** Real Quiz creation/search/view and Student Dashboard from PRs #25–33, plus Karan's production Attempt API (#29), are integrated in the PR targeting main. `createRuntime` now registers the real Quiz moderation adapter by default. Earlier absence/adapter-injection statements below describe the 28 October snapshot; see the [current owner boundaries and remaining work](SPRINT2_TEAM_REVIEW_2026-10-29.md). Production Attempt/Result screens, history/performance and folders remain owner deliverables.
+
 Harshit owns shared security/integration, Administrator Dashboard and moderation. Prajwal retains Question/Quiz business functionality, Karan retains production attempts/results/history/performance, and Dharani retains materials/folders. Student quiz creation stays a Student capability under SRS F-030.
 
 Published User, Material and real Question modules are integrated. QuizAttempt/evaluator/UI prototypes are retained, not presented as production submission/history. Every published remote branch and open PR was inspected; missing production modules cannot be replaced by contract fixtures.
