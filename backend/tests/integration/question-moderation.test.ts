@@ -53,10 +53,10 @@ it('requires current admin role, confirmation and valid identifiers; removal is 
   await runtime.accounts.User.updateOne({ email: 'admin@example.test' }, { role: 'student' });
   await request(runtime.app).get('/api/admin/resources').set(bearer(admin)).expect(403);
 });
-it('reports unavailable owner modules honestly and rejects malicious query/body fields', async () => {
+it('discovers integrated modules and rejects malicious query/body fields', async () => {
   const resources = await request(runtime.app).get('/api/admin/resources').set(bearer(admin)).expect(200);
-  expect(resources.body.resources).toEqual(['materials', 'questions']);
-  await request(runtime.app).get('/api/admin/quizzes').set(bearer(admin)).expect(503);
+  expect(resources.body.resources).toEqual(['materials', 'questions', 'quizzes']);
+  await request(runtime.app).get('/api/admin/quizzes').set(bearer(admin)).expect(200);
   await request(runtime.app).delete('/api/admin/quizzes/' + new Types.ObjectId()).set(bearer(student)).send({ confirmed: true }).expect(403);
   for (const query of ['subject[$ne]=x', 'difficulty=Unknown', 'extra=x']) {
     await request(runtime.app).get('/api/questions?' + query).set(bearer(admin)).expect(400);
