@@ -6,6 +6,7 @@ import { createQuizSchema, validateQuizBody } from './validation.js';
 import { buildQuizFilter } from './filters.js';
 import { toStudentSafeQuestions } from '../questions/serializer.js';
 import { AppError, unauthorized } from '../errors.js';
+import { z } from 'zod';
 
 export function createQuizzesRouter(connection: Connection) {
   const Quiz = getQuizModel(connection);
@@ -65,7 +66,10 @@ export function createQuizzesRouter(connection: Connection) {
 
   // GET /api/quizzes — Search and filter available quizzes (keyword, subject, combined)
   router.get('/', async (req, res) => {
-    const filter = buildQuizFilter(req.query);
+    const text = z.string().trim().max(100).regex(/^[^<>\x00-\x1f\x7f]*$/).optional();
+    const query = z.strictObject({ search: text, keyword: text, subject: text }).safeParse(req.query);
+    if (!query.success) throw new AppError(400, 'INVALID_QUERY', 'Use valid quiz search and subject filters.');
+    const filter = buildQuizFilter(query.data);
     const quizzes = await Quiz.find(filter)
       .sort({ createdAt: -1 })
       .lean();
@@ -94,11 +98,18 @@ export function createQuizzesRouter(connection: Connection) {
       _id: new Types.ObjectId(req.params.id),
       removedAt: null
     })
-      .populate('questions')
+      .populate({ path: 'questions', match: { removedAt: null } })
       .lean();
 
     if (!quiz) {
       throw new AppError(404, 'NOT_FOUND', 'Quiz not found.');
+    }
+
+    // Do not silently offer a shorter quiz after a referenced question is removed.
+    // Discovery and submission must agree on the same active question set.
+    const stored = await Quiz.findById(quiz._id).select('questions').lean();
+    if (!stored || quiz.questions.length !== stored.questions.length) {
+      throw new AppError(409, 'QUIZ_QUESTION_MISSING', 'A question required by this quiz is unavailable.');
     }
 
     const safeQuestions = toStudentSafeQuestions(
