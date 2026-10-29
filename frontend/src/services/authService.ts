@@ -80,6 +80,7 @@ export async function uploadMaterial(input: { title: string; subject: string; de
 }
 
 export type StudyMaterial = { id: string; title: string; subject: string; description: string; size: number; createdAt: string }
+export type MaterialDetails = Pick<StudyMaterial, 'id' | 'title' | 'subject' | 'description' | 'createdAt'> & { uploadedBy: string }
 // First-page convenience for older callers; paginated UIs use searchMaterials.
 export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!sessionToken) throw new Error('Please log in to view materials.')
@@ -138,6 +139,16 @@ export async function searchMaterials(query: string, cursor?: string, signal?: A
     throw new Error('The server returned an unexpected response.')
   }
   return { materials: result.materials, nextCursor: result.nextCursor }
+}
+export async function getMaterialDetails(id: string): Promise<MaterialDetails> {
+  const result = await (await authorized('/api/materials/' + encodeURIComponent(id))).json() as { material?: Partial<MaterialDetails> }
+  const material = result.material
+  if (!material || typeof material.id !== 'string' || typeof material.title !== 'string'
+    || typeof material.subject !== 'string' || typeof material.description !== 'string'
+    || typeof material.uploadedBy !== 'string' || typeof material.createdAt !== 'string') {
+    throw new Error('The server returned unexpected material details.')
+  }
+  return material as MaterialDetails
 }
 export async function materialFile(id: string): Promise<Blob> {
   return (await authorized('/api/materials/' + encodeURIComponent(id) + '/file')).blob()
