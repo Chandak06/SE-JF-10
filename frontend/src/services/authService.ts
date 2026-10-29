@@ -127,9 +127,10 @@ export async function removeItem(kind: ModerationKind, id: string) {
 }
 export type MaterialSummary = StudyMaterial
 export type MaterialPage = { materials: MaterialSummary[]; nextCursor: string | null }
-export async function searchMaterials(query: string, cursor?: string, signal?: AbortSignal): Promise<MaterialPage> {
+export async function searchMaterials(query: string, cursor?: string, signal?: AbortSignal, subject?: string): Promise<MaterialPage> {
   const params = new URLSearchParams()
   if (query.trim()) params.set('q', query.trim())
+  if (subject?.trim()) params.set('subject', subject.trim())
   if (cursor) params.set('cursor', cursor)
   const suffix = params.size ? '?' + params.toString() : ''
   const result = await (await authorized('/api/materials' + suffix, { signal })).json() as Partial<MaterialPage>
