@@ -1,7 +1,7 @@
 .page { width: 100%; min-height: calc(100vh - 76px); margin: 0; padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 6rem); color: var(--text-primary); }
 .page h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -.035em; font-weight: 650; }
 .intro { margin: .65rem 0 0; color: var(--text-secondary); font-size: 1rem; }
-.dashboardGrid { display: grid; grid-template-columns: minmax(300px, .8fr) minmax(0, 1.5fr); align-items: start; gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(2rem, 4vw, 3.25rem); }
+.dashboardGrid { display: grid; grid-template-columns: minmax(300px, .8fr) minmax(0, 1.5fr); align-items: start; column-gap: clamp(2.75rem, 5.5vw, 5.75rem); row-gap: 2rem; margin-top: clamp(2rem, 4vw, 3.25rem); }
 .recentSection, .toolsSection { min-width: 0; }
 .grid { display: flex; flex-direction: column; gap: .8rem; }
 .card { display: grid; width: 100%; min-height: 104px; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 15px; color: var(--text-primary); background: var(--surface); text-align: left; cursor: not-allowed; opacity: 1; }
@@ -10,7 +10,7 @@
 .cardCopy { display: grid; gap: .32rem; }
 .cardCopy strong { font-size: .98rem; font-weight: 650; }
 .cardCopy small { color: var(--text-secondary); font-size: .82rem; line-height: 1.45; }
-.recentHeading { display: flex; align-items: center; justify-content: space-between; padding-bottom: .9rem; border-bottom: 1px solid var(--border); }
+.recentHeading { display: flex; max-width: 700px; align-items: center; justify-content: space-between; padding-bottom: .9rem; border-bottom: 1px solid var(--border); }
 .recentHeading h2 { margin: 0; font-size: 1.1rem; font-weight: 650; }
 .recentList { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: .8rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .recentList li { min-width: 0; }
@@ -22,5 +22,5 @@
 .recentCopy small { color: var(--text-tertiary); font-size: .78rem; }
 .recentList time { color: var(--text-tertiary); font-size: .72rem; white-space: nowrap; }
 .recentEmpty { margin: 1rem 0 0; padding: 1.1rem; border: 1px dashed var(--border); border-radius: 12px; color: var(--text-tertiary); font-size: .88rem; }
-@media (max-width: 820px) { .dashboardGrid { grid-template-columns: 1fr; gap: 2rem; } }
+@media (max-width: 820px) { .dashboardGrid { grid-template-columns: 1fr; gap: 2rem; } .recentHeading { max-width: 100%; } }
 @media (max-width: 520px) { .page { padding: 1.5rem 1rem 2.5rem; } .dashboardGrid { margin-top: 1.6rem; } .recentList { grid-template-columns: 1fr; } .card { min-height: 94px; grid-template-columns: 50px minmax(0, 1fr); gap: .8rem; padding: .9rem; } .icon { width: 48px; height: 48px; font-size: 1.5rem; } }
