@@ -42,6 +42,60 @@ export interface QuizDetail {
   createdAt?: string;
 }
 
+export interface QuizSearchFilters {
+  search?: string;
+  subject?: string;
+}
+
+export interface QuizSummary {
+  id: string;
+  title: string;
+  subject: string;
+  questionCount: number;
+  creator?: string;
+  createdAt?: string;
+}
+
+export async function searchQuizzes(
+  filters?: QuizSearchFilters
+): Promise<QuizSummary[]> {
+  const token = getSessionToken();
+  const headers: HeadersInit = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const params = new URLSearchParams();
+  if (filters?.search?.trim()) params.set('search', filters.search.trim());
+  if (filters?.subject?.trim()) params.set('subject', filters.subject.trim());
+
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+
+  let response: Response;
+  try {
+    response = await fetch(`${baseUrl}/api/quizzes${queryString}`, {
+      headers
+    });
+  } catch {
+    throw new Error(
+      'Unable to reach the server. Check your connection and try again.'
+    );
+  }
+
+  const result = (await response.json().catch(() => ({}))) as {
+    quizzes?: QuizSummary[];
+    error?: { message?: string };
+  };
+
+  if (!response.ok) {
+    throw new Error(result.error?.message ?? 'Failed to search quizzes.');
+  }
+
+  if (!Array.isArray(result.quizzes)) {
+    throw new Error('The server returned an unexpected response.');
+  }
+
+  return result.quizzes;
+}
+
 export async function createQuiz(input: CreateQuizInput): Promise<CreatedQuiz> {
   const token = getSessionToken();
   if (!token) throw new Error('Please log in to create a quiz.');
@@ -155,3 +209,4 @@ export async function fetchQuestionBankForQuiz(
 
   return result.questions;
 }
+

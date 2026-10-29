@@ -361,4 +361,223 @@ describe('Quiz API integration (CSMQ-48 / SRS CSMQ-F-030)', () => {
       .set(bearer(token))
       .expect(404);
   });
+
+  it('IT-M2-QUIZ-11: GET /api/quizzes returns all active quizzes with metadata and question count', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1, q2] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Computer Networks Midterm',
+        subject: 'Computer Networks',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Database Normalization Exam',
+        subject: 'Database Systems',
+        questionIds: [q1._id.toString(), q2._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(2);
+    expect(res.body.quizzes[0].title).toBe('Database Normalization Exam');
+    expect(res.body.quizzes[0].subject).toBe('Database Systems');
+    expect(res.body.quizzes[0].questionCount).toBe(2);
+    expect(res.body.quizzes[1].title).toBe('Computer Networks Midterm');
+    expect(res.body.quizzes[1].questionCount).toBe(1);
+  });
+
+  it('IT-M2-QUIZ-12: GET /api/quizzes?search=... filters quizzes by title keyword case-insensitively', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Computer Networks Final Quiz',
+        subject: 'Computer Networks',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Operating Systems Quiz',
+        subject: 'Operating Systems',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes?search=networks')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(1);
+    expect(res.body.quizzes[0].title).toBe('Computer Networks Final Quiz');
+  });
+
+  it('IT-M2-QUIZ-13: GET /api/quizzes?subject=... filters quizzes by subject case-insensitively', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Quiz 1',
+        subject: 'Computer Networks',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Quiz 2',
+        subject: 'Mathematics',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes?subject=computer networks')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(1);
+    expect(res.body.quizzes[0].title).toBe('Quiz 1');
+  });
+
+  it('IT-M2-QUIZ-14: GET /api/quizzes?search=...&subject=... applies combined filters', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Midterm Prep',
+        subject: 'Computer Networks',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Midterm Prep',
+        subject: 'Database Systems',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes?search=midterm&subject=database')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(1);
+    expect(res.body.quizzes[0].subject).toBe('Database Systems');
+  });
+
+  it('IT-M2-QUIZ-15: GET /api/quizzes returns empty list when nothing matches search or subject', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Calculus Quiz',
+        subject: 'Mathematics',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes?search=quantum')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toEqual([]);
+
+    const resSubject = await request(runtime.app)
+      .get('/api/quizzes?subject=Physics')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(resSubject.body.quizzes).toEqual([]);
+  });
+
+  it('IT-M2-QUIZ-16: GET /api/quizzes excludes soft-deleted/moderated quizzes', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    const createRes = await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Flagged Quiz',
+        subject: 'Biology',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const quizId = createRes.body.quiz.id;
+    await runtime.quizzes.moderation.remove(quizId, new Types.ObjectId().toString());
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes?subject=Biology')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(0);
+  });
+
+  it('IT-M2-QUIZ-17: GET /api/quizzes never leaks question options, questions array, or correctAnswer', async () => {
+    const { token } = await registerAndLogin(studentCredentials, 'student');
+    const [q1] = await seedQuestions();
+
+    await request(runtime.app)
+      .post('/api/quizzes')
+      .set(bearer(token))
+      .send({
+        title: 'Safety Check Quiz',
+        subject: 'Computer Networks',
+        questionIds: [q1._id.toString()]
+      })
+      .expect(201);
+
+    const res = await request(runtime.app)
+      .get('/api/quizzes')
+      .set(bearer(token))
+      .expect(200);
+
+    expect(res.body.quizzes).toHaveLength(1);
+    const item = res.body.quizzes[0];
+    expect(item.questions).toBeUndefined();
+    expect(item.correctAnswer).toBeUndefined();
+
+    const json = JSON.stringify(res.body);
+    expect(json).not.toContain('correctAnswer');
+    expect(json).not.toContain('options');
+  });
 });

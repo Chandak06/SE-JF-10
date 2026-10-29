@@ -3,6 +3,7 @@ import { Types, type Connection } from 'mongoose';
 import { getQuizModel, softDeleteQuizById } from '../models/quiz.js';
 import { getQuestionModel } from '../models/question.js';
 import { createQuizSchema, validateQuizBody } from './validation.js';
+import { buildQuizFilter } from './filters.js';
 import { toStudentSafeQuestions } from '../questions/serializer.js';
 import { AppError, unauthorized } from '../errors.js';
 
@@ -61,6 +62,27 @@ export function createQuizzesRouter(connection: Connection) {
       });
     }
   );
+
+  // GET /api/quizzes — Search and filter available quizzes (keyword, subject, combined)
+  router.get('/', async (req, res) => {
+    const filter = buildQuizFilter(req.query);
+    const quizzes = await Quiz.find(filter)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({
+      quizzes: quizzes.map((quiz) => ({
+        id: quiz._id.toString(),
+        title: quiz.title,
+        subject: quiz.subject,
+        questionCount: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+        creator: quiz.creator ? quiz.creator.toString() : undefined,
+        createdAt: quiz.createdAt
+          ? (quiz.createdAt as Date).toISOString()
+          : undefined
+      }))
+    });
+  });
 
   // GET /api/quizzes/:id — Retrieve quiz details with student-safe questions (zero answer leakage)
   router.get('/:id', async (req, res) => {
