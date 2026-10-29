@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { uploadMaterial, materialFile, getSessionUser, type StudyMaterial } from '../services/authService'
+import { uploadMaterial, materialFile, getMaterialDetails, getSessionUser, type MaterialDetails, type StudyMaterial } from '../services/authService'
 import { useMaterialLibrary } from '../hooks/useMaterialLibrary'
 import styles from './MaterialsPage.module.css'
 
@@ -10,6 +10,10 @@ function formatSize(bytes: number) {
 export default function MaterialsPage() {
   const { materials, nextCursor, loading, loadingMore, loadError, search: searchLibrary, refresh, loadMore, retry } = useMaterialLibrary()
   const [downloadError, setDownloadError] = useState('')
+  const [details, setDetails] = useState<MaterialDetails | null>(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [detailsError, setDetailsError] = useState('')
+  const detailsRequest = useRef(0)
   const fileInput = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [subjectFilter, setSubjectFilter] = useState('')
@@ -32,6 +36,22 @@ export default function MaterialsPage() {
     } catch (error) { setDownloadError(error instanceof Error ? error.message : 'Download failed.') }
     finally { setBusy(false) }
   }
+  async function showDetails(material: StudyMaterial) {
+    const request = ++detailsRequest.current
+    setDetails(null); setDetailsError(''); setDetailsLoading(true)
+    try {
+      const result = await getMaterialDetails(material.id)
+      if (request === detailsRequest.current) setDetails(result)
+    } catch (error) {
+      if (request === detailsRequest.current) setDetailsError(error instanceof Error ? error.message : 'Unable to load material details.')
+    } finally {
+      if (request === detailsRequest.current) setDetailsLoading(false)
+    }
+  }
+  function closeDetails() {
+    ++detailsRequest.current
+    setDetails(null); setDetailsError(''); setDetailsLoading(false)
+  }
   async function submit(event: FormEvent) {
     event.preventDefault(); if (!file) { setMessage('Choose a PDF file to continue.'); return }
     setBusy(true); setMessage('')
@@ -47,9 +67,10 @@ export default function MaterialsPage() {
     <section className={styles.library} aria-label="Study materials"><form onSubmit={search}><label>Search study materials<input aria-label="Search study materials" placeholder="Title, subject, or description" maxLength={100} value={query} onChange={event => setQuery(event.target.value)} /></label><label>Filter by subject<input aria-label="Filter by subject" placeholder="Any subject" maxLength={100} value={subjectFilter} onChange={event => setSubjectFilter(event.target.value)} /></label><button disabled={loading || busy}>Search</button></form>
       {loadError && <div role="alert"><p>{loadError}</p><button disabled={loading || loadingMore || busy} onClick={() => void retry()}>Try again</button></div>}
       {downloadError && <p role="alert">{downloadError}</p>}
-      {loading ? <p className={styles.status}>Loading materials…</p> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>{hasSearched ? 'No matching materials' : 'Nothing exists yet'}</p><p>{hasSearched ? 'Try different keywords or clear the subject filter.' : 'Shared notes and study resources will appear here.'}</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p><button disabled={busy} onClick={() => void download(material)}>Download {material.title}</button></div></article>)}</div>}
+      {loading ? <p className={styles.status}>Loading materials…</p> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>{hasSearched ? 'No matching materials' : 'Nothing exists yet'}</p><p>{hasSearched ? 'Try different keywords or clear the subject filter.' : 'Shared notes and study resources will appear here.'}</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p><button type="button" disabled={busy} onClick={() => void showDetails(material)}>View details for {material.title}</button><button disabled={busy} onClick={() => void download(material)}>Download {material.title}</button></div></article>)}</div>}
       {!loading && nextCursor && !loadError && <button disabled={loadingMore || busy} onClick={() => void loadMore()}>{loadingMore ? 'Loading more…' : 'Load more materials'}</button>}
     </section>
+    {(detailsLoading || details || detailsError) && <div className={styles.overlay} onMouseDown={event => { if (event.target === event.currentTarget) closeDetails() }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="details-title"><div className={styles.drawerHeader}><div><p className={styles.kicker}>STUDY MATERIAL DETAILS</p>{details && <h2 id="details-title">{details.title}</h2>}{detailsLoading && <h2 id="details-title">Loading material…</h2>}{detailsError && <h2 id="details-title">Unable to load details</h2>}</div><button className={styles.close} type="button" aria-label="Close material details" onClick={closeDetails}>×</button></div>{detailsLoading && <p className={styles.status}>Loading material details…</p>}{detailsError && <p className={styles.formMessage} role="alert">{detailsError}</p>}{details && <dl className={styles.detailsList}><dt>Subject</dt><dd>{details.subject}</dd><dt>Description</dt><dd>{details.description}</dd><dt>Uploaded by</dt><dd>{details.uploadedBy}</dd><dt>Upload date</dt><dd><time dateTime={details.createdAt}>{new Date(details.createdAt).toLocaleString()}</time></dd></dl>}</section></div>}
     {getSessionUser()?.role === 'student' && <button className={styles.uploadFab} type="button" aria-label="Upload a material" onClick={() => { setMessage(''); setUploadOpen(true) }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>}
     {uploadOpen && <div className={styles.overlay} onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setUploadOpen(false) }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className={styles.drawerHeader}><div><p className={styles.kicker}>CONTRIBUTE TO YOUR LIBRARY</p><h2 id="upload-title">Upload a material</h2><p>Give your classmates a useful resource to study from.</p></div><button className={styles.close} type="button" aria-label="Close upload form" disabled={busy} onClick={() => setUploadOpen(false)}>×</button></div><form className={styles.form} onSubmit={submit}>
       <div className={styles.fields}><label className={styles.field}>Material title<input name="title" required maxLength={150} placeholder="e.g. Week 4 lecture notes" value={title} onChange={event => setTitle(event.target.value)} /></label><label className={styles.field}>Subject<input name="subject" required maxLength={100} placeholder="e.g. Software Engineering" value={subject} onChange={event => setSubject(event.target.value)} /></label><label className={`${styles.field} ${styles.full}`}>Description<textarea name="description" required maxLength={1000} rows={4} placeholder="What should classmates know about this resource?" value={description} onChange={event => setDescription(event.target.value)} /></label></div>
