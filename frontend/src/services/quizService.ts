@@ -1,10 +1,6 @@
-import { getSessionToken } from './authService';
+import { authorized, getSessionToken } from './authService';
 import type { QuestionFilters } from './questionService';
 
-const baseUrl = (
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
-  'http://localhost:5000'
-).replace(/\/$/, '');
 
 export interface CreateQuizInput {
   title: string;
@@ -59,26 +55,13 @@ export interface QuizSummary {
 export async function searchQuizzes(
   filters?: QuizSearchFilters
 ): Promise<QuizSummary[]> {
-  const token = getSessionToken();
-  const headers: HeadersInit = {};
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
   const params = new URLSearchParams();
   if (filters?.search?.trim()) params.set('search', filters.search.trim());
   if (filters?.subject?.trim()) params.set('subject', filters.subject.trim());
 
   const queryString = params.toString() ? `?${params.toString()}` : '';
 
-  let response: Response;
-  try {
-    response = await fetch(`${baseUrl}/api/quizzes${queryString}`, {
-      headers
-    });
-  } catch {
-    throw new Error(
-      'Unable to reach the server. Check your connection and try again.'
-    );
-  }
+  const response = await authorized(`/api/quizzes${queryString}`);
 
   const result = (await response.json().catch(() => ({}))) as {
     quizzes?: QuizSummary[];
@@ -100,21 +83,13 @@ export async function createQuiz(input: CreateQuizInput): Promise<CreatedQuiz> {
   const token = getSessionToken();
   if (!token) throw new Error('Please log in to create a quiz.');
 
-  let response: Response;
-  try {
-    response = await fetch(`${baseUrl}/api/quizzes`, {
+  const response = await authorized('/api/quizzes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(input)
     });
-  } catch {
-    throw new Error(
-      'Unable to reach the server. Check your connection and try again.'
-    );
-  }
 
   const result = (await response.json().catch(() => ({}))) as {
     quiz?: CreatedQuiz;
@@ -139,18 +114,7 @@ export async function getQuizById(id: string): Promise<QuizDetail> {
   const token = getSessionToken();
   if (!token) throw new Error('Please log in to view the quiz.');
 
-  let response: Response;
-  try {
-    response = await fetch(`${baseUrl}/api/quizzes/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  } catch {
-    throw new Error(
-      'Unable to reach the server. Check your connection and try again.'
-    );
-  }
+  const response = await authorized(`/api/quizzes/${encodeURIComponent(id)}`);
 
   const result = (await response.json().catch(() => ({}))) as {
     quiz?: QuizDetail;
@@ -181,18 +145,7 @@ export async function fetchQuestionBankForQuiz(
 
   const queryString = params.toString() ? `?${params.toString()}` : '';
 
-  let response: Response;
-  try {
-    response = await fetch(`${baseUrl}/api/quiz-questions${queryString}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  } catch {
-    throw new Error(
-      'Unable to reach the server. Check your connection and try again.'
-    );
-  }
+  const response = await authorized(`/api/quiz-questions${queryString}`);
 
   const result = (await response.json().catch(() => ({}))) as {
     questions?: QuizQuestionSummary[];
