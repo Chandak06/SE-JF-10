@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import Navbar from './components/Navbar'
@@ -44,7 +44,8 @@ function QuizzesRoute() {
   return <StudentRoute><QuizListPage /></StudentRoute>
 }
 function QuizViewRoute() {
-  return <StudentRoute><QuizViewPage /></StudentRoute>
+  const { id } = useParams()
+  return <StudentRoute><QuizViewPage key={id} /></StudentRoute>
 }
 export default function App() {
   const [ready, setReady] = useState(() => !!getSessionToken() || !hasStoredSession())
