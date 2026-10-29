@@ -5,7 +5,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import MaterialsPage from './MaterialsPage'
 import * as auth from '../services/authService'
 
-vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
+vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), getMaterialDetails: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
 beforeEach(() => {
   vi.resetAllMocks()
   vi.mocked(auth.getSessionToken).mockReturnValue('test-token')
@@ -151,4 +151,28 @@ it('combines keyword and subject filters and explains unmatched results', async 
   fireEvent.submit(screen.getByRole('button', { name: 'Search' }).closest('form')!)
   expect(await screen.findByText('No matching materials')).toBeInTheDocument()
   expect(auth.searchMaterials).toHaveBeenLastCalledWith('algorithms', undefined, expect.any(AbortSignal), 'CS')
+})
+
+it('loads and displays metadata for a selected material', async () => {
+  const selected = { id: 'material-id', title: 'Selected Notes', subject: 'Software Engineering', description: 'Sprint review notes', uploadedBy: 'student-id', createdAt: '2026-10-21T10:30:00.000Z' }
+  vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [item(selected.id, selected.title)], nextCursor: null })
+  vi.mocked(auth.getMaterialDetails).mockResolvedValue(selected)
+  show()
+  await screen.findByRole('heading', { name: 'Selected Notes' })
+  fireEvent.click(screen.getByRole('button', { name: 'View details for Selected Notes' }))
+  expect(await screen.findByRole('dialog', { name: 'Selected Notes' })).toBeInTheDocument()
+  expect(screen.getByText('Software Engineering')).toBeInTheDocument()
+  expect(screen.getByText('Sprint review notes')).toBeInTheDocument()
+  expect(screen.getByText('student-id')).toBeInTheDocument()
+  expect(screen.getByText(new Date(selected.createdAt).toLocaleString())).toBeInTheDocument()
+  expect(auth.getMaterialDetails).toHaveBeenCalledWith(selected.id)
+})
+
+it('shows an unavailable message when selected material details cannot be loaded', async () => {
+  vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [item('gone', 'Removed notes')], nextCursor: null })
+  vi.mocked(auth.getMaterialDetails).mockRejectedValue(new Error('Material is unavailable.'))
+  show()
+  await screen.findByRole('heading', { name: 'Removed notes' })
+  fireEvent.click(screen.getByRole('button', { name: 'View details for Removed notes' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Material is unavailable.')
 })
