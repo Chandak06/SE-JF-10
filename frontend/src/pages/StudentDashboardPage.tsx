@@ -38,7 +38,7 @@ export default function StudentDashboardPage() {
     </div>
     <section className={styles.recentSection} aria-labelledby="recent-materials-title">
       <div className={styles.recentHeading}><h2 id="recent-materials-title">Recently opened</h2><Link to="/materials">Browse materials</Link></div>
-      {recentMaterials.length ? <ul className={styles.recentList}>{recentMaterials.map(material => <li key={material.id}><Link to={`/materials?material=${encodeURIComponent(material.id)}`}><span className={styles.recentFile} aria-hidden="true">PDF</span><span className={styles.recentCopy}><strong>{material.title}</strong><small>{material.subject}</small></span><time dateTime={new Date(material.openedAt).toISOString()}>{new Date(material.openedAt).toLocaleDateString()}</time></Link></li>)}</ul>
+      {recentMaterials.length ? <ul className={styles.recentList}>{recentMaterials.map(material => <li key={material.id}><Link to={`/materials?pdf=${encodeURIComponent(material.id)}`} aria-label={`View PDF ${material.title}`}><span className={styles.recentFile} aria-hidden="true">PDF</span><span className={styles.recentCopy}><strong>{material.title}</strong><small>{material.subject}</small></span><time dateTime={new Date(material.openedAt).toISOString()}>{new Date(material.openedAt).toLocaleDateString()}</time></Link></li>)}</ul>
         : <p className={styles.recentEmpty}>Materials you open will appear here for quick access.</p>}
     </section>
   </section>

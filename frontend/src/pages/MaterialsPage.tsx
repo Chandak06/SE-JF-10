@@ -55,7 +55,13 @@ export default function MaterialsPage() {
   useEffect(() => () => { if (pdfViewUrl) URL.revokeObjectURL(pdfViewUrl) }, [pdfViewUrl])
 
   useEffect(() => {
-    const id = new URLSearchParams(location.search).get('material')
+    const params = new URLSearchParams(location.search)
+    const pdfId = params.get('pdf')
+    if (pdfId) {
+      void Promise.resolve().then(() => openPdf(pdfId))
+      return
+    }
+    const id = params.get('material')
     if (!id) return
     let active = true
     void Promise.resolve().then(() => {
@@ -100,20 +106,24 @@ export default function MaterialsPage() {
     } catch (error) { setDownloadError(error instanceof Error ? error.message : 'Download failed.') }
     finally { setBusy(false) }
   }
-  async function viewPdf(material: StudyMaterial) {
-    recordRecentMaterial(material.id, getSessionUser()?.id ?? '')
+  async function openPdf(id: string, title?: string) {
     const request = ++pdfRequest.current
-    setPdfViewUrl(null); setPdfViewTitle(material.title); setDownloadError(''); setPdfLoading(true)
+    setPdfViewUrl(null); setPdfViewTitle(title ?? ''); setDownloadError(''); setPdfLoading(true)
     try {
-      const url = URL.createObjectURL(await materialFile(material.id, 'inline'))
+      const metadata = title ? null : await getMaterialDetails(id)
+      const resolvedTitle = title ?? metadata!.title
+      if (request === pdfRequest.current) setPdfViewTitle(resolvedTitle)
+      const url = URL.createObjectURL(await materialFile(id, 'inline'))
       if (request === pdfRequest.current) setPdfViewUrl(url)
       else URL.revokeObjectURL(url)
+      if (request === pdfRequest.current) recordRecentMaterial(id, getSessionUser()?.id ?? '')
     } catch (error) {
       if (request === pdfRequest.current) setDownloadError(error instanceof Error ? error.message : 'Unable to view this PDF.')
     } finally {
       if (request === pdfRequest.current) setPdfLoading(false)
     }
   }
+  function viewPdf(material: StudyMaterial) { void openPdf(material.id, material.title) }
   function closePdf() {
     ++pdfRequest.current
     if (document.fullscreenElement === pdfDialog.current) void document.exitFullscreen().catch(() => {})

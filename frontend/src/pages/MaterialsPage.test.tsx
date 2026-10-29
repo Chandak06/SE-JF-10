@@ -187,12 +187,15 @@ it('loads and displays metadata for a selected material', async () => {
   expect(JSON.parse(localStorage.getItem('study-commons-recent-materials:student-1')!)[0].id).toBe(selected.id)
 })
 
-it('opens recent material details directly from the dashboard link', async () => {
+it('opens the recent material PDF directly from the dashboard link', async () => {
   const selected = { id: 'material-1', title: 'Recent Notes', subject: 'SE', description: 'Recently opened', uploadedBy: 'student-1', createdAt: '2026-10-21T10:30:00.000Z' }
   vi.mocked(auth.getMaterialDetails).mockResolvedValue(selected)
-  show('/materials?material=material-1')
-  expect(await screen.findByRole('dialog', { name: 'Recent Notes' })).toBeInTheDocument()
+  vi.mocked(auth.materialFile).mockResolvedValue(new Blob(['PDF'], { type: 'application/pdf' }))
+  vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:recent-pdf')
+  show('/materials?pdf=material-1')
+  expect(await screen.findByTitle('Recent Notes PDF')).toHaveAttribute('src', 'blob:recent-pdf')
   expect(auth.getMaterialDetails).toHaveBeenCalledWith('material-1')
+  expect(auth.materialFile).toHaveBeenCalledWith('material-1', 'inline')
 })
 
 it('shows an unavailable message when selected material details cannot be loaded', async () => {
