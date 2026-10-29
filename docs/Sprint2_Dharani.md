@@ -67,3 +67,38 @@ Added a “View details” action to each material card. It loads details by ID 
 - `98713a2` Sprint:2 CSMQ:36 Test selected details and unavailable state
 
 All four commits are local and have not been pushed.
+
+## CSMQ-38: Study Material PDF Viewing and Download
+
+**Sprint:** 2
+**Owner:** Dharani S
+**SRS:** CSMQ-F-012, CSMQ-F-013
+**Test plan:** TC-MAT-02, TC-MAT-03
+**Related tasks:** CSMQ-35, CSMQ-36
+
+### Implementation
+
+Extended the authenticated GridFS file endpoint for inline PDF viewing and attachment downloads. It validates material IDs and disposition, returns `application/pdf`, and only serves materials whose `removedAt` is null. The response filename is derived safely from the material title. Missing files and removed or nonexistent materials return 404; invalid IDs or dispositions return 400.
+
+Added View PDF and Download PDF actions to each material card. View PDF requests inline disposition and displays the returned PDF in a viewer. Download PDF requests attachment disposition and downloads the same file with a sanitized title based filename. Both actions use the existing authenticated client and GridFS storage. Search, subject filters, details, and upload remain integrated.
+
+### Verification and Jira Evidence
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | Passed |
+| Materials page and auth service tests | 28 passed |
+| Sprint 2 backend integration suite | 11 tests passed |
+| GridFS response bytes and dispositions | Verified for inline and attachment responses |
+| Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
+
+The test commands and results are recorded here for Jira evidence. No Jira attachment or PR evidence was submitted because these commits remain local and unpushed.
+
+### Commits
+
+- `b3cc625` Sprint:2 CSMQ:38 Serve protected GridFS PDFs safely
+- `b157ef8` Sprint:2 CSMQ:38 Request PDFs with authenticated disposition
+- `4a0ffcd` Sprint:2 CSMQ:38 Add PDF viewing and named download actions
+- `ab1861c` Sprint:2 CSMQ:38 Test PDF viewing and titled download
+
+All four commits are local and have not been pushed.
