@@ -155,8 +155,8 @@ describe('Study Commons routes and forms', () => {
     expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
-    expect(screen.getAllByRole('status').map(status => status.textContent)).toContain('Coming soon')
-    expect(screen.getAllByRole('status').map(status => status.textContent)).toHaveLength(2)
+    expect(screen.getByRole('button', { name: /Quiz Attempt History/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Performance Dashboard/ })).toBeDisabled()
     expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
   })
 
