@@ -100,6 +100,15 @@ it('searches all material metadata and combines keyword with a subject filter', 
   expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).toContain(byDescription);
   expect(exactSubject.body.materials.map((item: { id: string }) => item.id)).not.toContain(bySubject);
 });
+it('lists searchable subjects from available materials only', async () => {
+  const removed = await upload('Removed notes', 'Archived', 'Old notes');
+  await upload('Algorithms', 'Computer Science', 'Lecture');
+  await upload('Statistics', 'Mathematics', 'Lecture');
+  await request(runtime.app).delete('/api/admin/materials/' + removed).set(bearer(admin)).send({ confirmed: true }).expect(204);
+  const subjects = await request(runtime.app).get('/api/materials/subjects').set(bearer(student)).expect(200);
+  expect(subjects.body.subjects).toEqual(['Computer Science', 'Mathematics']);
+  await request(runtime.app).get('/api/materials/subjects').expect(401);
+});
 it('returns selected material metadata by identifier and rejects invalid or unavailable identifiers', async () => {
   const id = await upload('Selected notes', 'CS', 'Details for a selected material');
   const response = await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);

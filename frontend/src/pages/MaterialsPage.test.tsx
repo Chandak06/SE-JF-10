@@ -5,7 +5,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import MaterialsPage from './MaterialsPage'
 import * as auth from '../services/authService'
 
-vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), getMaterialDetails: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
+vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), getMaterialSubjects: vi.fn().mockResolvedValue([]), getMaterialDetails: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
 beforeEach(() => {
   vi.resetAllMocks()
   vi.mocked(auth.getSessionToken).mockReturnValue('test-token')
@@ -57,12 +57,12 @@ it('loads the 26th material and resets pagination when a new search is submitted
   show()
   fireEvent.click(await screen.findByRole('button', { name: 'Load more materials' }))
   await screen.findByRole('heading', { name: 'Notes 26' })
-  expect(screen.getAllByRole('article')).toHaveLength(26)
+  expect(screen.getAllByRole('group')).toHaveLength(26)
   expect(auth.searchMaterials).toHaveBeenLastCalledWith('', cursor, expect.any(AbortSignal), '')
   expect(screen.queryByRole('button', { name: 'Load more materials' })).not.toBeInTheDocument()
   submitSearch('Beta')
   await screen.findByRole('heading', { name: 'Beta notes' })
-  expect(screen.getAllByRole('article')).toHaveLength(1)
+  expect(screen.getAllByRole('group')).toHaveLength(1)
   expect(auth.searchMaterials).toHaveBeenLastCalledWith('Beta', undefined, expect.any(AbortSignal), '')
 })
 
@@ -127,7 +127,7 @@ it('does not append an older page after a different search completes', async () 
   show(); fireEvent.click(await screen.findByRole('button', { name: 'Load more materials' }))
   submitSearch('Beta'); await screen.findByRole('heading', { name: 'Beta notes' })
   await act(async () => { finishPage({ materials: [item('old', 'Old Alpha page')], nextCursor: null }) })
-  expect(screen.getAllByRole('article')).toHaveLength(1)
+  expect(screen.getAllByRole('group')).toHaveLength(1)
   expect(screen.queryByRole('heading', { name: 'Old Alpha page' })).not.toBeInTheDocument()
 })
 
@@ -145,12 +145,30 @@ it('retries a failed first-page search with the same query', async () => {
 })
 
 it('combines keyword and subject filters and explains unmatched results', async () => {
+  const user = userEvent.setup()
+  vi.mocked(auth.getMaterialSubjects).mockResolvedValue(['CS'])
   show(); await screen.findByText('Nothing exists yet')
-  fireEvent.change(screen.getByLabelText('Search study materials'), { target: { value: 'algorithms' } })
-  fireEvent.change(screen.getByLabelText('Filter by subject'), { target: { value: 'CS' } })
-  fireEvent.submit(screen.getByRole('button', { name: 'Search' }).closest('form')!)
+  await user.type(screen.getByLabelText('Search study materials'), 'algorithms')
+  await user.click(screen.getByRole('button', { name: 'Filter by subject' }))
+  await user.click(await screen.findByRole('option', { name: 'CS' }))
   expect(await screen.findByText('No matching materials')).toBeInTheDocument()
   expect(auth.searchMaterials).toHaveBeenLastCalledWith('algorithms', undefined, expect.any(AbortSignal), 'CS')
+})
+
+it('searches existing subjects in the filter menu and applies a selected subject', async () => {
+  const user = userEvent.setup()
+  vi.mocked(auth.getMaterialSubjects).mockResolvedValue(['Computer Science', 'Mathematics', 'Software Engineering'])
+  show(); await screen.findByText('Nothing exists yet')
+  await user.type(screen.getByLabelText('Search study materials'), 'graphs')
+  await user.click(screen.getByRole('button', { name: 'Filter by subject' }))
+  expect(await screen.findByRole('dialog', { name: 'Choose a subject' })).toBeInTheDocument()
+  await user.type(screen.getByLabelText('Search subjects'), 'soft')
+  expect(screen.getByRole('option', { name: 'Software Engineering' })).toBeInTheDocument()
+  expect(screen.queryByRole('option', { name: 'Mathematics' })).not.toBeInTheDocument()
+  await user.click(screen.getByRole('option', { name: 'Software Engineering' }))
+  expect(screen.getByRole('button', { name: 'Filter by subject' })).toHaveAttribute('aria-pressed', 'true')
+  expect(auth.searchMaterials).toHaveBeenLastCalledWith('graphs', undefined, expect.any(AbortSignal), 'Software Engineering')
+  expect(screen.getByRole('button', { name: 'Clear subject filter Software Engineering' })).toBeInTheDocument()
 })
 
 it('loads and displays metadata for a selected material', async () => {

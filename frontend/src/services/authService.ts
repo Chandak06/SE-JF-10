@@ -128,6 +128,13 @@ export async function removeItem(kind: ModerationKind, id: string) {
 }
 export type MaterialSummary = StudyMaterial
 export type MaterialPage = { materials: MaterialSummary[]; nextCursor: string | null }
+export async function getMaterialSubjects(): Promise<string[]> {
+  const result = await (await authorized('/api/materials/subjects')).json() as { subjects?: unknown }
+  if (!Array.isArray(result.subjects) || !result.subjects.every(subject => typeof subject === 'string')) {
+    throw new Error('The server returned an unexpected subject list.')
+  }
+  return result.subjects
+}
 export async function searchMaterials(query: string, cursor?: string, signal?: AbortSignal, subject?: string): Promise<MaterialPage> {
   const params = new URLSearchParams()
   if (query.trim()) params.set('q', query.trim())

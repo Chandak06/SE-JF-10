@@ -71,6 +71,10 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
       description: item.description, size: item.size, createdAt: item.createdAt, uploadedBy: item.uploadedBy.toString() })),
       nextCursor: items.length === limit ? items[items.length - 1]!._id.toString() : null });
   });
+  router.get('/subjects', async (_req, res) => {
+    const subjects = await Material.distinct('subject', { removedAt: null });
+    res.json({ subjects: subjects.filter((value): value is string => typeof value === 'string').sort((a, b) => a.localeCompare(b)) });
+  });
   router.get('/:id', async (req, res) => {
     const id = objectId.safeParse(req.params.id);
     if (!id.success) throw new AppError(400, 'INVALID_ID', 'Invalid material identifier.');

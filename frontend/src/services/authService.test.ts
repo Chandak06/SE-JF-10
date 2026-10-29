@@ -121,6 +121,16 @@ it('rejects malformed pagination responses instead of silently losing the cursor
   await expect(auth.searchMaterials('')).resolves.toEqual({ materials: [], nextCursor: null })
 })
 
+it('loads validated available material subjects using the authenticated endpoint', async () => {
+  await signIn()
+  fetchMock.mockResolvedValueOnce(reply({ subjects: ['Computer Science', 'Mathematics'] }))
+  await expect(auth.getMaterialSubjects()).resolves.toEqual(['Computer Science', 'Mathematics'])
+  expect(fetchMock.mock.calls[1][0]).toContain('/api/materials/subjects')
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  fetchMock.mockResolvedValueOnce(reply({ subjects: ['CS', 42] }))
+  await expect(auth.getMaterialSubjects()).rejects.toThrow('unexpected subject list')
+})
+
 it('requests inline and attachment PDFs through the authenticated material endpoint', async () => {
   await signIn()
   const pdf = new Blob(['PDF bytes'], { type: 'application/pdf' })

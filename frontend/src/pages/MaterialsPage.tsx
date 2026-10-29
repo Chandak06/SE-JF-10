@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { uploadMaterial, materialFile, getMaterialDetails, getSessionUser, type MaterialDetails, type StudyMaterial } from '../services/authService'
+import { uploadMaterial, materialFile, getMaterialDetails, getMaterialSubjects, getSessionUser, type MaterialDetails, type StudyMaterial } from '../services/authService'
 import { useMaterialLibrary } from '../hooks/useMaterialLibrary'
 import styles from './MaterialsPage.module.css'
 
@@ -39,6 +39,11 @@ export default function MaterialsPage() {
   const fileInput = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [subjectFilter, setSubjectFilter] = useState('')
+  const [subjectPickerOpen, setSubjectPickerOpen] = useState(false)
+  const [subjectOptions, setSubjectOptions] = useState<string[]>([])
+  const [subjectOptionsLoading, setSubjectOptionsLoading] = useState(false)
+  const [subjectOptionsError, setSubjectOptionsError] = useState('')
+  const [subjectSearch, setSubjectSearch] = useState('')
   const [hasSearched, setHasSearched] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [title, setTitle] = useState(''); const [subject, setSubject] = useState(''); const [description, setDescription] = useState('')
@@ -50,6 +55,22 @@ export default function MaterialsPage() {
     event.preventDefault(); setDownloadError('')
     setHasSearched(Boolean(query.trim() || subjectFilter.trim()))
     await searchLibrary(query, subjectFilter)
+  }
+  async function toggleSubjectPicker() {
+    if (subjectPickerOpen) { setSubjectPickerOpen(false); return }
+    setSubjectPickerOpen(true); setSubjectSearch(''); setSubjectOptionsError('')
+    if (subjectOptions.length || subjectOptionsLoading) return
+    await loadSubjectOptions()
+  }
+  async function loadSubjectOptions() {
+    setSubjectOptionsLoading(true); setSubjectOptionsError('')
+    try { setSubjectOptions(await getMaterialSubjects()) }
+    catch (error) { setSubjectOptionsError(error instanceof Error ? error.message : 'Unable to load subjects.') }
+    finally { setSubjectOptionsLoading(false) }
+  }
+  async function chooseSubject(value: string) {
+    setSubjectFilter(value); setSubjectPickerOpen(false); setHasSearched(Boolean(query.trim() || value))
+    await searchLibrary(query, value)
   }
   async function download(material: StudyMaterial) {
     setBusy(true); setDownloadError('')
@@ -122,7 +143,7 @@ export default function MaterialsPage() {
     finally { setBusy(false) }
   }
   return <div className={styles.page}>
-    <section className={styles.library} aria-label="Study materials"><form className={styles.searchForm} onSubmit={search}><div className={styles.searchControl}><ActionIcon kind="search" /><input aria-label="Search study materials" placeholder="Search title, subject, or description" maxLength={100} value={query} onChange={event => setQuery(event.target.value)} /><span className={styles.controlDivider} /><ActionIcon kind="filter" /><input aria-label="Filter by subject" placeholder="Subject" maxLength={100} value={subjectFilter} onChange={event => setSubjectFilter(event.target.value)} /></div><button className={styles.searchButton} aria-label="Search" title="Search materials" disabled={loading || busy}><ActionIcon kind="search" /></button></form>
+    <section className={styles.library} aria-label="Study materials"><form className={styles.searchForm} onSubmit={search}><div className={styles.searchControl}><ActionIcon kind="search" /><input aria-label="Search study materials" placeholder="Search title, subject, or description" maxLength={100} value={query} onChange={event => setQuery(event.target.value)} /><span className={styles.controlDivider} /><div className={styles.filterWrap}><button className={`${styles.filterButton} ${subjectFilter ? styles.filterActive : ''}`} type="button" aria-label="Filter by subject" aria-pressed={Boolean(subjectFilter)} title={subjectFilter ? `Subject filter: ${subjectFilter}` : 'Filter by subject'} onClick={() => void toggleSubjectPicker()}><ActionIcon kind="filter" /></button>{subjectPickerOpen && <div className={styles.subjectPicker} role="dialog" aria-label="Choose a subject"><label className={styles.subjectSearch}><ActionIcon kind="search" /><input autoFocus aria-label="Search subjects" placeholder="Search subjects" value={subjectSearch} onChange={event => setSubjectSearch(event.target.value)} /></label>{subjectOptionsLoading ? <p className={styles.pickerMessage}>Loading subjects…</p> : subjectOptionsError ? <p className={styles.pickerMessage} role="alert">{subjectOptionsError} <button type="button" onClick={() => void loadSubjectOptions()}>Retry</button></p> : <div className={styles.subjectOptions} role="listbox" aria-label="Available subjects"><button type="button" role="option" aria-selected={!subjectFilter} onClick={() => void chooseSubject('')}>All subjects</button>{subjectOptions.filter(option => option.toLocaleLowerCase().includes(subjectSearch.trim().toLocaleLowerCase())).map(option => <button key={option} type="button" role="option" aria-selected={subjectFilter === option} onClick={() => void chooseSubject(option)}>{option}</button>)}{subjectOptions.filter(option => option.toLocaleLowerCase().includes(subjectSearch.trim().toLocaleLowerCase())).length === 0 && <p className={styles.pickerMessage}>No subjects match your search.</p>}</div>}</div>}</div></div>{subjectFilter && <button type="button" className={styles.activeFilter} aria-label={`Clear subject filter ${subjectFilter}`} onClick={() => void chooseSubject('')}>{subjectFilter}<span aria-hidden="true">×</span></button>}<button className={styles.searchButton} aria-label="Search" title="Search materials" disabled={loading || busy}><ActionIcon kind="search" /></button></form>
       {loadError && <div role="alert"><p>{loadError}</p><button disabled={loading || loadingMore || busy} onClick={() => void retry()}>Try again</button></div>}
       {downloadError && <p role="alert">{downloadError}</p>}
       {loading ? <p className={styles.status}>Loading materials…</p> : materials.length === 0 ? <div className={styles.empty}><span className={styles.emptyIcon} aria-hidden="true">▤</span><p className={styles.emptyTitle}>{hasSearched ? 'No matching materials' : 'Nothing exists yet'}</p><p>{hasSearched ? 'Try different keywords or clear the subject filter.' : 'Shared notes and study resources will appear here.'}</p></div> : <div className={styles.grid}>{materials.map((material) => <article className={styles.material} key={material.id} role="group" tabIndex={0} aria-label={`Material: ${material.title}. Select to view details.`} onClick={() => void showDetails(material)} onKeyDown={event => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); void showDetails(material) } }}><div className={styles.materialIcon} aria-hidden="true">PDF</div><div className={styles.materialCopy}><p className={styles.subject}>{material.subject}</p><h2>{material.title}</h2><p className={styles.description}>{material.description}</p><p className={styles.meta}>{new Date(material.createdAt).toLocaleDateString()} <span>·</span> {formatSize(material.size)}</p><div className={styles.materialActions}><button className={`${styles.iconAction} ${styles.viewAction}`} type="button" disabled={busy || pdfLoading} aria-label={`View PDF ${material.title}`} title="View PDF" onClick={event => { event.stopPropagation(); void viewPdf(material) }}><ActionIcon kind="view" /><span>View PDF</span></button><button className={styles.iconAction} type="button" disabled={busy} aria-label={`Download PDF ${material.title}`} title="Download PDF" onClick={event => { event.stopPropagation(); void download(material) }}><ActionIcon kind="download" /></button></div></div></article>)}</div>}
