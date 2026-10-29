@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useLocation } from 'react-router-dom'
 import { uploadMaterial, materialFile, getMaterialDetails, getMaterialSubjects, getSessionUser, type MaterialDetails, type StudyMaterial } from '../services/authService'
+import { recordRecentMaterial } from '../services/recentMaterials'
 import { useMaterialLibrary } from '../hooks/useMaterialLibrary'
 import styles from './MaterialsPage.module.css'
 
@@ -24,6 +26,7 @@ function ActionIcon({ kind }: { kind: 'search' | 'filter' | 'view' | 'download' 
 }
 
 export default function MaterialsPage() {
+  const location = useLocation()
   const { materials, nextCursor, loading, loadingMore, loadError, search: searchLibrary, refresh, loadMore, retry } = useMaterialLibrary()
   const [downloadError, setDownloadError] = useState('')
   const [pdfViewUrl, setPdfViewUrl] = useState<string | null>(null)
@@ -50,6 +53,22 @@ export default function MaterialsPage() {
   const [file, setFile] = useState<File | null>(null); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false)
 
   useEffect(() => () => { if (pdfViewUrl) URL.revokeObjectURL(pdfViewUrl) }, [pdfViewUrl])
+
+  useEffect(() => {
+    const id = new URLSearchParams(location.search).get('material')
+    if (!id) return
+    let active = true
+    void Promise.resolve().then(() => {
+      if (!active) return null
+      setDetails(null); setDetailsError(''); setDetailsLoading(true)
+      return getMaterialDetails(id)
+    }).then(result => {
+      if (active && result) { setDetails(result); recordRecentMaterial(result.id, getSessionUser()?.id ?? '') }
+    }).catch(error => {
+      if (active) setDetailsError(error instanceof Error ? error.message : 'Unable to load material details.')
+    }).finally(() => { if (active) setDetailsLoading(false) })
+    return () => { active = false }
+  }, [location.search])
 
   async function search(event: FormEvent) {
     event.preventDefault(); setDownloadError('')
@@ -82,6 +101,7 @@ export default function MaterialsPage() {
     finally { setBusy(false) }
   }
   async function viewPdf(material: StudyMaterial) {
+    recordRecentMaterial(material.id, getSessionUser()?.id ?? '')
     const request = ++pdfRequest.current
     setPdfViewUrl(null); setPdfViewTitle(material.title); setDownloadError(''); setPdfLoading(true)
     try {
@@ -116,6 +136,7 @@ export default function MaterialsPage() {
     return () => document.removeEventListener('fullscreenchange', syncFullscreen)
   }, [])
   async function showDetails(material: StudyMaterial) {
+    recordRecentMaterial(material.id, getSessionUser()?.id ?? '')
     const request = ++detailsRequest.current
     setDetails(null); setDetailsError(''); setDetailsLoading(true)
     try {

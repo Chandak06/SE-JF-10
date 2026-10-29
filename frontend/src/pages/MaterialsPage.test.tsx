@@ -5,13 +5,13 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import MaterialsPage from './MaterialsPage'
 import * as auth from '../services/authService'
 
-vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ role: 'student' }), searchMaterials: vi.fn(), getMaterialSubjects: vi.fn().mockResolvedValue([]), getMaterialDetails: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
+vi.mock('../services/authService', () => ({ getSessionToken: vi.fn(), getSessionUser: () => ({ id: 'student-1', role: 'student' }), searchMaterials: vi.fn(), getMaterialSubjects: vi.fn().mockResolvedValue([]), getMaterialDetails: vi.fn(), materialFile: vi.fn(), logout: vi.fn(), uploadMaterial: vi.fn() }))
 beforeEach(() => {
   vi.resetAllMocks()
   vi.mocked(auth.getSessionToken).mockReturnValue('test-token')
   vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [], nextCursor: null })
 })
-const show = () => render(<MemoryRouter><MaterialsPage /></MemoryRouter>)
+const show = (initialEntry = '/materials') => render(<MemoryRouter initialEntries={[initialEntry]}><MaterialsPage /></MemoryRouter>)
 
 it('shows the empty library state and opens a separate upload form', async () => {
   const user = userEvent.setup(); show()
@@ -184,6 +184,15 @@ it('loads and displays metadata for a selected material', async () => {
   expect(screen.getByText('student-id')).toBeInTheDocument()
   expect(screen.getByText(new Date(selected.createdAt).toLocaleString())).toBeInTheDocument()
   expect(auth.getMaterialDetails).toHaveBeenCalledWith(selected.id)
+  expect(JSON.parse(localStorage.getItem('study-commons-recent-materials:student-1')!)[0].id).toBe(selected.id)
+})
+
+it('opens recent material details directly from the dashboard link', async () => {
+  const selected = { id: 'material-1', title: 'Recent Notes', subject: 'SE', description: 'Recently opened', uploadedBy: 'student-1', createdAt: '2026-10-21T10:30:00.000Z' }
+  vi.mocked(auth.getMaterialDetails).mockResolvedValue(selected)
+  show('/materials?material=material-1')
+  expect(await screen.findByRole('dialog', { name: 'Recent Notes' })).toBeInTheDocument()
+  expect(auth.getMaterialDetails).toHaveBeenCalledWith('material-1')
 })
 
 it('shows an unavailable message when selected material details cannot be loaded', async () => {

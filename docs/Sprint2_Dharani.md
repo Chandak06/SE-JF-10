@@ -80,7 +80,7 @@ Added a “View details” action to each material card. It loads details by ID 
 
 Extended the authenticated GridFS file endpoint for inline PDF viewing and attachment downloads. It validates material IDs and disposition, returns `application/pdf`, and only serves materials whose `removedAt` is null. The response filename is derived safely from the material title. Missing files and removed or nonexistent materials return 404; invalid IDs or dispositions return 400.
 
-Refined material cards into left aligned, compact cards that open metadata details when selected. View PDF and Download PDF use clear document and download icons. The PDF viewer uses the browser Fullscreen API with a viewport fallback. Keyword and subject inputs share a single search control with search and filter icons. Search, subject filters, details, and upload remain integrated.
+Refined material cards into left aligned, compact cards that open metadata details when selected. View PDF and Download PDF use clear document and download icons. The PDF viewer uses the browser Fullscreen API with a viewport fallback. Added a small gap below the search bar. Keyword and subject inputs share a single search control with search and filter icons. Search, subject filters, details, and upload remain integrated.
 
 ### Verification and Jira Evidence
 
@@ -112,7 +112,7 @@ Test commands and results are recorded here for Jira evidence.
 
 ### Implementation
 
-Added the protected `/dashboard` student landing page and made successful student login redirect there. Removed the student eyebrow, reduced the welcome heading size, and changed the two unavailable destinations to compact list rows. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
+Added the protected `/dashboard` student landing page and made successful student login redirect there. Removed the student eyebrow, reduced the welcome heading size, and changed the two unavailable destinations to compact list rows. The dashboard shows up to five recently opened active materials, scoped to the signed-in student, and links each item directly to its details. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
 
 The handoff review found no Quiz History or Performance page or API in Karan’s available branches. Those dashboard cards state that the sections are unavailable. The dashboard does not replace them with the local attempt prototype. Acceptance criterion 6 remains dependent on Karan’s route and page exports.
 
@@ -120,7 +120,7 @@ The handoff review found no Quiz History or Performance page or API in Karan’s
 
 | Check | Result |
 |---|---|
-| Frontend suite | 97 tests passed |
+| Frontend suite | 102 tests passed |
 | Backend unit suite | 171 tests passed |
 | Backend integration suite | 89 passed; 1 local-demo test failed when MongoMemoryServer stopped with `mongod internal error (fassert() failure)` |
 | Backend typecheck and build | Passed |

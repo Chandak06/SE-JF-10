@@ -1,7 +1,7 @@
 .page { min-height: calc(100vh - 76px); max-width: 1320px; margin: 0 auto; padding: 12px 56px 110px; }
 .kicker { margin: 0 0 9px; color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.5px; }
 .library { min-height: 440px; padding: 4px 0; }
-.searchForm { display: flex; align-items: center; gap: 10px; margin: 0 0 26px; }
+.searchForm { display: flex; align-items: center; gap: 10px; margin: 0 0 36px; }
 .searchControl { display: flex; min-width: 0; min-height: 50px; flex: 1; align-items: center; gap: 11px; padding: 0 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
 .searchControl svg { width: 19px; height: 19px; flex: 0 0 19px; color: var(--text-tertiary); }
 .searchControl input { width: 100%; min-width: 0; height: 46px; border: 0; outline: 0; color: var(--text-primary); background: transparent; font: inherit; font-size: 14px; }

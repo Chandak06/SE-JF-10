@@ -11,4 +11,19 @@
 .card > a:hover { background: var(--accent-hover); }
 .card > a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .card .unavailable { color: var(--text-tertiary); font-size: .78rem; white-space: nowrap; }
+.recentSection { max-width: 780px; margin-top: 2.5rem; }
+.recentHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .65rem; border-bottom: 1px solid var(--border); }
+.recentHeading h2 { margin: 0; font-size: 1.05rem; font-weight: 650; }
+.recentHeading > a { color: var(--accent); font-size: .85rem; font-weight: 600; text-decoration: none; }
+.recentHeading > a:hover { text-decoration: underline; }
+.recentList { margin: 0; padding: 0; list-style: none; }
+.recentList li { border-bottom: 1px solid var(--border); }
+.recentList li > a { display: flex; min-height: 66px; align-items: center; gap: .85rem; padding: .6rem .35rem; color: inherit; text-decoration: none; }
+.recentList li > a:hover { background: var(--surface-subtle); }
+.recentFile { display: grid; width: 34px; height: 38px; flex: 0 0 34px; place-items: center; border-radius: 8px; color: var(--accent); background: var(--surface-subtle); font-size: .62rem; font-weight: 750; }
+.recentCopy { display: grid; min-width: 0; gap: .2rem; flex: 1; }
+.recentCopy strong { overflow: hidden; font-size: .9rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.recentCopy small { color: var(--text-tertiary); font-size: .78rem; }
+.recentList time { color: var(--text-tertiary); font-size: .78rem; white-space: nowrap; }
+.recentEmpty { margin: 0; padding: 1rem .35rem; color: var(--text-tertiary); font-size: .88rem; }
 @media (max-width: 520px) { .page { padding-top: 1rem; } .grid { margin-top: 1.25rem; } .card { min-height: 88px; grid-template-columns: 36px minmax(0, 1fr); gap: .8rem; padding: .85rem 0; } .icon { width: 34px; height: 34px; } .card .unavailable { grid-column: 2; margin-top: -.4rem; } }
