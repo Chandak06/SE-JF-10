@@ -159,7 +159,7 @@ it('loads and displays metadata for a selected material', async () => {
   vi.mocked(auth.getMaterialDetails).mockResolvedValue(selected)
   show()
   await screen.findByRole('heading', { name: 'Selected Notes' })
-  fireEvent.click(screen.getByRole('button', { name: 'View details for Selected Notes' }))
+  fireEvent.click(screen.getByRole('group', { name: 'Material: Selected Notes. Select to view details.' }))
   expect(await screen.findByRole('dialog', { name: 'Selected Notes' })).toBeInTheDocument()
   expect(screen.getByText('Software Engineering')).toBeInTheDocument()
   expect(screen.getByText('Sprint review notes')).toBeInTheDocument()
@@ -173,7 +173,7 @@ it('shows an unavailable message when selected material details cannot be loaded
   vi.mocked(auth.getMaterialDetails).mockRejectedValue(new Error('Material is unavailable.'))
   show()
   await screen.findByRole('heading', { name: 'Removed notes' })
-  fireEvent.click(screen.getByRole('button', { name: 'View details for Removed notes' }))
+  fireEvent.click(screen.getByRole('group', { name: 'Material: Removed notes. Select to view details.' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Material is unavailable.')
 })
 

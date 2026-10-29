@@ -81,7 +81,7 @@ test('student uploads, administrator confirms removal and removed content cannot
   await expect(page.getByRole('status')).toContainText('Your material has been uploaded.')
   await page.getByRole('button', { name: 'Close upload form' }).click()
   await page.getByRole('button', { name: 'Search', exact: true }).click()
-  await page.getByRole('button', { name: 'View details for Browser notes' }).click()
+  await page.getByRole('group', { name: 'Material: Browser notes. Select to view details.' }).click()
   await expect(page.getByRole('dialog', { name: 'Browser notes' })).toContainText('Browser regression')
   await page.getByRole('button', { name: 'Close material details' }).click()
   await page.getByRole('button', { name: 'View PDF Browser notes' }).click()

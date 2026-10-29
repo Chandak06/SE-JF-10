@@ -1,10 +1,16 @@
 .page { min-height: calc(100vh - 76px); max-width: 1320px; margin: 0 auto; padding: 40px 56px 110px; }
 .kicker { margin: 0 0 9px; color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.5px; }
 .library { min-height: 440px; padding: 34px 0; }
-.searchForm { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(200px, .75fr) auto; align-items: end; gap: 12px; margin: 0 0 26px; }
-.searchForm label { display: grid; gap: 7px; color: var(--text-secondary); font-size: 13px; font-weight: 650; }
-.searchForm input { width: 100%; min-height: 46px; border: 1px solid var(--border); border-radius: 9px; padding: 0 13px; color: var(--text-primary); background: var(--input-bg); font: inherit; font-weight: 400; }
-.searchButton, .loadMore { min-height: 46px; padding: 0 20px; border: 0; border-radius: 9px; color: var(--accent-contrast); background: var(--accent); font-weight: 650; cursor: pointer; }
+.searchForm { display: flex; align-items: center; gap: 10px; margin: 0 0 26px; }
+.searchControl { display: flex; min-width: 0; min-height: 50px; flex: 1; align-items: center; gap: 11px; padding: 0 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+.searchControl svg { width: 19px; height: 19px; flex: 0 0 19px; color: var(--text-tertiary); }
+.searchControl input { width: 100%; min-width: 0; height: 46px; border: 0; outline: 0; color: var(--text-primary); background: transparent; font: inherit; font-size: 14px; }
+.searchControl input:first-of-type { flex: 1.6; }
+.searchControl input:last-of-type { flex: .8; }
+.searchControl input::placeholder { color: var(--text-tertiary); }
+.controlDivider { width: 1px; height: 25px; flex: 0 0 1px; background: var(--border); }
+.searchButton, .loadMore { display: grid; min-width: 50px; min-height: 50px; place-items: center; padding: 0 16px; border: 0; border-radius: 12px; color: var(--accent-contrast); background: var(--accent); font-weight: 650; cursor: pointer; }
+.searchButton svg { width: 20px; height: 20px; }
 .searchButton:hover, .loadMore:hover { background: var(--accent-hover); }
 .searchButton:disabled, .loadMore:disabled { opacity: .6; cursor: wait; }
 .status { text-align: center; color: var(--text-tertiary); padding: 110px 20px; }
@@ -14,12 +20,13 @@
 .empty p:last-of-type { margin: 5px 0 0; font-size: 14px; }
 .empty button { border: 0; margin-top: 14px; color: var(--accent); background: transparent; font-weight: 650; cursor: pointer; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 18px; }
-.material { display: flex; gap: 17px; padding: 22px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); box-shadow: var(--shadow); }
+.material { display: flex; min-height: 170px; align-items: flex-start; gap: 15px; padding: 18px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); box-shadow: var(--shadow); cursor: pointer; transition: border-color .16s, box-shadow .16s, transform .16s; }
+.material:hover, .material:focus-visible { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 12px 30px rgba(45, 32, 37, .1); outline: none; }
 .materialIcon { flex: 0 0 44px; height: 50px; display: grid; place-items: center; border-radius: 10px; background: var(--surface-subtle); color: var(--accent); font-size: 11px; font-weight: 800; }
 .materialCopy { min-width: 0; }
 .subject { margin: 0 0 5px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-size: 10px; font-weight: 750; }
 .material h2 { margin: 0; font-size: 17px; letter-spacing: -.25px; }
-.description { margin: 7px 0 12px; color: var(--text-secondary); font-size: 13px; overflow-wrap: anywhere; }
+.description { margin: 6px 0 10px; color: var(--text-secondary); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
 .meta { margin: 0; color: var(--text-tertiary); font-size: 11px; }
 .meta span { padding: 0 5px; }
 .materialActions { display: flex; align-items: center; gap: 9px; margin-top: 17px; }
@@ -66,10 +73,11 @@
 .pdfFrame { display: block; width: 100%; min-height: 0; flex: 1; margin-top: 14px; border: 1px solid var(--border); border-radius: 8px; background: white; }
 .pdfFullScreenOverlay { background: #141113; }
 .pdfFullScreen { width: 100%; max-width: none; height: 100%; padding: 12px 18px; }
+.pdfDrawer:fullscreen { width: 100vw; max-width: none; height: 100vh; padding: 12px 18px; border-radius: 0; }
 .formActions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
 .cancel, .submit { min-height: 45px; padding: 0 18px; border-radius: 8px; font-weight: 650; cursor: pointer; }
 .cancel { border: 1px solid var(--border); color: var(--text-secondary); background: transparent; }
 .submit { border: 0; color: var(--accent-contrast); background: var(--accent); }
 .submit:hover { background: var(--accent-hover); }
 .submit:disabled, .cancel:disabled { opacity: .6; cursor: wait; }
-@media (max-width: 650px) { .page { padding: 28px 22px 100px; } .library { min-height: 350px; } .empty { min-height: 300px; } .uploadFab { right: 20px; bottom: 20px; width: 56px; height: 56px; } .drawer { padding: 31px 22px; } .fields { grid-template-columns: 1fr; gap: 18px; } .full { grid-column: auto; } .searchForm { grid-template-columns: 1fr; } .searchButton { width: 100%; } .material { padding: 16px; gap: 12px; } .materialActions { gap: 7px; } .iconAction { min-width: 40px; height: 40px; padding: 0 9px; } .viewAction { flex: 1; } .pdfDrawer { padding: 12px; } .pdfFullScreen { padding: 8px; } }
+@media (max-width: 650px) { .page { padding: 28px 22px 100px; } .library { min-height: 350px; } .empty { min-height: 300px; } .uploadFab { right: 20px; bottom: 20px; width: 56px; height: 56px; } .drawer { padding: 31px 22px; } .fields { grid-template-columns: 1fr; gap: 18px; } .full { grid-column: auto; } .searchForm { align-items: stretch; } .searchControl { flex-wrap: wrap; gap: 7px; padding: 8px 11px; } .searchControl input:first-of-type { flex: 1 1 calc(100% - 35px); } .searchControl input:last-of-type { flex: 1 1 calc(100% - 35px); } .searchControl .controlDivider { display: none; } .searchButton { min-width: 46px; padding: 0 12px; } .material { min-height: 150px; padding: 15px; gap: 11px; } .materialIcon { flex-basis: 40px; height: 44px; } .materialActions { gap: 7px; } .iconAction { min-width: 40px; height: 40px; padding: 0 9px; } .viewAction { flex: 1; } .pdfDrawer { padding: 12px; } .pdfFullScreen { padding: 8px; } }
