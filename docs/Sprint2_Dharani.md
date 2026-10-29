@@ -1,4 +1,4 @@
-# CSMQ-35: Study Material Search and Filtering
+## CSMQ-35: Study Material Search and Filtering
 
 **Sprint:** 2  
 **Owner:** Dharani S  
@@ -79,7 +79,7 @@ Added a “View details” action to each material card. It loads details by ID 
 
 Extended the authenticated GridFS file endpoint for inline PDF viewing and attachment downloads. It validates material IDs and disposition, returns `application/pdf`, and only serves materials whose `removedAt` is null. The response filename is derived safely from the material title. Missing files and removed or nonexistent materials return 404; invalid IDs or dispositions return 400.
 
-Added View PDF and Download PDF actions to each material card. View PDF requests inline disposition and displays the returned PDF in a viewer. Download PDF requests attachment disposition and downloads the same file with a sanitized title based filename. Both actions use the existing authenticated client and GridFS storage. Search, subject filters, details, and upload remain integrated.
+Added icon based View details, View PDF, and Download PDF actions to each material card. View PDF opens an in-page viewer with an explicit full-screen toggle. The search and subject controls and material actions have responsive styles. Download still uses the authenticated client, GridFS storage, and a sanitized title based filename. Search, subject filters, details, and upload remain integrated.
 
 ### Verification and Jira Evidence
 
@@ -92,7 +92,7 @@ Added View PDF and Download PDF actions to each material card. View PDF requests
 | Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
 | Frontend lint and production build | Passed |
 
-Updated the Playwright selectors to match the current search and download labels. The browser flow now checks material details and opens the PDF viewer before downloading. The browser suite could not be run in this workspace because `@playwright/test` is not installed; the CI run should verify the selector changes.
+Updated the Playwright selectors to match the current search and download labels. The browser flow checks material details, the PDF viewer, and its full-screen toggle before downloading. The browser suite could not be run in this workspace because `@playwright/test` is not installed; the CI run should verify the selector changes.
 
 Test commands and results are recorded here for Jira evidence.
 
@@ -111,7 +111,7 @@ Test commands and results are recorded here for Jira evidence.
 
 ### Implementation
 
-Added the protected `/dashboard` student landing page and made successful student login redirect there. The dashboard links to Materials, Quiz Creation, and Quiz Search. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place. The responsive card layout and student navigation use the shared React Router and Navbar.
+Added the protected `/dashboard` student landing page and made successful student login redirect there. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place. The responsive card layout and student navigation use the shared React Router and Navbar.
 
 The handoff review found no Quiz History or Performance page or API in Karan’s available branches. Those dashboard cards state that the sections are unavailable. The dashboard does not replace them with the local attempt prototype. Acceptance criterion 6 remains dependent on Karan’s route and page exports.
 
@@ -126,4 +126,4 @@ The handoff review found no Quiz History or Performance page or API in Karan’s
 | Frontend lint and production build | Passed |
 | Browser suite | Not run; `@playwright/test` is missing from this workspace |
 
-The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px. GitHub Actions and Jira evidence still need to be recorded through the project workflow.
+The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px.
