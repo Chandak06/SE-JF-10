@@ -1,29 +1,29 @@
-.page { max-width: 1160px; min-height: calc(100vh - 76px); margin: auto; padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 3.5rem); color: var(--text-primary); }
-.eyebrow { margin: 0 0 .8rem; color: var(--accent); font-size: .75rem; font-weight: 750; letter-spacing: .13em; }
+.page { width: 100%; min-height: calc(100vh - 76px); margin: 0; padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 6rem); color: var(--text-primary); }
 .page h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -.035em; font-weight: 650; }
-.intro { margin: .8rem 0 0; color: var(--text-secondary); font-size: 1.05rem; }
-.grid { display: flex; max-width: 780px; flex-direction: column; margin: 1.5rem 0 0; }
-.card { display: grid; min-height: 94px; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem .5rem; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
-.icon { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--border); border-radius: 11px; color: var(--accent); background: var(--surface-subtle); font-size: 1.05rem; font-weight: 750; }
-.card h2 { margin: 0; font-size: 1rem; font-weight: 650; }
-.cardCopy p { margin: .3rem 0 0; color: var(--text-secondary); font-size: .9rem; line-height: 1.45; }
-.card > a { display: inline-flex; min-height: 42px; align-items: center; margin-top: auto; padding: 0 1rem; border-radius: 8px; color: var(--accent-contrast); background: var(--accent); font-weight: 650; text-decoration: none; }
-.card > a:hover { background: var(--accent-hover); }
-.card > a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.card .unavailable { color: var(--text-tertiary); font-size: .78rem; white-space: nowrap; }
-.recentSection { max-width: 780px; margin-top: 2.5rem; }
-.recentHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .65rem; border-bottom: 1px solid var(--border); }
-.recentHeading h2 { margin: 0; font-size: 1.05rem; font-weight: 650; }
-.recentHeading > a { color: var(--accent); font-size: .85rem; font-weight: 600; text-decoration: none; }
+.intro { margin: .65rem 0 0; color: var(--text-secondary); font-size: 1rem; }
+.dashboardGrid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, .85fr); align-items: start; gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(2rem, 4vw, 3.25rem); }
+.recentSection, .toolsSection { min-width: 0; }
+.recentHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .9rem; border-bottom: 1px solid var(--border); }
+.recentHeading h2, .toolsSection > h2 { margin: 0; font-size: 1.1rem; font-weight: 650; }
+.recentHeading p { margin: .3rem 0 0; color: var(--text-tertiary); font-size: .85rem; }
+.recentHeading > a { color: var(--accent); font-size: .85rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .recentHeading > a:hover { text-decoration: underline; }
-.recentList { margin: 0; padding: 0; list-style: none; }
-.recentList li { border-bottom: 1px solid var(--border); }
-.recentList li > a { display: flex; min-height: 66px; align-items: center; gap: .85rem; padding: .6rem .35rem; color: inherit; text-decoration: none; }
-.recentList li > a:hover { background: var(--surface-subtle); }
-.recentFile { display: grid; width: 34px; height: 38px; flex: 0 0 34px; place-items: center; border-radius: 8px; color: var(--accent); background: var(--surface-subtle); font-size: .62rem; font-weight: 750; }
-.recentCopy { display: grid; min-width: 0; gap: .2rem; flex: 1; }
+.recentList { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: .8rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.recentList li { min-width: 0; }
+.recentList li > a { display: flex; min-height: 82px; align-items: center; gap: .8rem; padding: .8rem .9rem; border: 1px solid var(--border); border-radius: 12px; color: inherit; background: var(--surface); text-decoration: none; transition: border-color .16s, background .16s, transform .16s; }
+.recentList li > a:hover { transform: translateY(-1px); border-color: var(--accent); background: var(--surface-subtle); }
+.recentFile { display: grid; width: 36px; height: 40px; flex: 0 0 36px; place-items: center; border-radius: 9px; color: var(--accent); background: var(--surface-subtle); font-size: .62rem; font-weight: 750; }
+.recentCopy { display: grid; min-width: 0; gap: .25rem; flex: 1; }
 .recentCopy strong { overflow: hidden; font-size: .9rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .recentCopy small { color: var(--text-tertiary); font-size: .78rem; }
-.recentList time { color: var(--text-tertiary); font-size: .78rem; white-space: nowrap; }
-.recentEmpty { margin: 0; padding: 1rem .35rem; color: var(--text-tertiary); font-size: .88rem; }
-@media (max-width: 520px) { .page { padding-top: 1rem; } .grid { margin-top: 1.25rem; } .card { min-height: 88px; grid-template-columns: 36px minmax(0, 1fr); gap: .8rem; padding: .85rem 0; } .icon { width: 34px; height: 34px; } .card .unavailable { grid-column: 2; margin-top: -.4rem; } }
+.recentList time { color: var(--text-tertiary); font-size: .72rem; white-space: nowrap; }
+.recentEmpty { margin: 1rem 0 0; padding: 1.1rem; border: 1px dashed var(--border); border-radius: 12px; color: var(--text-tertiary); font-size: .88rem; }
+.toolsSection > h2 { padding-bottom: .9rem; border-bottom: 1px solid var(--border); }
+.grid { display: flex; flex-direction: column; }
+.card { display: grid; min-height: 88px; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: .85rem; padding: .8rem .1rem; border-bottom: 1px solid var(--border); }
+.icon { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid var(--border); border-radius: 10px; color: var(--accent); background: var(--surface-subtle); font-size: 1rem; font-weight: 700; }
+.card h3 { margin: 0; font-size: .92rem; font-weight: 650; }
+.cardCopy p { margin: .25rem 0 0; color: var(--text-secondary); font-size: .8rem; line-height: 1.4; }
+.card .unavailable { color: var(--text-tertiary); font-size: .72rem; white-space: nowrap; }
+@media (max-width: 820px) { .dashboardGrid { grid-template-columns: 1fr; gap: 2rem; } }
+@media (max-width: 520px) { .page { padding: 1.5rem 1rem 2.5rem; } .dashboardGrid { margin-top: 1.6rem; } .recentHeading { align-items: flex-start; } .recentList { grid-template-columns: 1fr; } .card { grid-template-columns: 36px minmax(0, 1fr) auto; gap: .65rem; } .icon { width: 33px; height: 33px; } .card .unavailable { font-size: .66rem; } }
