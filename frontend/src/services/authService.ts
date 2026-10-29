@@ -94,7 +94,7 @@ export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!Array.isArray(result.materials)) throw new Error('The server returned an unexpected response.')
   return result.materials
 }
-async function authorized(path: string, options: RequestInit = {}) {
+export async function authorized(path: string, options: RequestInit = {}) {
   if (!sessionToken) throw new Error('Please log in to continue.')
   const token = sessionToken
   let response: Response
