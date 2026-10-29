@@ -50,17 +50,17 @@ Updated the Playwright pagination test to count material groups by their accessi
 
 ### Implementation
 
-Added an authenticated `GET /api/materials/:id` lookup. It returns the material ID, title, subject, description, uploader ID, and creation date for active materials. Invalid IDs return HTTP 400. Missing and removed materials return HTTP 404. The route selects only the required metadata and does not expose file data.
+Added an authenticated `GET /api/materials/:id` lookup. It returns the material ID, title, subject, description, uploader ID, uploader name from the existing User model, and creation date for active materials. The details panel displays the uploader name while retaining the ID in the API response. Invalid IDs return HTTP 400. Missing and removed materials return HTTP 404. The route selects only the required metadata and does not expose file data.
 
-Added a “View details” action to each material card. It loads details by ID and displays the title, subject, description, uploader identifier, and localized upload date. Lookup errors appear in the details view.
+Selecting a material card loads details by ID and displays the title, subject, description, uploader name, and localized upload date. The response retains the uploader ID for identifier-based consumers. Lookup errors appear in the details view.
 
 ### Verification
 
 | Check | Result |
 |---|---|
 | `npm run typecheck` | Passed |
-| Sprint 2 backend integration suite | 11 tests passed |
-| Materials page frontend tests | 11 tests passed |
+| Sprint 2 backend integration suite | 12 tests passed |
+| Materials page frontend tests | 15 tests passed |
 
 ### Commits
 

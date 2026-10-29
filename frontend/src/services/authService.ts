@@ -80,7 +80,7 @@ export async function uploadMaterial(input: { title: string; subject: string; de
 }
 
 export type StudyMaterial = { id: string; title: string; subject: string; description: string; size: number; createdAt: string }
-export type MaterialDetails = Pick<StudyMaterial, 'id' | 'title' | 'subject' | 'description' | 'createdAt'> & { uploadedBy: string }
+export type MaterialDetails = Pick<StudyMaterial, 'id' | 'title' | 'subject' | 'description' | 'createdAt'> & { uploadedBy: string; uploadedByName?: string }
 // First-page convenience for older callers; paginated UIs use searchMaterials.
 export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!sessionToken) throw new Error('Please log in to view materials.')
@@ -152,7 +152,8 @@ export async function getMaterialDetails(id: string): Promise<MaterialDetails> {
   const material = result.material
   if (!material || typeof material.id !== 'string' || typeof material.title !== 'string'
     || typeof material.subject !== 'string' || typeof material.description !== 'string'
-    || typeof material.uploadedBy !== 'string' || typeof material.createdAt !== 'string') {
+    || typeof material.uploadedBy !== 'string' || (material.uploadedByName !== undefined && typeof material.uploadedByName !== 'string')
+    || typeof material.createdAt !== 'string') {
     throw new Error('The server returned unexpected material details.')
   }
   return material as MaterialDetails

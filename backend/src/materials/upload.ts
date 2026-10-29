@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { AppError } from '../errors.js';
 import { requireRole } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validation.js';
+import { getUserModel } from '../models/user.js';
 import { objectId, type ModerationResource } from '../admin/moderation.js';
 
 export interface StoredMaterial {
@@ -41,6 +42,7 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
   }, { timestamps: true, versionKey: false, strict: 'throw' });
   const Material = (connection.models.Material as Model<StoredMaterial> | undefined)
     ?? connection.model<StoredMaterial>('Material', schema);
+  const User = getUserModel(connection);
   const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: maxBytes, files: 1, fields: 3, parts: 5, fieldSize: 4096 },
@@ -81,8 +83,10 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     const material = await Material.findOne({ _id: id.data, removedAt: null })
       .select('title subject description uploadedBy createdAt').lean();
     if (!material) throw new AppError(404, 'NOT_FOUND', 'Material is unavailable.');
+    const uploader = await User.findById(material.uploadedBy).select('name').lean();
     res.json({ material: { id: material._id.toString(), title: material.title, subject: material.subject,
-      description: material.description, uploadedBy: material.uploadedBy.toString(), createdAt: material.createdAt.toISOString() } });
+      description: material.description, uploadedBy: material.uploadedBy.toString(), uploadedByName: uploader?.name ?? 'Unknown user',
+      createdAt: material.createdAt.toISOString() } });
   });
   router.get('/:id/file', async (req, res) => {
     const id = objectId.safeParse(req.params.id);

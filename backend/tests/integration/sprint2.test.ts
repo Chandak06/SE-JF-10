@@ -114,7 +114,7 @@ it('returns selected material metadata by identifier and rejects invalid or unav
   const response = await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
   expect(response.body.material).toMatchObject({
     id, title: 'Selected notes', subject: 'CS', description: 'Details for a selected material',
-    uploadedBy: expect.any(String), createdAt: expect.any(String)
+    uploadedBy: expect.any(String), uploadedByName: 'Student', createdAt: expect.any(String)
   });
   expect(response.body.material.uploadedBy).toBe((await runtime.accounts.User.findOne({ email: 'student@example.com' }))!._id.toString());
   expect(Number.isNaN(Date.parse(response.body.material.createdAt))).toBe(false);

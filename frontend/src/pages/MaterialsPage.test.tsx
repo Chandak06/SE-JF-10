@@ -172,7 +172,7 @@ it('searches existing subjects in the filter menu and applies a selected subject
 })
 
 it('loads and displays metadata for a selected material', async () => {
-  const selected = { id: 'material-id', title: 'Selected Notes', subject: 'Software Engineering', description: 'Sprint review notes', uploadedBy: 'student-id', createdAt: '2026-10-21T10:30:00.000Z' }
+  const selected = { id: 'material-id', title: 'Selected Notes', subject: 'Software Engineering', description: 'Sprint review notes', uploadedBy: 'student-id', uploadedByName: 'Alex Student', createdAt: '2026-10-21T10:30:00.000Z' }
   vi.mocked(auth.searchMaterials).mockResolvedValue({ materials: [item(selected.id, selected.title)], nextCursor: null })
   vi.mocked(auth.getMaterialDetails).mockResolvedValue(selected)
   show()
@@ -181,7 +181,8 @@ it('loads and displays metadata for a selected material', async () => {
   expect(await screen.findByRole('dialog', { name: 'Selected Notes' })).toBeInTheDocument()
   expect(screen.getByText('Software Engineering')).toBeInTheDocument()
   expect(screen.getByText('Sprint review notes')).toBeInTheDocument()
-  expect(screen.getByText('student-id')).toBeInTheDocument()
+  expect(screen.getByText('Alex Student')).toBeInTheDocument()
+  expect(screen.queryByText('student-id')).not.toBeInTheDocument()
   expect(screen.getByText(new Date(selected.createdAt).toLocaleString())).toBeInTheDocument()
   expect(auth.getMaterialDetails).toHaveBeenCalledWith(selected.id)
   expect(JSON.parse(localStorage.getItem('study-commons-recent-materials:student-1')!)[0].id).toBe(selected.id)
