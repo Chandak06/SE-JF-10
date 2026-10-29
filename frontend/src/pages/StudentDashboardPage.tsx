@@ -11,7 +11,6 @@ const destinations: DashboardDestination[] = [
 export default function StudentDashboardPage() {
   const student = getSessionUser()
   return <section className={styles.page} aria-labelledby="student-dashboard-title">
-    <p className={styles.eyebrow}>STUDY COMMONS · STUDENT</p>
     <h1 id="student-dashboard-title">{student?.name ? `Welcome, ${student.name}` : 'Student Dashboard'}</h1>
     <p className={styles.intro}>Your starting point for study materials and quizzes.</p>
     <div className={styles.grid}>
