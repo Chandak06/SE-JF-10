@@ -129,9 +129,9 @@ test('student loads the 26th search match and keeps the search after another upl
   await expect(page).toHaveURL(url + '/materials')
   await page.getByLabel('Search study materials').fill('Paging')
   await page.getByRole('button', { name: 'Search', exact: true }).click()
-  await expect(page.getByRole('article')).toHaveCount(25)
+  await expect(page.getByRole('group', { name: /^Material:/ })).toHaveCount(25)
   await page.getByRole('button', { name: 'Load more materials' }).click()
-  await expect(page.getByRole('article')).toHaveCount(26)
+  await expect(page.getByRole('group', { name: /^Material:/ })).toHaveCount(26)
   await expect(page.getByRole('button', { name: 'Load more materials' })).toHaveCount(0)
   await page.getByRole('button', { name: 'Upload a material' }).click()
   await page.getByLabel('Material title', { exact: true }).fill('Unrelated upload')
@@ -146,7 +146,7 @@ test('student loads the 26th search match and keeps the search after another upl
   await expect(page.getByLabel('Search study materials')).toHaveValue('Paging')
   await expect(page.getByRole('heading', { name: 'Unrelated upload', exact: true })).toHaveCount(0)
   await page.getByRole('button', { name: 'Load more materials' }).click()
-  await expect(page.getByRole('article')).toHaveCount(26)
+  await expect(page.getByRole('group', { name: /^Material:/ })).toHaveCount(26)
 })
 
 test('Admin dashboard integrates real Question Bank moderation, responsive navigation and Student denial', async ({ page }, info) => {

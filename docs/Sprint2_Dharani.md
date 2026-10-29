@@ -31,6 +31,8 @@ Added a keyword search with the filter icon at the right edge of the search fiel
 | Materials page and auth service frontend tests | 30 passed |
 | `git diff --check` | Passed |
 
+Updated the Playwright pagination test to count material groups by their accessible card labels after the card role changed. The browser suite could not be rerun locally because the Playwright executable is unavailable in this workspace.
+
 ## Commits
 
 - `60e5e95` Sprint:2 CSMQ:35 Cover combined material search behavior
