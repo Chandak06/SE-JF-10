@@ -39,3 +39,31 @@ Added keyword and subject fields to the student Materials page. Both filters are
 - `442f24a` Sprint:2 CSMQ:35 Verify tombstone and overlapping matches
 
 
+
+## CSMQ-36: Study Material View and Details
+
+**Sprint:** 2
+**Owner:** Dharani S
+
+### Implementation
+
+Added an authenticated `GET /api/materials/:id` lookup. It returns the material ID, title, subject, description, uploader ID, and creation date for active materials. Invalid IDs return HTTP 400. Missing and removed materials return HTTP 404. The route selects only the required metadata and does not expose file data.
+
+Added a “View details” action to each material card. It loads details by ID and displays the title, subject, description, uploader identifier, and localized upload date. Lookup errors appear in the details view.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | Passed |
+| Sprint 2 backend integration suite | 11 tests passed |
+| Materials page frontend tests | 11 tests passed |
+
+### Commits
+
+- `39e32f4` Sprint:2 CSMQ:36 Add protected material details lookup
+- `55763f3` Sprint:2 CSMQ:36 Add authenticated material details client
+- `09e25ce` Sprint:2 CSMQ:36 Show selected material details
+- `98713a2` Sprint:2 CSMQ:36 Test selected details and unavailable state
+
+All four commits are local and have not been pushed.
