@@ -53,6 +53,7 @@ export default function MaterialsPage() {
   const [file, setFile] = useState<File | null>(null); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false)
 
   useEffect(() => () => { if (pdfViewUrl) URL.revokeObjectURL(pdfViewUrl) }, [pdfViewUrl])
+  useEffect(() => () => { ++pdfRequest.current; ++detailsRequest.current }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
