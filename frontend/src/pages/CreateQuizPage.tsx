@@ -20,8 +20,12 @@ export default function CreateQuizPage() {
   const [availableQuestions, setAvailableQuestions] = useState<
     QuizQuestionSummary[]
   >([]);
-  const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [initialLoadingQuestions, setLoadingQuestions] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const filterKey = JSON.stringify([filterSubject.trim(), filterTopic.trim(), filterDifficulty]);
+  const [resolvedFilter, setResolvedFilter] = useState<string | null>(null);
+  const loadingQuestions = initialLoadingQuestions || resolvedFilter !== filterKey;
+  const currentFetchError = resolvedFilter === filterKey ? fetchError : null;
 
   // Form submission state
   const [formError, setFormError] = useState<string | null>(null);
@@ -42,6 +46,7 @@ export default function CreateQuizPage() {
       .then((data) => {
         if (!isCancelled && reqId === activeRequestId.current) {
           setAvailableQuestions(data);
+          setResolvedFilter(filterKey);
           setFetchError(null);
           setLoadingQuestions(false);
         }
@@ -51,6 +56,8 @@ export default function CreateQuizPage() {
           setFetchError(
             err instanceof Error ? err.message : 'Failed to load questions.'
           );
+          setAvailableQuestions([]);
+          setResolvedFilter(filterKey);
           setLoadingQuestions(false);
         }
       });
@@ -58,7 +65,7 @@ export default function CreateQuizPage() {
     return () => {
       isCancelled = true;
     };
-  }, [filterSubject, filterTopic, filterDifficulty]);
+  }, [filterSubject, filterTopic, filterDifficulty, filterKey]);
 
   function toggleQuestionSelection(id: string) {
     setSelectedQuestionIds((prev) =>
@@ -138,6 +145,7 @@ export default function CreateQuizPage() {
         <p className={styles.subtitle}>
           Assemble an objective quiz for student practice by selecting questions
           from the Question Bank.
+          {' '}Scoring awards one point per correct answer.
         </p>
       </header>
 
@@ -196,7 +204,7 @@ export default function CreateQuizPage() {
               <span className={styles.selectedCountBadge}>
                 {selectedQuestionIds.length} question(s) selected
               </span>
-              {availableQuestions.length > 0 && (
+              {!loadingQuestions && !currentFetchError && availableQuestions.length > 0 && (
                 <>
                   <button
                     type="button"
@@ -256,9 +264,9 @@ export default function CreateQuizPage() {
             )}
           </div>
 
-          {fetchError && (
+          {currentFetchError && (
             <div className={styles.alertError} role="alert">
-              {fetchError}
+              {currentFetchError}
             </div>
           )}
 
@@ -266,7 +274,7 @@ export default function CreateQuizPage() {
             <div className={styles.emptyState}>
               <p>Loading Question Bank questions...</p>
             </div>
-          ) : availableQuestions.length === 0 ? (
+          ) : currentFetchError ? null : availableQuestions.length === 0 ? (
             <div className={styles.emptyState}>
               <p>No questions found matching the selected filters.</p>
             </div>
@@ -320,7 +328,7 @@ export default function CreateQuizPage() {
                         )}
                         {question.marks !== undefined && (
                           <span className={styles.tagMeta}>
-                            <strong>Marks:</strong> {question.marks}
+                            <strong>Question Bank marks (reference):</strong> {question.marks}
                           </span>
                         )}
                         <span className={styles.tagMeta}>
