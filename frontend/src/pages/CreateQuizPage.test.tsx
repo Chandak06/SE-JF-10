@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -42,6 +42,20 @@ const mockQuestions: quizService.QuizQuestionSummary[] = [
 ];
 
 describe('CreateQuizPage (CSMQ-49)', () => {
+  it('prevents selecting stale questions while filters load and distinguishes errors from no matches', async () => {
+    vi.mocked(quizService.fetchQuestionBankForQuiz).mockResolvedValueOnce(mockQuestions);
+    render(<MemoryRouter><CreateQuizPage /></MemoryRouter>);
+    await screen.findByText('What protocol operates at the Transport Layer?');
+    let reject!: (reason: Error) => void;
+    vi.mocked(quizService.fetchQuestionBankForQuiz).mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; }));
+    fireEvent.change(screen.getByLabelText('Filter questions by subject'), { target: { value: 'Databases' } });
+    expect(screen.getByText('Loading Question Bank questions...')).toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Select All' })).not.toBeInTheDocument();
+    await act(async () => reject(new Error('Question search unavailable')));
+    expect(screen.getByRole('alert')).toHaveTextContent('Question search unavailable');
+    expect(screen.queryByText('No questions found matching the selected filters.')).not.toBeInTheDocument();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(quizService.fetchQuestionBankForQuiz).mockResolvedValue(mockQuestions);
