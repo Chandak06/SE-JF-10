@@ -31,7 +31,7 @@ export function createApp({ config, auth, features = {}, databaseReady = () => t
     next();
   });
   app.use(helmet());
-  app.use(cors({ origin: config.CLIENT_ORIGIN, methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization'] }));
+  app.use(cors({ origin: config.CLIENT_ORIGIN, methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'] }));
   app.use('/api', (req, _res, next) => {
     if (config.NODE_ENV === 'production' && !req.secure) throw new AppError(400, 'HTTPS_REQUIRED', 'Use HTTPS for API requests.');
     next();

@@ -17,7 +17,7 @@ import {
 } from './attemptService';
 
 vi.mock('./authService', () => ({
-  getSessionToken: vi.fn()
+  getSessionToken: vi.fn(), invalidateExpiredSession: vi.fn()
 }));
 
 const fetchMock = vi.fn();

@@ -1,6 +1,6 @@
-# Sprint 2 requirement/test matrix — 29 October 2026
+# Sprint 2 requirement/test matrix — 30 October 2026
 
-SRS/SAD requirements are unchanged. Validated means actual available code/tests, not independent human/faculty acceptance. Execution details: [current status](SPRINT2_HARSHIT.md).
+Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated means executed automated verification, not invented human/faculty acceptance. Current execution and release evidence: [final implementation/test summary](SPRINT2_HARSHIT_FINAL_2026-10-30.md).
 
 | SRS IDs | Evidence / available implementation | Final acceptance boundary |
 | --- | --- | --- |
@@ -12,16 +12,16 @@ SRS/SAD requirements are unchanged. Validated means actual available code/tests,
 | F-020/022 | Real Admin MCQ creation/classification/filtering and student-safe serializer; model/API/UI/browser tests | Validated |
 | F-042 | Real Question/Quiz moderation, read/submission exclusions and preserved stored attempts; shared-runtime API/browser tests | Implemented and regression tested; genuine review pending |
 | F-030/032 | Real Quiz model/create/search/view APIs and Student UI from PRs #25–32; cross-module and browser tests | Integrated and tested |
-| F-033/034 | Production trusted submission/evaluation/persistence from PR #29; real Quiz integration and removed-reference security | API tested; production Attempt UI (CSMQ-41) pending |
-| F-035/036/040 | Submission API returns correct result; production Result/history/subject-average routes/UI not delivered | CSMQ-42–44 pending; prototype is not substituted |
-| NF-001 | Three browsers assert single-user dashboard content within 3s after app startup; scoped load timings | Scoped pass; full-platform timing pending |
-| NF-002 | Accounts/materials/Question removal/sessions survive restart/reconnect; real Quiz moderation preserves saved attempts | Delivered-module pass; full history/performance lifecycle pending |
-| NF-003 | Separate auth/material and real Quiz retrieval/scoring workloads at 10/50 sessions | Delivered-module pass; missing workflows pending |
-| NF-004 | Chrome/Edge/Firefox matrix includes Quiz creation/view, production API scoring and moderation | Delivered-module pass; missing pages untested |
+| F-033/034 | Real Attempt UI loads the actual Quiz and submits to trusted scoring/persistence; stable retry identity prevents duplicate records | Integrated UI/API/browser and racing-retry tests pass |
+| F-035/036/040 | Real saved Result/History/Performance pages; full-history subject means include the 51st record; SAD resultId/answer feedback supplied only after saved submission | Automated acceptance and actual browser journey pass |
+| NF-001 | All three browsers enforce primary-content under 3s after startup for Materials, Create/Search/View Quiz, Dashboard, Attempt, Result, History and Performance | Pass with timing attachments; normal single-user conditions |
+| NF-002 | Accounts, sessions, attempts/history and moderation survive actual MongoDB stop/restart; history remains after Quiz/Question removal | Restart/reconnect and built-release lifecycle pass |
+| NF-003 | Separate auth/material and real Quiz retrieval/scoring workloads at 10/50 sessions | Pass; scope and measured p90 values recorded without claiming 50 browser processes |
+| NF-004 | 15 journeys across Chrome/Edge/Firefox, including the complete saved Attempt/Result/History/Performance flow | Browser matrix pass |
 | NF-005 | Dashboard/navbar at 320/375/768/1024/1440px, no overflow/overlap; loading/error/retry/confirmation/cancel states | Available-module pass; whole-product usability pending |
 | SR-001 | Existing bcrypt helper, confirmed initial Admin CLI and credential-exclusion tests | Validated |
 | SR-002/003 | Current account/session role, protected routes, Admin/Student UI gates, 401/403 | Validated on integrated routes; owner routes must comply |
 | SR-004 | Strict body/ID/filter validation, query-injection tests, safe errors and confirmed deletion | Validated on integrated routes |
-| SR-005 | Production HTTPS enforcement, trusted proxy and Caddy; separate loopback development HTTP | Code/config tested; public deployed certificate not claimed |
+| SR-005 | Production transport gate and trusted gateway; dedicated certificate-validated local HTTPS deployment/sensitive-operation smoke in CI, plus direct plaintext rejection | Verify final PR CI; no public host/certificate claim or TLS verification bypass |
 
-Approved requirements are unchanged. Material details/viewing, Student Dashboard and real Quiz/Attempt API integration now have delivered-module evidence; material folders, production Attempt/Result screens, history/performance and genuine final acceptance remain pending. See the [current team report](SPRINT2_TEAM_REVIEW_2026-10-29.md) for reviewed heads and findings.
+All 17 functional, five NFR and five security requirement groups remain represented. CSMQ-32's folder phrase conflicts with the frozen baseline and is recorded separately, not assigned to Dharani or used to rewrite submitted requirements. Final peer cross-testing, RTM/defect review, Project Guide acceptance, final demo and release freeze remain genuine human acceptance gates. Current modules are no longer marked missing simply because earlier dated reports predate their PRs.

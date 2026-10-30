@@ -8,6 +8,7 @@
     "node": ">=24.15 <25"
   },
   "scripts": {
+    "check:submitted": "node scripts/check-submitted-documents.mjs",
     "demo:build": "node scripts/build-local-demo.mjs",
     "demo:local": "tsx backend/scripts/local-demo.ts",
     "demo:verify": "tsx backend/scripts/verify-local-demo.ts",
@@ -22,7 +23,7 @@
     "test:integration": "vitest run backend/tests/integration",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage",
-    "check": "npm run typecheck && npm run build && npm run test:ci"
+    "check": "npm run check:submitted && npm run typecheck && npm run build && npm run test:ci"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

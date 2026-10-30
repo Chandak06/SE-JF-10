@@ -21,6 +21,7 @@ export interface AttemptToSave {
   responses: readonly SubmittedResponse[];
   score: number;
   percentage: number;
+  submissionKey?: string;
 }
 
 // Database operations needed by the service.
@@ -41,7 +42,8 @@ export interface AttemptRepository {
 export async function submitQuizAttempt(
   input: AttemptSubmissionInput,
   authenticatedUserId: string,
-  repository: AttemptRepository
+  repository: AttemptRepository,
+  submissionKey?: string
 ) {
   // Step 1: Fetch the quiz from the database.
   const quiz = await repository.findQuiz(input.quizId);
@@ -134,13 +136,17 @@ export async function submitQuizAttempt(
     quizId: quiz.id,
     responses: normalizedResponses,
     score: evaluation.score,
-    percentage: evaluation.percentage
+    percentage: evaluation.percentage,
+    ...(submissionKey ? { submissionKey } : {})
   });
 
   // Step 7: Return the result to the frontend.
   return {
     attemptId: savedAttempt.id,
+    resultId: savedAttempt.id,
     quizId: quiz.id,
+    // Submitted SAD §4.3: answer feedback is emitted only after a saved result.
+    correctAnswers: orderedQuestions.map(question => ({ questionId: question.id, correctOptionId: question.correctAnswer })),
     ...evaluation
   };
 }

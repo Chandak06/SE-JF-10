@@ -116,7 +116,7 @@ describe('CSMQ-41: Quiz Attempt frontend integration', () => {
             selectedOptionId: 'B'
           }
         ]
-      })
+      }, expect.any(String))
     })
 
     expect(

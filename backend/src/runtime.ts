@@ -23,8 +23,9 @@ export async function createRuntime(connection: Connection, config: Config, opti
   const sessions = createMongoSessionStore(connection);
   const questions = createQuestionsRouter(connection);
   const quizzes = createQuizzesRouter(connection);
-  const attempts = createAttemptRouter(createMongoAttemptRepository(connection));
-  await Promise.all([accounts.initialize(), materials.initialize(), sessions.initialize(), questions.initialize(), quizzes.initialize()]);
+  const attemptRepository = createMongoAttemptRepository(connection);
+  const attempts = createAttemptRouter(attemptRepository);
+  await Promise.all([accounts.initialize(), materials.initialize(), sessions.initialize(), questions.initialize(), quizzes.initialize(), attemptRepository.initialize()]);
   const auth = await createAuthService({
     accounts: accounts.accounts, sessions, rounds: config.BCRYPT_ROUNDS, ttlMinutes: config.SESSION_TTL_MINUTES
   });

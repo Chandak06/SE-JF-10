@@ -31,4 +31,6 @@ it('keeps each student recent list separate and shows a first-open empty state',
   recordRecentMaterial('material-1', 'another-student')
   render(<MemoryRouter><StudentDashboardPage /></MemoryRouter>)
   expect(screen.getByText('Materials you open will appear here for quick access.')).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /Quiz Attempt History/ })).toHaveAttribute('href', '/attempt-history')
+  expect(screen.getByRole('link', { name: /Performance Dashboard/ })).toHaveAttribute('href', '/attempt-insights')
 })

@@ -30,6 +30,11 @@ function displayResult(state?: unknown, path = `/quizzes/${quizId}/results/${att
 afterEach(() => cleanup())
 
 describe('CSMQ-42: Quiz Result screen', () => {
+  it('shows submitted-SAD answer feedback only in a matching successful result', () => {
+    displayResult({ result: { ...result, resultId: attemptId, correctAnswers: [{ questionId: '507f1f77bcf86cd799439001', correctOptionId: 'B' }] } })
+    expect(screen.getByRole('region', { name: 'Submitted quiz answer feedback' })).toBeTruthy()
+    expect(screen.getByText('Correct option: B')).toBeTruthy()
+  })
   it('renders trusted submission metrics and navigation', () => {
     displayResult({ result, title: 'Computer Science Practice Quiz' })
 
