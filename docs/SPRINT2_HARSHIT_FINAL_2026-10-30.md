@@ -45,6 +45,6 @@ The configured Atlas read-only ping was rerun on 30 October and failed. Its reco
 
 ## Separate scope clarification
 
-Folder management appears in Jira CSMQ-32 but not in the frozen SRS/SAD/Test Plan, the current work division, or Dharani's CSMQ-35/36/38/54 criteria. It is a backlog/baseline inconsistency, not a verified missing Dharani requirement. This report does not amend the submitted documents, silently delete Jira acceptance criteria or add an unapproved folder feature.
+Harshit confirmed on 30 October that the folder-management idea is dropped. CSMQ-32's current integration acceptance criterion has been updated accordingly, with a dated scope decision retaining the historical context. Folder management is excluded from Sprint 2 completion assessment and is not an outstanding defect or teammate deliverable. The submitted SRS, SAD and Test Plan remain unchanged.
 
 Harshit's implementation and automated verification are ready for final acceptance against the frozen baseline. Jira completion still requires the remaining genuine review/acceptance evidence; an automated coding run alone does not satisfy every Test Plan exit criterion.
