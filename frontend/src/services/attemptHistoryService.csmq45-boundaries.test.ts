@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getAttemptHistory } from './attemptHistoryService'
 import { getSessionToken } from './authService'
 
-vi.mock('./authService', () => ({ getSessionToken: vi.fn() }))
+vi.mock('./authService', () => ({ getSessionToken: vi.fn(), invalidateExpiredSession: vi.fn() }))
 const fetchMock = vi.fn()
 
 beforeEach(() => {
