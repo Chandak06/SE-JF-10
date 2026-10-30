@@ -4,6 +4,8 @@ Date: 30 October 2026. Owner: Harshit Chandak / PES2UG24CS185. Baseline: main `f
 
 ## Current scope
 
+The subsequent [whole-flow logic audit](SPRINT2_LOGIC_AUDIT_2026-10-30.md) records the corrected filter loading/error states, consistent one-point scoring labels and canonical quiz IDs, with the latest 326 backend / 184 frontend / 15 browser test results. Earlier execution totals below describe their dated runs.
+
 Karan's real Attempt, Result, History, Performance and acceptance-test changes are now published and integrated. The earlier missing-module reports describe the 28/29 October snapshots, not current availability. Harshit's CSMQ-29–34/55 implementation now connects the complete available application.
 
 The submitted SRS, SAD and Test Plan are unchanged. `npm run check:submitted` and CI verify frozen fingerprints in [the separate manifest](evidence/submitted-document-hashes.json). PDFs are checked byte-for-byte; Markdown canonicalizes only checkout line endings. Local hashes also cover the untouched Word/PDF copies supplied in the project folder. No submitted file is regenerated or rewritten.
