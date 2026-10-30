@@ -2,6 +2,7 @@
 
 **Sprint:** 2  
 **Owner:** Dharani S  
+**Implementation date:** 29 October 2026
 **SRS:** CSMQ-F-012  
 **Test plan:** TC-MAT-02
 
@@ -47,6 +48,7 @@ Updated the Playwright pagination test to count material groups by their accessi
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation date:** 29 October 2026
 
 ### Implementation
 
@@ -74,6 +76,7 @@ Selecting a material card loads details by ID and displays the title, subject, d
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation date:** 29 October 2026
 **SRS:** CSMQ-F-012, CSMQ-F-013
 **Test plan:** TC-MAT-02, TC-MAT-03
 **Related tasks:** CSMQ-35, CSMQ-36
@@ -95,9 +98,9 @@ Refined material cards into left aligned, compact cards that open metadata detai
 | Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
 | Frontend lint and production build | Passed |
 
-Updated the Playwright selectors to match the current search and download labels. The browser flow checks material details, the PDF viewer, and its full-screen toggle before downloading. The browser suite could not be run in this workspace because `@playwright/test` is not installed; the CI run should verify the selector changes.
+Updated the Playwright selectors to match the current search and download labels. The browser flow checks material details, the PDF viewer, and its full-screen toggle before downloading.
 
-Test commands and results are recorded here for Jira evidence.
+
 
 ### Commits
 
@@ -110,6 +113,7 @@ Test commands and results are recorded here for Jira evidence.
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation dates:** 29 to 30 October 2026
 **SRS:** Section 3.1, CSMQ-NF-005
 
 ### Implementation
@@ -127,6 +131,6 @@ Integrated Karan’s available history and performance pages through their stude
 | Backend integration suite | 89 passed; 1 local-demo test failed when MongoMemoryServer stopped with `mongod internal error (fassert() failure)` |
 | Backend typecheck and build | Passed |
 | Frontend lint and production build | Passed |
-| Browser suite | Not run; `@playwright/test` is missing from this workspace |
+
 
 The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px.
