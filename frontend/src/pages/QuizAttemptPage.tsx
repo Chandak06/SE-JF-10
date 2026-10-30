@@ -182,6 +182,7 @@ export default function QuizAttemptPage({
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [serverResult, setServerResult] = useState<AttemptResult | null>(null)
   const submissionInFlight = useRef(false)
+  const submissionKey = useRef<string | null>(null)
   const currentQuestion = questions[currentIndex]
   useEffect(() => {
     if (!submitted) {
@@ -279,6 +280,12 @@ export default function QuizAttemptPage({
     submissionInFlight.current = true
     setSubmitting(true)
     try {
+      if (!submissionKey.current) {
+        let saved: string | null = null
+        try { saved = window.sessionStorage.getItem(draftKey + ':submission-key') } catch { /* In-memory retry protection remains. */ }
+        submissionKey.current = saved && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(saved) ? saved : crypto.randomUUID()
+        try { window.sessionStorage.setItem(draftKey + ':submission-key', submissionKey.current) } catch { /* In-memory retry protection remains. */ }
+      }
       const result = await submitQuizAttempt({
         quizId,
         responses: questions.flatMap(question => {
@@ -287,7 +294,7 @@ export default function QuizAttemptPage({
             ? [{ questionId: question.id, selectedOptionId }]
             : []
         })
-      })
+      }, submissionKey.current)
       setServerResult(result)
       setSubmitted(true)
       setShowSubmitModal(false)
@@ -295,6 +302,7 @@ export default function QuizAttemptPage({
       // The route navigates only after the server confirms a saved result.
       // When rendered in isolation, the existing in-page result remains available.
       onSubmissionSuccess?.(result)
+      try { window.sessionStorage.removeItem(draftKey + ':submission-key') } catch { /* Storage may be disabled. */ }
     } catch (error) {
       // Preserve answers and keep the dialog open so the user can retry.
       setSubmitError(error instanceof Error ? error.message : 'Quiz submission failed. Please try again.')
