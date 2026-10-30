@@ -22,6 +22,7 @@ import QuizAttemptPage from './pages/QuizAttemptPage'
 import QuizAttemptLoader from './pages/QuizAttemptLoader'
 import QuizResultPage from './pages/QuizResultPage'
 import QuizHistoryPage from './pages/QuizHistoryPage'
+import QuizInsightsPage from './pages/QuizInsightsPage'
 import QuestionBankPage from './pages/QuestionBankPage'
 import CreateQuizPage from './pages/CreateQuizPage'
 import QuizListPage from './pages/QuizListPage'
@@ -239,6 +240,15 @@ export default function App() {
           <Route
             path="/quizzes/:id/results/:attemptId"
             element={<QuizResultRoute />}
+          />
+
+          <Route
+            path="/attempt-insights"
+            element={
+              <StudentRoute>
+                <QuizInsightsPage />
+              </StudentRoute>
+            }
           />
 
           <Route
