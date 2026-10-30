@@ -1,13 +1,7 @@
-
 import { useEffect, useState } from 'react'
-
 import QuizAttemptPage from './QuizAttemptPage'
-
-import {
-  loadQuizForAttempt,
-  type LoadedQuiz
-} from '../services/quizAttemptDataService'
-
+import { loadQuizForAttempt, type LoadedQuiz } from '../services/quizAttemptDataService'
+import type { AttemptResult } from '../services/attemptService'
 import styles from './QuizAttemptPage.module.css'
 
 type LoadState =
@@ -17,20 +11,16 @@ type LoadState =
 
 interface QuizAttemptLoaderProps {
   quizId: string
+  onSubmissionSuccess?: (result: AttemptResult, title: string) => void
 }
 
-interface QuizRequestProps {
-  quizId: string
+interface QuizRequestProps extends QuizAttemptLoaderProps {
   onRetry: () => void
 }
 
-/*
- * The outer component manages retries.
- * Changing the key creates a new request component
- * with its own initial loading state.
- */
 export default function QuizAttemptLoader({
-  quizId
+  quizId,
+  onSubmissionSuccess
 }: QuizAttemptLoaderProps) {
   const [retryCount, setRetryCount] = useState(0)
 
@@ -38,20 +28,18 @@ export default function QuizAttemptLoader({
     <QuizAttemptRequest
       key={`${quizId}:${retryCount}`}
       quizId={quizId}
-      onRetry={() => {
-        setRetryCount(count => count + 1)
-      }}
+      onSubmissionSuccess={onSubmissionSuccess}
+      onRetry={() => setRetryCount(count => count + 1)}
     />
   )
 }
 
 function QuizAttemptRequest({
   quizId,
+  onSubmissionSuccess,
   onRetry
 }: QuizRequestProps) {
-  const [state, setState] = useState<LoadState>({
-    status: 'loading'
-  })
+  const [state, setState] = useState<LoadState>({ status: 'loading' })
 
   useEffect(() => {
     let active = true
@@ -68,10 +56,7 @@ function QuizAttemptRequest({
           return
         }
 
-        setState({
-          status: 'ready',
-          quiz
-        })
+        setState({ status: 'ready', quiz })
       })
       .catch(error => {
         if (!active) return
@@ -79,9 +64,7 @@ function QuizAttemptRequest({
         setState({
           status: 'error',
           message:
-            error instanceof Error
-              ? error.message
-              : 'Unable to load quiz.'
+            error instanceof Error ? error.message : 'Unable to load quiz.'
         })
       })
 
@@ -95,16 +78,8 @@ function QuizAttemptRequest({
       <div className={styles.page}>
         <div className={styles.shell}>
           <header className={styles.examHeader}>
-            <h1 className={styles.title}>
-              Preparing your quiz
-            </h1>
-
-            <p
-              role="status"
-              className={styles.subtitle}
-            >
-              Loading questions securely...
-            </p>
+            <h1 className={styles.title}>Preparing your quiz</h1>
+            <p role="status" className={styles.subtitle}>Loading questions securely...</p>
           </header>
         </div>
       </div>
@@ -116,22 +91,9 @@ function QuizAttemptRequest({
       <div className={styles.page}>
         <div className={styles.shell}>
           <header className={styles.examHeader}>
-            <h1 className={styles.title}>
-              Unable to open quiz
-            </h1>
-
-            <p
-              role="alert"
-              className={styles.subtitle}
-            >
-              {state.message}
-            </p>
-
-            <button
-              type="button"
-              className={styles.navButton}
-              onClick={onRetry}
-            >
+            <h1 className={styles.title}>Unable to open quiz</h1>
+            <p role="alert" className={styles.subtitle}>{state.message}</p>
+            <button type="button" className={styles.navButton} onClick={onRetry}>
               Try again
             </button>
           </header>
@@ -146,6 +108,9 @@ function QuizAttemptRequest({
       quizId={state.quiz.quizId}
       title={state.quiz.title}
       questions={state.quiz.questions}
+      onSubmissionSuccess={result =>
+        onSubmissionSuccess?.(result, state.quiz.title)
+      }
     />
   )
 }
