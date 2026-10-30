@@ -1,20 +1,35 @@
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './QuizAttemptPage.module.css'
 import { getSessionUser } from '../services/authService'
 import { readQuizDraft } from '../services/quizDraft'
-import { submitQuizAttempt, type AttemptResult } from '../services/attemptService'
+import {
+  submitQuizAttempt,
+  type AttemptResult
+} from '../services/attemptService'
+
 interface QuizOption {
   id: string
   text: string
 }
+
 export interface QuizQuestion {
   id: string
   questionText: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
-  marks: number
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  marks?: number
   options: QuizOption[]
 }
+
+interface QuizAttemptPageProps {
+  quizId?: string
+  title?: string
+  questions?: QuizQuestion[]
+}
+
 const QUIZ_DURATION = 20 * 60
+const mongoIdPattern = /^[0-9a-fA-F]{24}$/
+
 const sampleQuestions: QuizQuestion[] = [
   {
     id: 'q1',
@@ -146,15 +161,6 @@ const sampleQuestions: QuizQuestion[] = [
     ]
   }
 ]
-interface QuizAttemptPageProps {
-  /** Real quiz ID from the backend; omitted for the Sprint 1 local demo. */
-  quizId?: string
-  title?: string
-  /** Student-safe questions belonging to quizId (loaded by the quiz screen). */
-  questions?: QuizQuestion[]
-}
-
-const mongoIdPattern = /^[0-9a-fA-F]{24}$/
 
 export default function QuizAttemptPage({
   quizId,
@@ -162,165 +168,238 @@ export default function QuizAttemptPage({
   questions: suppliedQuestions
 }: QuizAttemptPageProps = {}) {
   const isDemo = !quizId
-  // Never mix sample questions with a real MongoDB quiz ID.
-  const questions = suppliedQuestions ?? (isDemo ? sampleQuestions : [])
-  const draftKey = 'study-commons-quiz-responses:' + getSessionUser()!.id +
+
+  const questions =
+    suppliedQuestions ?? (isDemo ? sampleQuestions : [])
+
+  const draftKey =
+    'study-commons-quiz-responses:' +
+    getSessionUser()!.id +
     (quizId ? ':' + quizId : '')
+
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [responses, setResponses] = useState<Record<string, string>>(() => {
-    try { return readQuizDraft(window.sessionStorage, draftKey, questions) } catch { return {} }
-  })
+
+  const [responses, setResponses] = useState<Record<string, string>>(
+    () => {
+      try {
+        return readQuizDraft(
+          window.sessionStorage,
+          draftKey,
+          questions
+        )
+      } catch {
+        return {}
+      }
+    }
+  )
+
   const [reviewQuestions, setReviewQuestions] = useState<Set<string>>(
     new Set()
   )
+
   const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [serverResult, setServerResult] = useState<AttemptResult | null>(null)
+  const [serverResult, setServerResult] = useState<AttemptResult | null>(
+    null
+  )
+
   const submissionInFlight = useRef(false)
   const currentQuestion = questions[currentIndex]
+
   useEffect(() => {
     if (!submitted) {
-      try { window.sessionStorage.setItem(draftKey, JSON.stringify(responses)) } catch { /* In-memory answers still work when storage is blocked. */ }
+      try {
+        window.sessionStorage.setItem(
+          draftKey,
+          JSON.stringify(responses)
+        )
+      } catch {
+        // Continue using in-memory responses.
+      }
     }
   }, [responses, submitted, draftKey])
+
   useEffect(() => {
-    if (submitted) {
-      return
-    }
+    if (submitted) return
+
     const timer = window.setInterval(() => {
       setTimeLeft(current => {
         if (current <= 1) {
           window.clearInterval(timer)
           return 0
         }
+
         return current - 1
       })
     }, 1000)
+
     return () => window.clearInterval(timer)
   }, [submitted])
+
   const answeredCount = Object.keys(responses).length
   const unansweredCount = questions.length - answeredCount
   const reviewCount = reviewQuestions.size
+
   const progress = useMemo(
-    () => questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0,
+    () =>
+      questions.length > 0
+        ? Math.round((answeredCount / questions.length) * 100)
+        : 0,
     [answeredCount, questions.length]
   )
+
   const minutes = Math.floor(timeLeft / 60)
   const seconds = timeLeft % 60
+
   function selectAnswer(questionId: string, optionId: string) {
-    if (submitted || submitting) {
-      return
-    }
+    if (submitted || submitting) return
+
     setResponses(current => ({
       ...current,
       [questionId]: optionId
     }))
   }
+
   function clearResponse() {
-    if (submitted || submitting) {
-      return
-    }
+    if (submitted || submitting || !currentQuestion) return
+
     setResponses(current => {
       const updated = { ...current }
       delete updated[currentQuestion.id]
       return updated
     })
   }
+
   function toggleReview() {
-    if (submitted || submitting) {
-      return
-    }
+    if (submitted || submitting || !currentQuestion) return
+
     setReviewQuestions(current => {
       const updated = new Set(current)
+
       if (updated.has(currentQuestion.id)) {
         updated.delete(currentQuestion.id)
       } else {
         updated.add(currentQuestion.id)
       }
+
       return updated
     })
   }
+
   function goToQuestion(index: number) {
     setCurrentIndex(index)
   }
+
   function previousQuestion() {
     setCurrentIndex(current => Math.max(0, current - 1))
   }
+
   function nextQuestion() {
     setCurrentIndex(current =>
       Math.min(questions.length - 1, current + 1)
     )
   }
+
   async function confirmSubmission() {
-    // Ref protects against a second click before React has rerendered.
     if (submitted || submissionInFlight.current) return
+
     setSubmitError(null)
 
-    // The existing /quiz-attempt route remains a local practice demo.
+    // Preserve the existing local demo quiz.
     if (isDemo) {
       setSubmitted(true)
       setShowSubmitModal(false)
-      try { window.sessionStorage.removeItem(draftKey) } catch { /* Storage may be disabled. */ }
+
+      try {
+        window.sessionStorage.removeItem(draftKey)
+      } catch {
+        // Storage may be disabled.
+      }
+
       return
     }
 
-    // Do not submit sample IDs or partially loaded question lists.
-    if (!quizId || !mongoIdPattern.test(quizId) ||
-        questions.length === 0 || questions.some(question => !mongoIdPattern.test(question.id))) {
-      setSubmitError('This quiz is not ready for server submission. Load its real questions first.')
+    // Prevent demo IDs or unloaded questions from being submitted.
+    if (
+      !quizId ||
+      !mongoIdPattern.test(quizId) ||
+      questions.length === 0 ||
+      questions.some(question => !mongoIdPattern.test(question.id))
+    ) {
+      setSubmitError(
+        'This quiz is not ready for server submission. Load its real questions first.'
+      )
       return
     }
 
     submissionInFlight.current = true
     setSubmitting(true)
+
     try {
       const result = await submitQuizAttempt({
         quizId,
         responses: questions.flatMap(question => {
           const selectedOptionId = responses[question.id]
+
           return selectedOptionId
             ? [{ questionId: question.id, selectedOptionId }]
             : []
         })
       })
+
       setServerResult(result)
       setSubmitted(true)
       setShowSubmitModal(false)
-      try { window.sessionStorage.removeItem(draftKey) } catch { /* Storage may be disabled. */ }
+
+      try {
+        window.sessionStorage.removeItem(draftKey)
+      } catch {
+        // Storage may be disabled.
+      }
     } catch (error) {
-      // Preserve answers and keep the dialog open so the user can retry.
-      setSubmitError(error instanceof Error ? error.message : 'Quiz submission failed. Please try again.')
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Quiz submission failed. Please try again.'
+      )
     } finally {
       submissionInFlight.current = false
       setSubmitting(false)
     }
   }
+
   function paletteClass(question: QuizQuestion, index: number) {
     const classes = [styles.paletteButton]
+
     if (responses[question.id]) {
       classes.push(styles.paletteAnswered)
     }
+
     if (reviewQuestions.has(question.id)) {
       classes.push(styles.paletteReview)
     }
+
     if (index === currentIndex) {
       classes.push(styles.paletteCurrent)
     }
+
     return classes.join(' ')
   }
-  // The next CSMQ-41 milestone will fetch real, student-safe questions.
-  // Until then, a real quiz URL must not silently display sample questions.
+
   if (!currentQuestion) {
     return (
       <div className={styles.page}>
         <div className={styles.shell}>
           <header className={styles.examHeader}>
-            <h1 className={styles.title}>Quiz questions unavailable</h1>
+            <h1 className={styles.title}>
+              Quiz questions unavailable
+            </h1>
             <p className={styles.subtitle} role="status">
-              The questions for this quiz have not been loaded. No attempt has been submitted.
+              The questions for this quiz have not been loaded.
+              No attempt has been submitted.
             </p>
           </header>
         </div>
@@ -331,24 +410,33 @@ export default function QuizAttemptPage({
   return (
     <div className={styles.page}>
       <div className={styles.shell}>
+
         <header className={styles.examHeader}>
           <div className={styles.headerTop}>
             <div>
-              <p className={styles.eyebrow}>LIVE QUIZ SESSION</p>
+              <p className={styles.eyebrow}>
+                LIVE QUIZ SESSION
+              </p>
+
               <h1 className={styles.title}>
                 {title}
               </h1>
+
               <p className={styles.subtitle}>
                 {isDemo
                   ? `${questions.length} sample questions · practice prototype · not sent for scoring`
-                  : `${questions.length} questions · server-scored quiz`} 
+                  : `${questions.length} questions · server-scored quiz`}
               </p>
             </div>
+
             <div className={styles.headerTools}>
               <div className={styles.autosave}>
                 <span className={styles.autosaveDot} />
-                {serverResult ? 'Submitted and saved' : 'Saved locally'}
+                {serverResult
+                  ? 'Submitted and saved'
+                  : 'Saved locally'}
               </div>
+
               <div
                 className={styles.timer}
                 aria-label={`${minutes} minutes ${seconds} seconds remaining`}
@@ -358,6 +446,7 @@ export default function QuizAttemptPage({
               </div>
             </div>
           </div>
+
           <div className={styles.progressRow}>
             <div
               className={styles.progressTrack}
@@ -368,31 +457,41 @@ export default function QuizAttemptPage({
                 style={{ width: `${progress}%` }}
               />
             </div>
+
             <span className={styles.progressText}>
               {progress}% complete
             </span>
           </div>
         </header>
+
         <div className={styles.workspace}>
           <main className={styles.questionPanel}>
             <div className={styles.questionTop}>
               <span className={styles.questionCount}>
                 Question {currentIndex + 1} of {questions.length}
               </span>
+
               <div className={styles.questionBadges}>
-                <span
-                  className={`${styles.badge} ${styles.difficulty}`}
-                >
-                  {currentQuestion.difficulty}
-                </span>
-                <span className={styles.badge}>
-                  +{currentQuestion.marks} mark
-                </span>
+                {currentQuestion.difficulty && (
+                  <span
+                    className={`${styles.badge} ${styles.difficulty}`}
+                  >
+                    {currentQuestion.difficulty}
+                  </span>
+                )}
+
+                {currentQuestion.marks !== undefined && (
+                  <span className={styles.badge}>
+                    +{currentQuestion.marks} mark
+                  </span>
+                )}
               </div>
             </div>
+
             <h2 className={styles.questionText}>
               {currentQuestion.questionText}
             </h2>
+
             <div
               className={styles.options}
               role="radiogroup"
@@ -401,6 +500,7 @@ export default function QuizAttemptPage({
               {currentQuestion.options.map(option => {
                 const selected =
                   responses[currentQuestion.id] === option.id
+
                 return (
                   <button
                     key={option.id}
@@ -418,9 +518,11 @@ export default function QuizAttemptPage({
                     <span className={styles.optionKey}>
                       {option.id}
                     </span>
+
                     <span className={styles.optionText}>
                       {option.text}
                     </span>
+
                     <span className={styles.optionCheck}>
                       {selected ? '✓' : ''}
                     </span>
@@ -428,18 +530,22 @@ export default function QuizAttemptPage({
                 )
               })}
             </div>
+
             <div className={styles.questionFooter}>
               <div className={styles.utilityRow}>
                 <button
                   type="button"
                   className={styles.textButton}
                   disabled={
-                    !responses[currentQuestion.id] || submitted || submitting
+                    !responses[currentQuestion.id] ||
+                    submitted ||
+                    submitting
                   }
                   onClick={clearResponse}
                 >
                   ↺ Clear response
                 </button>
+
                 <button
                   type="button"
                   disabled={submitted || submitting}
@@ -455,6 +561,7 @@ export default function QuizAttemptPage({
                     : '◇ Mark for review'}
                 </button>
               </div>
+
               <div className={styles.navigation}>
                 <button
                   type="button"
@@ -464,6 +571,7 @@ export default function QuizAttemptPage({
                 >
                   ← Previous
                 </button>
+
                 <button
                   type="button"
                   className={`${styles.navButton} ${styles.nextButton}`}
@@ -475,14 +583,17 @@ export default function QuizAttemptPage({
               </div>
             </div>
           </main>
+
           <aside className={styles.sidebar}>
             <section className={styles.sidebarSection}>
               <h2 className={styles.sidebarTitle}>
                 Question palette
               </h2>
+
               <p className={styles.sidebarHint}>
                 Jump directly to any question
               </p>
+
               <div className={styles.palette}>
                 {questions.map((question, index) => (
                   <button
@@ -496,6 +607,7 @@ export default function QuizAttemptPage({
                   </button>
                 ))}
               </div>
+
               <div className={styles.legend}>
                 <div className={styles.legendItem}>
                   <span
@@ -503,10 +615,12 @@ export default function QuizAttemptPage({
                   />
                   Answered
                 </div>
+
                 <div className={styles.legendItem}>
                   <span className={styles.legendDot} />
                   Not answered
                 </div>
+
                 <div className={styles.legendItem}>
                   <span
                     className={`${styles.legendDot} ${styles.legendReview}`}
@@ -515,13 +629,16 @@ export default function QuizAttemptPage({
                 </div>
               </div>
             </section>
+
             <section className={styles.sidebarSection}>
               <h2 className={styles.sidebarTitle}>
                 Attempt overview
               </h2>
+
               <p className={styles.sidebarHint}>
                 Your progress updates automatically
               </p>
+
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <span className={styles.statValue}>
@@ -531,6 +648,7 @@ export default function QuizAttemptPage({
                     ANSWERED
                   </span>
                 </div>
+
                 <div className={styles.stat}>
                   <span className={styles.statValue}>
                     {unansweredCount}
@@ -539,6 +657,7 @@ export default function QuizAttemptPage({
                     UNANSWERED
                   </span>
                 </div>
+
                 <div className={styles.stat}>
                   <span className={styles.statValue}>
                     {reviewCount}
@@ -547,6 +666,7 @@ export default function QuizAttemptPage({
                     FOR REVIEW
                   </span>
                 </div>
+
                 <div className={styles.stat}>
                   <span className={styles.statValue}>
                     {questions.length}
@@ -557,41 +677,79 @@ export default function QuizAttemptPage({
                 </div>
               </div>
             </section>
+
             <section className={styles.sidebarSection}>
               <button
                 type="button"
                 className={styles.submitButton}
                 disabled={submitted || submitting}
-                onClick={() => { setSubmitError(null); setShowSubmitModal(true) }}
+                onClick={() => {
+                  setSubmitError(null)
+                  setShowSubmitModal(true)
+                }}
               >
-                {submitted ? 'Quiz submitted' : submitting ? 'Submitting…' : 'Submit quiz'}
+                {submitted
+                  ? 'Quiz submitted'
+                  : submitting
+                    ? 'Submitting…'
+                    : 'Submit quiz'}
               </button>
+
               <p className={styles.submitNote}>
                 {serverResult
                   ? `Saved attempt ${serverResult.attemptId}`
                   : 'Review unanswered and marked questions before submitting.'}
               </p>
             </section>
+
             {serverResult && (
-              <section className={styles.sidebarSection} aria-live="polite">
-                <h2 className={styles.sidebarTitle}>Your verified result</h2>
-                <p className={styles.sidebarHint}>Calculated and saved by the server</p>
+              <section
+                className={styles.sidebarSection}
+                aria-live="polite"
+              >
+                <h2 className={styles.sidebarTitle}>
+                  Your verified result
+                </h2>
+
+                <p className={styles.sidebarHint}>
+                  Calculated and saved by the server
+                </p>
+
                 <div className={styles.stats}>
                   <div className={styles.stat}>
-                    <span className={styles.statValue}>{serverResult.score}/{serverResult.total}</span>
-                    <span className={styles.statLabel}>SCORE</span>
+                    <span className={styles.statValue}>
+                      {serverResult.score}/{serverResult.total}
+                    </span>
+                    <span className={styles.statLabel}>
+                      SCORE
+                    </span>
                   </div>
+
                   <div className={styles.stat}>
-                    <span className={styles.statValue}>{serverResult.percentage}%</span>
-                    <span className={styles.statLabel}>PERCENTAGE</span>
+                    <span className={styles.statValue}>
+                      {serverResult.percentage}%
+                    </span>
+                    <span className={styles.statLabel}>
+                      PERCENTAGE
+                    </span>
                   </div>
+
                   <div className={styles.stat}>
-                    <span className={styles.statValue}>{serverResult.correct}</span>
-                    <span className={styles.statLabel}>CORRECT</span>
+                    <span className={styles.statValue}>
+                      {serverResult.correct}
+                    </span>
+                    <span className={styles.statLabel}>
+                      CORRECT
+                    </span>
                   </div>
+
                   <div className={styles.stat}>
-                    <span className={styles.statValue}>{serverResult.incorrect}</span>
-                    <span className={styles.statLabel}>INCORRECT</span>
+                    <span className={styles.statValue}>
+                      {serverResult.incorrect}
+                    </span>
+                    <span className={styles.statLabel}>
+                      INCORRECT
+                    </span>
                   </div>
                 </div>
               </section>
@@ -599,11 +757,14 @@ export default function QuizAttemptPage({
           </aside>
         </div>
       </div>
+
       {showSubmitModal && (
         <div
           className={styles.modalBackdrop}
           role="presentation"
-          onMouseDown={() => { if (!submitting) setShowSubmitModal(false) }}
+          onMouseDown={() => {
+            if (!submitting) setShowSubmitModal(false)
+          }}
         >
           <section
             className={styles.modal}
@@ -612,50 +773,68 @@ export default function QuizAttemptPage({
             aria-labelledby="submit-dialog-title"
             onMouseDown={event => event.stopPropagation()}
           >
-            <div className={styles.modalIcon}>✓</div>
+            <div className={styles.modalIcon}>
+              ✓
+            </div>
+
             <h2 id="submit-dialog-title">
               Submit your quiz?
             </h2>
+
             <p>
               {isDemo
                 ? 'Once submitted, your responses will be locked for this prototype session. Check your attempt summary before continuing.'
                 : 'Your answers will be evaluated by the server and saved to your account. Review them before continuing.'}
             </p>
+
             <div className={styles.modalSummary}>
               <div className={styles.modalStat}>
                 <strong>{answeredCount}</strong>
                 <span>Answered</span>
               </div>
+
               <div className={styles.modalStat}>
                 <strong>{unansweredCount}</strong>
                 <span>Unanswered</span>
               </div>
+
               <div className={styles.modalStat}>
                 <strong>{reviewCount}</strong>
                 <span>Review</span>
               </div>
             </div>
+
             {submitError && (
-              <p role="alert" style={{ color: '#b91c1c', fontWeight: 600 }}>
+              <p
+                role="alert"
+                style={{
+                  color: '#b91c1c',
+                  fontWeight: 600
+                }}
+              >
                 {submitError}
               </p>
             )}
+
             <div className={styles.modalActions}>
               <button
                 type="button"
-              className={styles.cancelButton}
-              disabled={submitting}
-              onClick={() => setShowSubmitModal(false)}
+                className={styles.cancelButton}
+                disabled={submitting}
+                onClick={() => setShowSubmitModal(false)}
               >
                 Continue reviewing
               </button>
+
               <button
                 type="button"
-              className={styles.confirmButton}
-              disabled={submitting}
-              onClick={() => { void confirmSubmission() }}
-            >
-              {submitting ? 'Submitting…' : 'Submit quiz'}
+                className={styles.confirmButton}
+                disabled={submitting}
+                onClick={() => {
+                  void confirmSubmission()
+                }}
+              >
+                {submitting ? 'Submitting…' : 'Submit quiz'}
               </button>
             </div>
           </section>
