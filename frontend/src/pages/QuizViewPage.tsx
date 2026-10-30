@@ -215,12 +215,7 @@ export default function QuizViewPage() {
                     </span>
                   )}
 
-                  {typeof question.marks === 'number' && (
-                    <span className={styles.marksBadge}>
-                      {question.marks} mark
-                      {question.marks === 1 ? '' : 's'}
-                    </span>
-                  )}
+                  <span className={styles.marksBadge}>1 point if correct</span>
                 </div>
               </div>
 
