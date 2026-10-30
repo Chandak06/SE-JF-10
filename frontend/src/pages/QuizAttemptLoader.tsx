@@ -48,7 +48,7 @@ function QuizAttemptRequest({
       .then(quiz => {
         if (!active) return
 
-        if (quiz.quizId !== quizId) {
+        if (quiz.quizId.toLowerCase() !== quizId.toLowerCase()) {
           setState({
             status: 'error',
             message: 'The requested quiz could not be verified.'
