@@ -90,6 +90,11 @@ afterEach(() => {
 })
 
 describe('CSMQ-41: Quiz Attempt frontend integration', () => {
+  it('describes SRS scoring as one point per correct response regardless of marks metadata', () => {
+    render(<QuizAttemptPage quizId={quizId} title="Networks" questions={questions.map(q => ({ ...q, marks: 5 }))} />)
+    expect(screen.getByText('1 point if correct')).toBeInTheDocument()
+    expect(screen.queryByText(/5 mark/)).toBeNull()
+  })
 
   it('does not invent a time limit or expire an unsubmitted real quiz', () => {
     vi.useFakeTimers()
