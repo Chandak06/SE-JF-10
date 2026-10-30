@@ -2,12 +2,14 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import QuizAttemptPage from './pages/QuizAttemptPage'
 import { ThemeProvider } from './components/ThemeToggle'
 import { BrowserRouter } from 'react-router-dom'
 import * as auth from './services/authService'
 
 const authState = vi.hoisted(() => ({ sessionToken: null as string | null, user: null as { id: string; name: string; email: string; role: string } | null }))
 vi.mock('./services/authService', () => ({ register: vi.fn(), login: vi.fn(), logout: vi.fn(), listMaterials: vi.fn().mockResolvedValue([]), searchMaterials: vi.fn().mockResolvedValue({ materials: [], nextCursor: null }), getSessionToken: () => authState.sessionToken, getSessionUser: () => authState.user, hasStoredSession: () => false, restoreSession: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('./services/quizService', () => ({ searchQuizzes: vi.fn().mockResolvedValue([]) }))
 function renderApp() { return render(<ThemeProvider><BrowserRouter><App /></BrowserRouter></ThemeProvider>) }
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); authState.sessionToken = null; authState.user = null; vi.clearAllMocks() })
 
@@ -17,12 +19,22 @@ describe('Study Commons routes and forms', () => {
     expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Computer Science Practice Quiz' })).not.toBeInTheDocument()
   })
-  it('keeps independent answers in the authenticated student prototype', async () => {
+  it('redirects the retired prototype URL to real quiz discovery without starting an attempt', async () => {
+    authState.sessionToken = 'test-token'
+    authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
+    window.history.replaceState({}, '', '/quiz-attempt'); renderApp()
+    await waitFor(() => expect(window.location.pathname).toBe('/quizzes'))
+    expect(screen.queryByRole('heading', { name: 'Computer Science Practice Quiz' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Practice Quiz' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Quiz History' })).toHaveAttribute('href', '/attempt-history')
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+  })
+  it('keeps independent answers in the isolated Sprint 1 component', async () => {
     const user = userEvent.setup()
     authState.sessionToken = 'test-token'
     authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
     sessionStorage.setItem('study-commons-quiz-responses:student-1', 'null')
-    window.history.replaceState({}, '', '/quiz-attempt'); renderApp()
+    render(<QuizAttemptPage />)
     await user.click(screen.getByRole('radio', { name: /TCP/ }))
     await user.click(screen.getByRole('button', { name: /Next/ }))
     await user.click(screen.getByRole('radio', { name: /Queue/ }))
