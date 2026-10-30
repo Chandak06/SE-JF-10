@@ -14,7 +14,6 @@ export interface QuizQuestion {
   marks?: number
   options: QuizOption[]
 }
-const QUIZ_DURATION = 20 * 60
 const sampleQuestions: QuizQuestion[] = [
   {
     id: 'q1',
@@ -175,7 +174,6 @@ export default function QuizAttemptPage({
   const [reviewQuestions, setReviewQuestions] = useState<Set<string>>(
     new Set()
   )
-  const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -189,21 +187,6 @@ export default function QuizAttemptPage({
       try { window.sessionStorage.setItem(draftKey, JSON.stringify(responses)) } catch { /* In-memory answers still work when storage is blocked. */ }
     }
   }, [responses, submitted, draftKey])
-  useEffect(() => {
-    if (submitted) {
-      return
-    }
-    const timer = window.setInterval(() => {
-      setTimeLeft(current => {
-        if (current <= 1) {
-          window.clearInterval(timer)
-          return 0
-        }
-        return current - 1
-      })
-    }, 1000)
-    return () => window.clearInterval(timer)
-  }, [submitted])
   const answeredCount = Object.keys(responses).length
   const unansweredCount = questions.length - answeredCount
   const reviewCount = reviewQuestions.size
@@ -211,8 +194,6 @@ export default function QuizAttemptPage({
     () => questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0,
     [answeredCount, questions.length]
   )
-  const minutes = Math.floor(timeLeft / 60)
-  const seconds = timeLeft % 60
   function selectAnswer(questionId: string, optionId: string) {
     if (submitted || submitting) {
       return
@@ -262,7 +243,7 @@ export default function QuizAttemptPage({
     if (submitted || submissionInFlight.current) return
     setSubmitError(null)
 
-    // The existing /quiz-attempt route remains a local practice demo.
+    // Retained for isolated Sprint 1 component tests; no production route opens the demo.
     if (isDemo) {
       setSubmitted(true)
       setShowSubmitModal(false)
@@ -324,8 +305,7 @@ export default function QuizAttemptPage({
     }
     return classes.join(' ')
   }
-  // The next CSMQ-41 milestone will fetch real, student-safe questions.
-  // Until then, a real quiz URL must not silently display sample questions.
+  // A real quiz must never silently fall back to sample questions.
   if (!currentQuestion) {
     return (
       <div className={styles.page}>
@@ -360,15 +340,9 @@ export default function QuizAttemptPage({
             <div className={styles.headerTools}>
               <div className={styles.autosave}>
                 <span className={styles.autosaveDot} />
-                {serverResult ? 'Submitted and saved' : 'Saved locally'}
+                {serverResult ? 'Submitted and saved' : 'Draft · not submitted'}
               </div>
-              <div
-                className={styles.timer}
-                aria-label={`${minutes} minutes ${seconds} seconds remaining`}
-              >
-                ⏱ {String(minutes).padStart(2, '0')}:
-                {String(seconds).padStart(2, '0')}
-              </div>
+              <div className={styles.timer}>No time limit</div>
             </div>
           </div>
           <div className={styles.progressRow}>
