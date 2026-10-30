@@ -1,0 +1,70 @@
+/* CSMQ-42: Results screen - restrained, responsive and keyboard accessible */
+.page {
+  min-height: calc(100vh - 100px);
+  padding: clamp(24px, 5vw, 64px) 20px;
+  background: linear-gradient(165deg, #f6f8fd 0%, #f0f4fc 100%);
+  color: #19243b;
+}
+.container { max-width: 1050px; margin: 0 auto; }
+.backLink { display: inline-flex; margin-bottom: 24px; font-size: 14px; color: #425477; text-decoration: none; font-weight: 650; }
+.backLink:hover { color: #1e48a1; }
+.hero { position: relative; overflow: hidden; display: flex; gap: 32px; justify-content: space-between; align-items: center; border-radius: 24px; padding: clamp(28px, 5vw, 56px); background: linear-gradient(112deg, #14244f 0%, #264aa4 100%); color: #fff; box-shadow: 0 24px 60px rgba(29, 49, 95, .15); }
+.hero::before { content: ''; position: absolute; inset: -65% -30% auto auto; width: 600px; height: 600px; border-radius: 50%; border: 1px solid rgba(255,255,255,.13); pointer-events: none; }
+.heroCopy { position: relative; max-width: 600px; }
+.eyebrow { display: block; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #5071a5; }
+.hero .eyebrow { color: #bad0ff; }
+.hero h1 { font-size: clamp(32px, 4.5vw, 54px); letter-spacing: -.04em; line-height: 1.08; margin: 14px 0; }
+.quizTitle { font-size: clamp(17px, 2vw, 21px); font-weight: 660; margin: 0 0 14px; }
+.heroDescription { font-size: 14px; line-height: 1.6; color: #d9e3fa; max-width: 450px; }
+.successPill { display: inline-flex; align-items: center; margin-top: 16px; padding: 8px 12px; border: 1px solid rgba(153,245,188,.27); border-radius: 999px; color: #dcffe9; background: rgba(20,115,70,.32); font-size: 13px; font-weight: 700; }
+.scoreRing { flex-shrink: 0; display: grid; place-items: center; width: 208px; height: 208px; border-radius: 50%; background: conic-gradient(#c4e8ff var(--score), rgba(255,255,255,.22) 0); padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.12); }
+.scoreRingInner { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; border-radius: 50%; background: #1e3a7c; }
+.ringValue { font-weight: 850; font-size: 48px; letter-spacing: -.05em; }
+.ringLabel { color: #d4e4ff; font-size: 12px; margin-top: 4px; }
+.breakdown { border: 1px solid #e7ebf3; margin-top: 24px; background: #fff; border-radius: 22px; padding: clamp(24px,4vw,40px); box-shadow: 0 14px 46px rgba(38,61,109,.05); }
+.headingRow { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
+.headingRow h2 { margin: 8px 0 0; font-size: 25px; letter-spacing: -.03em; }
+.points { background: #edf3ff; border-radius: 999px; padding: 10px 15px; font-weight: 750; color: #214889; font-size: 14px; white-space: nowrap; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
+.metric { border: 1px solid #e9edf4; padding: 22px 18px; border-radius: 16px; display: flex; flex-direction: column; gap: 8px; }
+.metric strong { font-size: 32px; line-height: 1; letter-spacing: -.04em; }
+.metric > span:last-child { font-size: 13px; color: #6b7893; }
+.metricIcon { width: 33px; height: 33px; border-radius: 10px; display: grid; place-items: center; font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+.correctIcon { background: #e6f8ef; color: #138451; }
+.incorrectIcon { background: #fceced; color: #c03a43; }
+.unansweredIcon { background: #eef0f5; color: #68758b; }
+.totalIcon { background: #eaf1ff; color: #3359a5; }
+.distributionTitle { font-size: 15px; margin: 32px 0 12px; }
+.distribution { height: 13px; display: flex; gap: 3px; overflow: hidden; background: #e6ebf5; border-radius: 20px; }
+.correctSegment { background: #36b883; }
+.incorrectSegment { background: #f07172; }
+.unansweredSegment { background: #aab5c9; }
+.legend { margin-top: 16px; display: flex; gap: 23px; flex-wrap: wrap; color: #67758e; font-size: 12px; }
+.legend span { display: flex; align-items: center; gap: 7px; }
+.legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.legendCorrect { background: #36b883; }
+.legendIncorrect { background: #f07172; }
+.legendUnanswered { background: #aab5c9; }
+.footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 24px; padding: 12px 4px; }
+.attemptId { color: #6b7893; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+.actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.primaryButton,.secondaryButton { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 720; font-size: 14px; border-radius: 11px; min-height: 44px; padding: 12px 20px; transition: transform .16s, box-shadow .16s; }
+.primaryButton { background: #2855ba; color: #fff; box-shadow: 0 8px 22px rgba(40,85,186,.16); }
+.secondaryButton { background: #fff; color: #2b4269; border: 1px solid #d7dfea; }
+.primaryButton:hover,.secondaryButton:hover { transform: translateY(-2px); }
+.primaryButton:hover { color: #fff; background: #1d428e; }
+.primaryButton:focus-visible,.secondaryButton:focus-visible,.backLink:focus-visible { outline: 3px solid #8cb4ff; outline-offset: 3px; }
+.emptyCard { max-width: 640px; margin: 80px auto; background: #fff; padding: 48px; border: 1px solid #e2e8f1; border-radius: 22px; text-align: center; }
+.emptyCard h1 { margin: 13px 0; font-size: 30px; }
+.emptyCard p { color: #6b7893; line-height: 1.7; margin-bottom: 26px; }
+@media (max-width: 730px) {
+  .hero { flex-direction: column; text-align: center; }
+  .heroCopy { display: flex; flex-direction: column; align-items: center; }
+  .scoreRing { width: 175px; height: 175px; }
+  .ringValue { font-size: 40px; }
+  .metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .headingRow { align-items: start; flex-direction: column; }
+  .footer { align-items: start; flex-direction: column; }
+}
+@media (max-width: 420px) { .metrics { gap: 8px; } .metric { padding: 16px 12px; } .metric strong { font-size: 26px; } .actions,.primaryButton,.secondaryButton { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .primaryButton,.secondaryButton { transition: none; } }
