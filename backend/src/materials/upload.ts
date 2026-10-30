@@ -88,7 +88,8 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
       description: material.description, uploadedBy: material.uploadedBy.toString(), uploadedByName: uploader?.name ?? 'Unknown user',
       createdAt: material.createdAt.toISOString() } });
   });
-  router.get('/:id/file', async (req, res) => {
+  // Preserve the submitted SAD's download route alongside the existing client API.
+  router.get(['/:id/file', '/:id/download'], async (req, res) => {
     const id = objectId.safeParse(req.params.id);
     const query = z.strictObject({ disposition: z.enum(['inline', 'attachment']).default('attachment') }).safeParse(req.query);
     if (!id.success || !query.success) throw new AppError(400, 'INVALID_REQUEST', 'Invalid material identifier or download option.');
