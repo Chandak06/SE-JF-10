@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -27,6 +27,20 @@ const mockQuizzes: quizService.QuizSummary[] = [
 ];
 
 describe('QuizListPage (CSMQ-51)', () => {
+  it('hides previous results while a new filter loads and does not call a failed search empty', async () => {
+    vi.mocked(quizService.searchQuizzes).mockResolvedValueOnce(mockQuizzes);
+    render(<MemoryRouter><QuizListPage /></MemoryRouter>);
+    await screen.findByText('Computer Networks Midterm');
+    let reject!: (reason: Error) => void;
+    vi.mocked(quizService.searchQuizzes).mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; }));
+    fireEvent.change(screen.getByPlaceholderText('Search by quiz title…'), { target: { value: 'New query' } });
+    expect(screen.getByRole('status')).toHaveTextContent('Loading quizzes');
+    expect(screen.queryByText('Computer Networks Midterm')).not.toBeInTheDocument();
+    await act(async () => reject(new Error('Search temporarily unavailable')));
+    expect(screen.getByRole('alert')).toHaveTextContent('Search temporarily unavailable');
+    expect(screen.queryByText('Computer Networks Midterm')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'No quizzes found' })).not.toBeInTheDocument();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(quizService.searchQuizzes).mockResolvedValue(mockQuizzes);
