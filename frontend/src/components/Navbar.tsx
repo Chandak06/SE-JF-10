@@ -26,7 +26,7 @@ export default function Navbar() {
           <NavLink to="/materials">Materials</NavLink>
           <NavLink to="/create-quiz">Create Quiz</NavLink>
           <NavLink to="/quizzes">Quiz Search</NavLink>
-          <NavLink to="/quiz-attempt">Practice Quiz</NavLink>
+          <NavLink to="/attempt-history">Quiz History</NavLink>
         </>}
         {authenticated && user?.role === 'admin' && <>
           <NavLink to="/materials">Materials</NavLink>
