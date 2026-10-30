@@ -41,6 +41,65 @@ test.afterAll(async () => {
   await connection?.close(); await mongo?.stop()
 })
 
+test('complete Student attempt, result, history and subject performance survive Quiz moderation', async ({ page }, testInfo) => {
+  const timings: { page: string; milliseconds: number }[] = []
+  const measured = async (name: string, action: () => Promise<unknown>, ready: () => Promise<unknown>) => {
+    const started = Date.now(); await action(); await ready()
+    const milliseconds = Date.now() - started
+    timings.push({ page: name, milliseconds })
+    expect(milliseconds, name + ' primary content under normal single-user conditions').toBeLessThan(3000)
+  }
+  const password = 'Complete flow password!'
+  const email = 'complete-flow@example.test'
+  await runtime.auth.register({ name: 'Complete Flow Student', email, password })
+  const student = await runtime.auth.login(email, password)
+  await provisionAdmin(connection, { name: 'Complete Flow Admin', email: 'complete-admin@example.test', password }, 10)
+  const administrator = await runtime.auth.login('complete-admin@example.test', password)
+  const question = await runtime.questions.Question.create({ questionText: 'Full flow: reliable protocol?', options: [{ id: 'A', text: 'UDP' }, { id: 'B', text: 'TCP' }], correctAnswer: 'B', subject: 'Full Flow Networks', topic: 'Transport', difficulty: 'Easy', marks: 1 })
+  const quiz = await runtime.quizzes.Quiz.create({ title: 'Full flow browser quiz', subject: 'Full Flow Networks', questions: [question._id], creator: student.authenticatedUser.id })
+  await page.goto(url + '/login')
+  await page.getByLabel('Email', { exact: true }).fill(email)
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Log in', exact: true }).click()
+  await expect(page).toHaveURL(url + '/dashboard')
+  await measured('Materials', () => page.goto(url + '/materials'), () => expect(page.getByRole('button', { name: 'Upload a material' })).toBeVisible())
+  await measured('Create Quiz', () => page.goto(url + '/create-quiz'), () => expect(page.getByRole('checkbox', { name: 'Select question: Full flow: reliable protocol?' })).toBeVisible())
+  await measured('Quiz Search', () => page.goto(url + '/quizzes'), () => expect(page.getByText('Full flow browser quiz', { exact: true })).toBeVisible())
+  await measured('Student Dashboard', () => page.goto(url + '/dashboard'), () => expect(page.getByRole('link', { name: /Quiz Attempt History/ })).toBeVisible())
+  await page.getByRole('link', { name: /Quiz Attempt History/ }).click()
+  await expect(page.getByRole('heading', { name: 'My quiz history', exact: true })).toBeVisible()
+  for (const answer of ['TCP', 'UDP']) {
+    await measured('Quiz View', () => page.goto(url + '/quizzes/' + quiz.id), () => expect(page.getByRole('link', { name: 'Start Quiz', exact: true })).toBeVisible())
+    await measured('Quiz Attempt', () => page.getByRole('link', { name: 'Start Quiz', exact: true }).click(), () => expect(page.getByRole('radio', { name: /TCP/ })).toBeVisible())
+    await page.getByRole('radio', { name: new RegExp(answer) }).click()
+    await page.getByRole('button', { name: 'Submit quiz', exact: true }).click()
+    await measured('Submission and Result', () => page.getByRole('dialog', { name: 'Submit your quiz?' }).getByRole('button', { name: 'Submit quiz', exact: true }).click(), () => expect(page.getByRole('heading', { name: 'Quiz results', exact: true })).toBeVisible())
+    await expect(page.getByRole('heading', { name: 'Quiz results', exact: true })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Submitted quiz answer feedback' })).toContainText('Correct option: B')
+    await page.reload()
+    await expect(page.getByRole('heading', { name: 'Quiz results', exact: true })).toBeVisible()
+    await measured('Attempt History', () => page.getByRole('link', { name: 'My attempt history', exact: true }).click(), () => expect(page.getByText('Full flow browser quiz', { exact: true }).first()).toBeVisible())
+    await expect(page.getByRole('heading', { name: 'My quiz history', exact: true })).toBeVisible()
+  }
+  await measured('Subject Performance', () => page.getByRole('link', { name: 'Performance insights', exact: true }).click(), () => expect(page.getByText('50%', { exact: true }).first()).toBeVisible())
+  await expect(page.getByText('50%', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Full Flow Networks', { exact: true })).toBeVisible()
+  for (const width of [375, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  }
+  const removed = await page.request.delete(url + '/api/admin/quizzes/' + quiz.id, { headers: { Authorization: 'Bearer ' + administrator.token }, data: { confirmed: true } })
+  expect(removed.status()).toBe(204)
+  const history = await page.request.get(url + '/api/attempts/history', { headers: { Authorization: 'Bearer ' + student.token } })
+  expect((await history.json()).total).toBe(2)
+  const attempts = await connection.collection('quizattempts').find({ quiz: quiz._id }).toArray()
+  expect(attempts.map(attempt => attempt.percentage).sort()).toEqual([0, 100])
+  const owner = await runtime.accounts.User.findOne({ email: 'complete-admin@example.test' })
+  await runtime.questions.moderation.remove(question.id, owner!.id)
+  await testInfo.attach('single-user-primary-content-timings', { body: JSON.stringify(timings, null, 2), contentType: 'application/json' })
+  await page.screenshot({ path: testInfo.outputPath('full-product-performance.png'), fullPage: true })
+})
+
 test('real Quiz creation, discovery, trusted API scoring and confirmed Quiz moderation integrate', async ({ page }) => {
   const password = 'Integrated browser password!'
   await provisionAdmin(connection, { name: 'Quiz Integration Admin', email: 'quiz-integration-admin@example.test', password }, 10)
@@ -107,8 +166,8 @@ test('student uploads, administrator confirms removal and removed content cannot
   await expect(page.getByRole('link', { name: 'Materials', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Create Quiz', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Quiz Search', exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: /Quiz Attempt History/ })).toBeDisabled()
-  await expect(page.getByRole('button', { name: /Performance Dashboard/ })).toBeDisabled()
+  await expect(page.getByRole('link', { name: /Quiz Attempt History/ })).toHaveAttribute('href', '/attempt-history')
+  await expect(page.getByRole('link', { name: /Performance Dashboard/ })).toHaveAttribute('href', '/attempt-insights')
   await page.getByRole('link', { name: 'Create Quiz', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Create New Quiz' })).toBeVisible()
   await page.getByRole('link', { name: 'Quiz Search' }).click()
