@@ -4,10 +4,10 @@ if (process.env.RELEASE_SMOKE_CONFIRM !== 'disposable-local') throw new Error('C
 let base;
 try { base = new URL(process.env.RELEASE_SMOKE_URL || 'http://127.0.0.1:8080'); }
 catch { throw new Error('Invalid disposable loopback URL.'); }
-if (base.protocol !== 'http:' || !['localhost', '127.0.0.1'].includes(base.hostname) || base.username || base.password || base.pathname !== '/') throw new Error('Only a credential-free loopback HTTP deployment is permitted.');
+if (!['http:', 'https:'].includes(base.protocol) || !['localhost', '127.0.0.1'].includes(base.hostname) || base.username || base.password || base.pathname !== '/') throw new Error('Only a credential-free loopback HTTP/HTTPS deployment is permitted.');
 async function call(path, options = {}) { return fetch(new URL(path, base), { ...options, signal: AbortSignal.timeout(10_000) }); }
 for (let i = 0; i < 60; i++) {
-  try { if ((await call('/ready')).ok) break; } catch { /* Bounded startup polling. */ }
+  try { const ready = await call('/ready'); if (ready.ok && (await ready.json()).status === 'ready') break; } catch { /* Bounded startup polling. */ }
   if (i === 59) throw new Error('Disposable deployment did not become ready.');
   await new Promise(resolve => setTimeout(resolve, 1000));
 }

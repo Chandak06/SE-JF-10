@@ -1,5 +1,13 @@
 # Question / Quiz Attempt API Contract
 
+## 30 October submitted-SAD compatibility
+
+The submitted SRS/SAD/Test Plan remain frozen. Production `POST /api/attempts` keeps `{ quizId, responses[] }` and current metrics/`attemptId`, and additionally supplies `resultId` (the same saved identifier) and `correctAnswers: [{ questionId, correctOptionId }]` only after successful evaluation/persistence, matching SAD 4.3. The saved Result page can display this feedback. Pre-submission Quiz/Question APIs and history remain answer-key-free.
+
+An optional UUID `Idempotency-Key` request header identifies one submission across retries; the real UI retains it with the draft until success. Same user/key/answers returns the same saved attempt; changed answers with a used key return 409; a new key starts a legitimate repeat attempt. The unique index is per authenticated user. This does not change the submitted request body or make legacy no-header clients idempotent.
+
+The SAD download route `/api/materials/:id/download` aliases the existing authenticated PDF retrieval route. Complete authenticated history powers subject averages; the summary is not limited to the newest 50 rows. See [current execution and acceptance evidence](SPRINT2_HARSHIT_FINAL_2026-10-30.md).
+
 ## Purpose
 
 This document defines shared Question/Attempt payloads and the intended production API. Sprint 1 verifies the student-safe serializer → actual UI → evaluator boundary using fixtures, model tests and a local-submit sample-question prototype. Production submission, server evaluation, results, history and performance integration belong to Sprint 2. Endpoint examples below are contract targets, not claims that production routes are mounted in Sprint 1.

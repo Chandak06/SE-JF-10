@@ -2,10 +2,10 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import QuizInsightsPage from './QuizInsightsPage'
-import { getAttemptHistory } from '../services/attemptHistoryService'
+import { getAllAttemptHistory } from '../services/attemptHistoryService'
 
-vi.mock('../services/attemptHistoryService', () => ({ getAttemptHistory: vi.fn() }))
-const getHistoryMock = vi.mocked(getAttemptHistory)
+vi.mock('../services/attemptHistoryService', () => ({ getAllAttemptHistory: vi.fn() }))
+const getHistoryMock = vi.mocked(getAllAttemptHistory)
 
 const item = {
   attemptId: '507f1f77bcf86cd799439021',
@@ -30,14 +30,14 @@ beforeEach(() => vi.clearAllMocks())
 afterEach(() => cleanup())
 
 describe('QuizInsightsPage', () => {
-  it('loads a bounded recent sample and shows saved metrics', async () => {
+  it('loads the complete history and shows saved metrics', async () => {
     getHistoryMock.mockResolvedValueOnce(response)
     renderPage()
     expect(screen.getByRole('status').textContent).toContain('Loading')
     expect((await screen.findAllByText('80%')).length).toBeGreaterThan(0)
     expect(screen.getByText('DBMS')).toBeTruthy()
     expect(screen.getByRole('button', { name: /Export shown attempts/i })).toBeTruthy()
-    expect(getHistoryMock).toHaveBeenCalledWith(1, 50)
+    expect(getHistoryMock).toHaveBeenCalledWith()
   })
 
   it('does not pretend a limited sample represents the full history', async () => {

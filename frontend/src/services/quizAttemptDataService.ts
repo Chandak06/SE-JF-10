@@ -1,5 +1,5 @@
 
-import { getSessionToken } from './authService'
+import { getSessionToken, invalidateExpiredSession } from './authService'
 
 const baseUrl = (
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
@@ -148,6 +148,7 @@ export async function loadQuizForAttempt(
 
   if (!response.ok) {
     if (response.status === 401) {
+      invalidateExpiredSession(token)
       throw new Error(
         'Your session has expired. Please log in again.'
       )

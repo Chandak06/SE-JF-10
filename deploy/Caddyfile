@@ -1,5 +1,6 @@
 {$SITE_ADDRESS} {
-    handle /api/* {
+    @backend path /api/* /ready /health
+    handle @backend {
         reverse_proxy backend:5000 {
             header_up X-Forwarded-Proto {scheme}
             header_up X-Forwarded-For {remote_host}

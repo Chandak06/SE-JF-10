@@ -1,5 +1,7 @@
 
 import { Types, type Connection } from 'mongoose'
+import { createHash } from 'node:crypto'
+import { AppError } from '../errors.js'
 
 import { getQuestionModel } from '../models/question.js'
 import { getQuizAttemptModel } from '../models/quiz-attempt.js'
@@ -32,12 +34,13 @@ interface HistoryRecord {
 
 export function createMongoAttemptRepository(
   connection: Connection
-): AttemptRepository & AttemptHistoryRepository {
+): AttemptRepository & AttemptHistoryRepository & { initialize(): Promise<void> } {
   const quizzes = connection.collection<StoredQuiz>('quizzes')
   const Question = getQuestionModel(connection)
   const QuizAttempt = getQuizAttemptModel(connection)
 
   return {
+    async initialize() { await QuizAttempt.init() },
     async findQuiz(quizId) {
       if (!Types.ObjectId.isValid(quizId)) {
         return null
@@ -82,6 +85,11 @@ export function createMongoAttemptRepository(
     },
 
     async saveAttempt(attempt: AttemptToSave) {
+      const digest = createHash('sha256').update(JSON.stringify({
+        quizId: attempt.quizId.toLowerCase(),
+        responses: [...attempt.responses].map(r => [r.questionId.toLowerCase(), r.selectedOptionId]).sort((a, b) => a[0]!.localeCompare(b[0]!))
+      })).digest('hex')
+      try {
       const saved = await QuizAttempt.create({
         user: new Types.ObjectId(attempt.userId),
         quiz: new Types.ObjectId(attempt.quizId),
@@ -92,11 +100,20 @@ export function createMongoAttemptRepository(
         })),
 
         score: attempt.score,
-        percentage: attempt.percentage
+        percentage: attempt.percentage,
+        ...(attempt.submissionKey ? { submissionKey: attempt.submissionKey, submissionDigest: digest } : {})
       })
 
       return {
         id: saved._id.toString()
+      }
+      } catch (error) {
+        if (!attempt.submissionKey || typeof error !== 'object' || error === null || !('code' in error) || error.code !== 11000) throw error
+        const existing = await QuizAttempt.findOne({ user: attempt.userId, submissionKey: attempt.submissionKey }).select('+submissionDigest').lean()
+        if (!existing || existing.submissionDigest !== digest) {
+          throw new AppError(409, 'SUBMISSION_CONFLICT', 'This submission identifier was already used with different answers.')
+        }
+        return { id: existing._id.toString() }
       }
     },
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { getAttemptHistory, type HistoryPage } from '../services/attemptHistoryService'
+import { getAllAttemptHistory, type HistoryPage } from '../services/attemptHistoryService'
 import { calculateAttemptInsights } from '../services/attemptInsights'
 import { downloadAttemptHistoryCsv } from '../services/attemptHistoryCsv'
 import styles from './QuizInsightsPage.module.css'
@@ -137,7 +137,7 @@ function InsightsRequest({ onRetry }: { onRetry: () => void }) {
 
   useEffect(() => {
     let active = true
-    void getAttemptHistory(1, 50)
+    void getAllAttemptHistory()
       .then(page => {
         if (active) setState({ status: 'ready', page })
       })

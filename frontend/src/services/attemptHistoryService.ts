@@ -1,5 +1,5 @@
 
-import { getSessionToken } from './authService'
+import { getSessionToken, invalidateExpiredSession } from './authService'
 
 const baseUrl = (
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
@@ -147,6 +147,7 @@ export async function getAttemptHistory(
 
   if (!response.ok) {
     if (response.status === 401) {
+      invalidateExpiredSession(token)
       throw new Error('Your session has expired. Please log in again.')
     }
 
@@ -158,4 +159,24 @@ export async function getAttemptHistory(
   }
 
   return parseHistory(body)
+}
+
+/** Performance must include all completed attempts, not just the newest page. */
+export async function getAllAttemptHistory(): Promise<HistoryPage> {
+  const token = getSessionToken()
+  const first = await getAttemptHistory(1, 50)
+  if (getSessionToken() !== token) throw new Error('Your session changed. Reload your performance summary.')
+  const attempts = [...first.attempts]
+  for (let page = 2; page <= first.totalPages; page++) {
+    const next = await getAttemptHistory(page, 50)
+    if (getSessionToken() !== token) throw new Error('Your session changed. Reload your performance summary.')
+    if (next.total !== first.total || next.totalPages !== first.totalPages) {
+      throw new Error('Your history changed while loading. Try again for a complete summary.')
+    }
+    attempts.push(...next.attempts)
+  }
+  if (attempts.length !== first.total || new Set(attempts.map(item => item.attemptId)).size !== attempts.length) {
+    throw new Error('Unable to load a complete history summary. Try again.')
+  }
+  return { ...first, attempts, page: 1, pageSize: attempts.length, totalPages: attempts.length ? 1 : 0 }
 }

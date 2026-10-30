@@ -17,6 +17,8 @@ export interface QuizAttemptFields {
   responses: AttemptResponse[];
   score: number;
   percentage: number;
+  submissionKey?: string;
+  submissionDigest?: string;
 }
 
 const responseSchema = new Schema<AttemptResponse>(
@@ -72,7 +74,9 @@ const quizAttemptSchema = new Schema<QuizAttemptFields>(
       required: true,
       min: 0,
       max: 100
-    }
+    },
+    submissionKey: { type: String, select: false },
+    submissionDigest: { type: String, select: false }
   },
   {
     timestamps: true,
@@ -80,6 +84,11 @@ const quizAttemptSchema = new Schema<QuizAttemptFields>(
     strict: 'throw'
   }
 );
+
+// Separate attempts can repeat a quiz; retries of one submission share one record.
+quizAttemptSchema.index({ user: 1, submissionKey: 1 }, {
+  unique: true, partialFilterExpression: { submissionKey: { $type: 'string' } }
+});
 
 export type QuizAttemptDocument =
   HydratedDocument<QuizAttemptFields>;

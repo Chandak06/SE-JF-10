@@ -1,5 +1,7 @@
 # Sprint 2 deployment and demonstration
 
+**30 October:** Real Attempt/Result/History/Performance modules are integrated, and Dashboard navigation is connected. The [current execution/acceptance report](SPRINT2_HARSHIT_FINAL_2026-10-30.md) supersedes older missing-module/prototype statements below. The built local verifier now exercises real Question/Quiz, idempotent scoring, SAD result/download contracts, PDF bytes and saved history through actual MongoDB restart. Submitted SRS/SAD/Test Plan files remain unchanged.
+
 Use supported Node 24.15+ and locked dependencies. Keep credentials/environment files out of Git, images, screenshots and logs. This branch packages available modules; missing production modules, public deployment and final freeze are not claimed complete.
 
 ## Existing local configuration / Atlas
@@ -70,6 +72,20 @@ Clear setup environment variables afterward. Do not put a password literally in 
 Use common login. Admins land on `/admin`, with the existing Question Bank and real material/Question/Quiz moderation. Cancel/confirm removal separately; audit metadata and saved references remain. Students land on `/dashboard` and can use materials and real Quiz creation/search/view. The production submission API is integrated; the old attempt page is still a labelled prototype until CSMQ-41/42 supplies production Attempt/Result screens.
 
 ## Production HTTPS packaging
+
+### Loopback HTTPS release verification
+
+`compose.https.local.yaml` provides a separate persistent local HTTPS deployment with production backend transport enforcement, an unpublished MongoDB service and a gateway bound only to `127.0.0.1:8443`. It uses a separate `study_commons_local_https` database and named database/CA volumes, never the Atlas URI:
+
+```text
+docker compose -f compose.https.local.yaml up --build -d
+```
+
+The gateway issues a `localhost` certificate using its own internal CA, following [Caddy's local HTTPS mechanism](https://caddyserver.com/docs/automatic-https#local-https). No system/browser trust store is modified automatically. Export only the public root certificate with `docker compose -f compose.https.local.yaml cp web:/data/caddy/pki/authorities/local/root.crt .local/local-https-root.crt`; an operator must explicitly choose any browser trust configuration. Never disable TLS certificate verification. CI trusts this public CA only for its smoke process through `NODE_EXTRA_CA_CERTS`, tests real sensitive operations over HTTPS and confirms direct HTTP production API calls return `HTTPS_REQUIRED`.
+
+For this separate local database's first Admin, use the secure input/confirmation procedure in [Admin setup](ADMIN_SETUP.md), then `docker compose -f compose.https.local.yaml --profile setup run --rm seed-admin`. The trusted setup helper runs in development mode against the literal local database; existing Student accounts are never promoted. Normal startup does not execute provisioning.
+
+Normal `docker compose -f compose.https.local.yaml down` preserves saved database/certificate volumes. CI uses its own disposable `sprint2-tls-ci` project and removes only those temporary volumes. The local Node launcher remains a development HTTP option; it is not represented as verification of deployed HTTPS. Public-host deployment still requires the operator's selected environment and domain.
 
 Existing `compose.yaml`, Dockerfiles and `deploy/Caddyfile` expose only the gateway and trust only its backend-network IP. Supply a selected public hostname/URI through ignored or managed configuration. DNS, HTTPS ports, approved database access and separately authorized production Admin bootstrap are operator requirements.
 

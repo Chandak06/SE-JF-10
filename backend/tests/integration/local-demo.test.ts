@@ -41,6 +41,8 @@ it('serves protected APIs and SPA routes, preserving sessions, questions and rem
   await first.get('/api/admin/resources').auth(student, { type: 'bearer' }).expect(403);
   const question = { questionText: 'Does this question persist?', options: [{ id: 'A', text: 'Yes' }, { id: 'B', text: 'No' }], correctAnswer: 'A', subject: 'SE', topic: 'Persistence', difficulty: 'Easy', marks: 1 };
   const id = (await first.post('/api/questions').auth(admin, { type: 'bearer' }).send(question).expect(201)).body.question.id;
+  const quiz = (await first.post('/api/quizzes').auth(student, { type: 'bearer' }).send({ title: 'Persistent local quiz', subject: 'SE', questionIds: [id] }).expect(201)).body.quiz.id;
+  const result = (await first.post('/api/attempts').auth(student, { type: 'bearer' }).send({ quizId: quiz, responses: [{ questionId: id, selectedOptionId: 'A' }] }).expect(201)).body;
   await first.delete('/api/admin/questions/' + id).auth(admin, { type: 'bearer' }).send({ confirmed: true }).expect(204);
   await demo.stop();
   expect((await readdir(options().dataDirectory)).length).toBeGreaterThan(0);
@@ -50,6 +52,9 @@ it('serves protected APIs and SPA routes, preserving sessions, questions and rem
   expect((await second.get('/api/quiz-questions').auth(student, { type: 'bearer' }).expect(200)).body.questions).toEqual([]);
   const saved = await demo.connection.collection('questions').findOne({ questionText: question.questionText });
   expect(saved?.removedAt).toBeInstanceOf(Date);
+  const history = await second.get('/api/attempts/history').auth(student, { type: 'bearer' }).expect(200);
+  expect(history.body.attempts).toHaveLength(1);
+  expect(history.body.attempts[0]).toMatchObject({ attemptId: result.attemptId, quizTitle: 'Persistent local quiz', subject: 'SE', percentage: 100 });
   await second.post('/api/auth/logout').auth(admin, { type: 'bearer' }).expect(204);
   await second.get('/api/auth/me').auth(admin, { type: 'bearer' }).expect(401);
 }, 120_000);

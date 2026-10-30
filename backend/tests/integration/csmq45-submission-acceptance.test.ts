@@ -85,7 +85,9 @@ describe('CSMQ-45 / production POST /api/attempts acceptance', () => {
       score: 1,
       percentage: 50
     })
-    expect(JSON.stringify(submission.body)).not.toContain('correctAnswer')
+    expect(submission.body.resultId).toBe(savedId)
+    expect(submission.body.correctAnswers).toHaveLength(2)
+    expect(JSON.stringify(submission.body)).not.toMatch(/passwordHash|tokenHash/)
   })
 
   it('counts an omitted question as unanswered rather than incorrect', async () => {

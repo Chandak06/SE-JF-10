@@ -13,6 +13,9 @@ function saveToken(token: string | null) {
   try { if (token) sessionStorage.setItem(sessionKey, token); else sessionStorage.removeItem(sessionKey) } catch { /* Login still works in memory if storage is disabled. */ }
 }
 function clearSession() { sessionVersion++; sessionToken = null; sessionUser = null; saveToken(null) }
+export function invalidateExpiredSession(expectedToken: string) {
+  if (sessionToken === expectedToken) clearSession()
+}
 export const hasStoredSession = () => !!storedToken()
 export function restoreSession(): Promise<void> {
   if (sessionToken && sessionUser) return Promise.resolve()
@@ -100,7 +103,7 @@ export async function authorized(path: string, options: RequestInit = {}) {
   let response: Response
   try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + sessionToken } }) }
   catch { throw new Error('Unable to reach the server. Try again.') }
-  if (response.status === 401 && sessionToken === token) clearSession()
+  if (response.status === 401) invalidateExpiredSession(token)
   if (!response.ok) {
     const result = await response.json().catch(() => ({})) as { error?: { message?: string } }
     throw new Error(result.error?.message ?? 'Request failed. Try again.')
