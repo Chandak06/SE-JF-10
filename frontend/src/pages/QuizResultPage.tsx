@@ -356,6 +356,12 @@ export default function QuizResultPage() {
 
           <div className={styles.actions}>
             <Link
+              to="/attempt-history"
+              className={styles.secondaryButton}
+            >
+              My attempt history
+            </Link>
+            <Link
               to="/dashboard"
               className={styles.secondaryButton}
             >
