@@ -1,3 +1,4 @@
+import { attachHistoryRoute } from './history-route.js';
 
 import { Router } from 'express';
 
@@ -41,6 +42,8 @@ export function createAttemptRouter(
       res.status(201).json(result);
     }
   );
+
+  attachHistoryRoute(router, repository);
 
   return router;
 }
