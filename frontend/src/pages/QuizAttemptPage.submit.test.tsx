@@ -91,6 +91,23 @@ afterEach(() => {
 
 describe('CSMQ-41: Quiz Attempt frontend integration', () => {
 
+  it('does not invent a time limit or expire an unsubmitted real quiz', () => {
+    vi.useFakeTimers()
+    try {
+      render(<QuizAttemptPage quizId={quizId} title="Networks" questions={questions} />)
+      expect(screen.getByText('No time limit')).toBeTruthy()
+      expect(screen.getByText('Draft · not submitted')).toBeTruthy()
+      expect(screen.queryByText(/practice prototype/)).toBeNull()
+      expect(screen.queryByLabelText(/seconds remaining/)).toBeNull()
+      act(() => vi.advanceTimersByTime(21 * 60 * 1000))
+      fireEvent.click(screen.getByRole('radio', { name: /TCP/ }))
+      expect(screen.getByRole('radio', { name: /TCP/ })).toHaveAttribute('aria-checked', 'true')
+      expect(submitMock).not.toHaveBeenCalled()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('sends selected answers to the real API', async () => {
     submitMock.mockResolvedValueOnce(result)
 
