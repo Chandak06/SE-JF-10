@@ -10,6 +10,8 @@ The submitted SRS, SAD and Test Plan are unchanged. `npm run check:submitted` an
 
 ## Integration and correctness fixes
 
+- Follow-up navigation audit: retired the exposed Sprint 1 sample practice route. The Student navbar links to saved Quiz History; `/quiz-attempt` redirects authenticated Students to real Quiz Search without starting or submitting an attempt. Real attempts open from Quiz details → Start Quiz. The historical Sprint 1 component remains isolated from production routing.
+- Removed the arbitrary 20-minute client-only countdown: no quiz duration/deadline is specified by the frozen requirements or Quiz API, refreshing reset the counter, and reaching zero enforced nothing. Current quizzes explicitly have no time limit. Unsubmitted answers are labelled as drafts; only a successful persisted server response is labelled submitted and saved. A timed-assessment feature would require a separate agreed requirement and server-enforced deadline.
 - Student Dashboard now opens the real History and Performance pages instead of disabled placeholders.
 - Attempt submission, history and quiz loading consistently invalidate an expired session without clearing a newer login.
 - Performance uses all authenticated history pages, including attempts older than the newest 50. A changing/incomplete history or changed session produces a retryable error rather than a misleading average. The 51-attempt regression gives the expected subject average.
@@ -32,6 +34,8 @@ The submitted SRS, SAD and Test Plan are unchanged. `npm run check:submitted` an
 | Frozen documents | Local hash comparison and canonical CI guard passed; no submitted document changes |
 
 Logs are under ignored `.local/sprint2-2026-10-30/`. CI retains JUnit/coverage/build and browser evidence, including full-flow timing JSON and screenshots. These tests use only newly allocated disposable databases; no Atlas content, roles or access settings are changed. The final PR/Jira evidence identifies its exact head and CI run; no successful CI result is invented here.
+
+Follow-up prototype/navigation correction: all 180 frontend tests, lint and production build pass. The complete real Quiz → Attempt → saved Result → History → Performance journey was rerun successfully in Chrome, Edge and Firefox, including the retired-URL redirect/no-attempt assertion and absence of the arbitrary countdown. A fake-clock regression verifies that 21 minutes does not silently expire or submit an untimed quiz. These are new local checks; the earlier full CI evidence above describes its original tested commit.
 
 ## Demonstration and release acceptance
 
