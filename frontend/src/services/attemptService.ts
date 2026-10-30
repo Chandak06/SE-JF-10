@@ -1,5 +1,5 @@
 
-import { getSessionToken } from './authService';
+import { getSessionToken, invalidateExpiredSession } from './authService';
 
 const baseUrl = (
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
@@ -25,10 +25,13 @@ export interface AttemptResult {
   correct: number;
   incorrect: number;
   unanswered: number;
+  resultId?: string;
+  correctAnswers?: { questionId: string; correctOptionId: string }[];
 }
 
 export async function submitQuizAttempt(
-  submission: AttemptSubmission
+  submission: AttemptSubmission,
+  submissionKey?: string
 ): Promise<AttemptResult> {
   const token = getSessionToken();
 
@@ -45,6 +48,7 @@ export async function submitQuizAttempt(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(submissionKey ? { 'Idempotency-Key': submissionKey } : {}),
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(submission)
@@ -67,6 +71,7 @@ export async function submitQuizAttempt(
 
   if (!response.ok) {
     if (response.status === 401) {
+      invalidateExpiredSession(token);
       throw new Error(
         'Your session has expired. Please log in again.'
       );
@@ -101,5 +106,9 @@ export async function submitQuizAttempt(
     );
   }
 
+  if (result.resultId !== undefined && result.resultId !== result.attemptId) throw new Error('The server returned an unexpected quiz result.');
+  if (result.correctAnswers !== undefined && (!Array.isArray(result.correctAnswers) || !result.correctAnswers.every(answer =>
+    answer && /^[a-fA-F0-9]{24}$/.test(answer.questionId) && typeof answer.correctOptionId === 'string' && answer.correctOptionId.length > 0 && answer.correctOptionId.length <= 50
+  ))) throw new Error('The server returned an unexpected quiz result.');
   return result as AttemptResult;
 }
