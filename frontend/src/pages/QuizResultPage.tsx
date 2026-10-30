@@ -89,6 +89,10 @@ function parseResult(
     incorrect,
     unanswered
   }
+  if (raw.resultId !== undefined && raw.resultId !== attemptId) return null
+  if (Array.isArray(raw.correctAnswers) && raw.correctAnswers.every(answer => isRecord(answer) && typeof answer.questionId === 'string' && validId.test(answer.questionId) && typeof answer.correctOptionId === 'string' && answer.correctOptionId.length > 0 && answer.correctOptionId.length <= 50)) {
+    result.correctAnswers = raw.correctAnswers as NonNullable<AttemptResult['correctAnswers']>
+  }
 
   return {
     result,
@@ -133,8 +137,7 @@ export default function QuizResultPage() {
 
           <p>
             Open this screen after successfully submitting a quiz.
-            Previous results will be available through attempt history
-            once that feature is connected.
+            You can view saved scores through your attempt history.
           </p>
 
           <Link
@@ -343,6 +346,11 @@ export default function QuizResultPage() {
           </div>
         </section>
 
+        {result.correctAnswers && <section aria-label="Submitted quiz answer feedback">
+          <h2>Answer feedback</h2>
+          <p>Correct options for your completed quiz.</p>
+          <ol>{result.correctAnswers.map(answer => <li key={answer.questionId}>Correct option: {answer.correctOptionId}</li>)}</ol>
+        </section>}
         <footer className={styles.footer}>
           <div>
             <span className={styles.eyebrow}>
