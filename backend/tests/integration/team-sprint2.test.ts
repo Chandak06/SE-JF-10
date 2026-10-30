@@ -6,6 +6,8 @@ import { loadConfig } from '../../src/config.js';
 import { createRuntime } from '../../src/runtime.js';
 import { provisionAdmin } from '../../src/security/provision-admin.js';
 import { getQuizAttemptModel } from '../../src/models/quiz-attempt.js';
+import { randomUUID } from 'node:crypto';
+import { PDFDocument } from 'pdf-lib';
 
 let mongo: MongoMemoryServer;
 let db: Awaited<ReturnType<typeof connectDatabase>>;
@@ -36,7 +38,9 @@ it('connects real Question creation, Quiz discovery, trusted submission and pers
   expect(JSON.stringify(retrieved.body)).not.toMatch(/correctAnswer|passwordHash|tokenHash/);
   const result = await request(runtime.app).post('/api/attempts').set(headers(student)).send(submission()).expect(201);
   expect(result.body).toMatchObject({ quizId, score: 1, total: 1, percentage: 100 });
-  expect(JSON.stringify(result.body)).not.toContain('correctAnswer');
+  expect(result.body.resultId).toBe(result.body.attemptId);
+  expect(result.body.correctAnswers).toEqual([{ questionId, correctOptionId: 'A' }]);
+  expect(JSON.stringify(result.body)).not.toMatch(/passwordHash|tokenHash|submissionDigest/);
   const stored = await getQuizAttemptModel(db).findById(result.body.attemptId);
   expect(stored?.score).toBe(1); expect(stored?.responses[0]?.questionId.toString()).toBe(questionId);
 });
@@ -67,6 +71,42 @@ it('rejects malformed Quiz filters, forged scores and Admin submissions', async 
   }
   await request(runtime.app).post('/api/attempts').set(headers(student)).send({ ...submission(), score: 500 }).expect(400);
   await request(runtime.app).post('/api/attempts').set(headers(admin)).send(submission()).expect(403);
+});
+it('deduplicates racing retries of one submission, rejects changed answers and permits a fresh repeat attempt', async () => {
+  const key = randomUUID();
+  const responses = await Promise.all([1, 2, 3].map(() => request(runtime.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', key).send(submission()).expect(201)));
+  expect(new Set(responses.map(r => r.body.attemptId)).size).toBe(1);
+  expect(await getQuizAttemptModel(db).countDocuments()).toBe(1);
+  await request(runtime.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', key).send({ quizId, responses: [{ questionId, selectedOptionId: 'B' }] }).expect(409);
+  await request(runtime.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', randomUUID()).send(submission()).expect(201);
+  expect(await getQuizAttemptModel(db).countDocuments()).toBe(2);
+  await request(runtime.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', 'bad-key').send(submission()).expect(400);
+});
+it('retains history and retry identity after reconnect and after moderation without exposing post-submission keys through history', async () => {
+  const key = randomUUID();
+  const saved = await request(runtime.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', key).send(submission()).expect(201);
+  const nextDb = await connectDatabase(mongo.getUri('team_sprint2'));
+  try {
+    const next = await createRuntime(nextDb, loadConfig({ NODE_ENV: 'test', MONGODB_URI: mongo.getUri('team_sprint2'), BCRYPT_ROUNDS: '10' }));
+    const retry = await request(next.app).post('/api/attempts').set(headers(student)).set('Idempotency-Key', key).send(submission()).expect(201);
+    expect(retry.body.attemptId).toBe(saved.body.attemptId);
+    await request(next.app).delete('/api/admin/quizzes/' + quizId).set(headers(admin)).send({ confirmed: true }).expect(204);
+    const history = await request(next.app).get('/api/attempts/history').set(headers(student)).expect(200);
+    expect(history.body.total).toBe(1); expect(history.body.attempts[0]).toMatchObject({ attemptId: saved.body.attemptId, percentage: 100, subject: 'Networks' });
+    expect(JSON.stringify(history.body)).not.toMatch(/correctAnswer|submissionKey|submissionDigest/);
+    await request(next.app).get('/api/attempts/history').set(headers(admin)).expect(403);
+    await request(next.app).get('/api/attempts/history?userId=someone-else').set(headers(student)).expect(400);
+  } finally { await nextDb.close(); }
+});
+it('supports the submitted SAD download path with the same authenticated PDF bytes and removal denial', async () => {
+  const document = await PDFDocument.create(); document.addPage(); const bytes = Buffer.from(await document.save());
+  const uploaded = await request(runtime.app).post('/api/materials').set(headers(student)).field('title', 'SAD notes').field('subject', 'SE').field('description', 'Contract verification').attach('file', bytes, { filename: 'notes.pdf', contentType: 'application/pdf' }).expect(201);
+  const path = '/api/materials/' + uploaded.body.material.id;
+  await request(runtime.app).get(path + '/download').expect(401);
+  const downloaded = await request(runtime.app).get(path + '/download').set(headers(student)).expect(200);
+  expect(downloaded.body).toEqual(bytes); expect(downloaded.headers['content-disposition']).toContain('attachment');
+  await request(runtime.app).delete('/api/admin/materials/' + uploaded.body.material.id).set(headers(admin)).send({ confirmed: true }).expect(204);
+  await request(runtime.app).get(path + '/download').set(headers(student)).expect(404);
 });
 it.each([10, 50])('serves real Quiz retrieval and trusted submissions for %i concurrent Student sessions', async count => {
   const sessions = await Promise.all(Array.from({ length: count }, async (_, index) => {
