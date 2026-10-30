@@ -34,7 +34,8 @@ it('ignores a forged browser role and redirects a server-identified Student to t
   show()
   expect(await screen.findByRole('heading', { name: 'Welcome, Demo User' })).toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Question Bank' })).not.toBeInTheDocument()
-  expect(screen.getByRole('link', { name: 'Practice Quiz' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Quiz History' })).toHaveAttribute('href', '/attempt-history')
+  expect(screen.queryByRole('link', { name: 'Practice Quiz' })).not.toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Materials', exact: true })).toHaveAttribute('href', '/materials')
 })
 it('redirects an expired stored session to the common login page after refresh', async () => {
