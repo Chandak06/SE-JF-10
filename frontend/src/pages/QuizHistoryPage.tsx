@@ -258,6 +258,7 @@ export default function QuizHistoryPage() {
             </p>
           </div>
 
+          <Link to="/attempt-insights" className={styles.heroButton}>Performance insights</Link>
           <Link
             to="/quizzes"
             className={styles.heroButton}
