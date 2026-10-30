@@ -56,6 +56,11 @@ afterEach(() => {
 })
 
 describe('CSMQ-41: Real quiz attempt loader', () => {
+  it('accepts the canonical lowercase ID returned for an uppercase MongoDB URL', async () => {
+    vi.mocked(loadQuizForAttempt).mockResolvedValueOnce(quiz)
+    render(<QuizAttemptLoader quizId={quizId.toUpperCase()} />)
+    expect(await screen.findByTestId('real-attempt')).toHaveTextContent(quizId)
+  })
   it('loads and renders real quiz questions', async () => {
     vi.mocked(loadQuizForAttempt).mockResolvedValueOnce(quiz)
 
