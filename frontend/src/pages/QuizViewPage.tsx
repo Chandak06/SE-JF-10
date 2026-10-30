@@ -9,67 +9,82 @@ import {
 
 import styles from './QuizViewPage.module.css'
 
+type QuizLoadState =
+  | {
+      id: string
+      status: 'loading'
+    }
+  | {
+      id: string
+      status: 'ready'
+      quiz: QuizDetail
+    }
+  | {
+      id: string
+      status: 'error'
+      message: string
+    }
+
 export default function QuizViewPage() {
   const { id } = useParams<{ id: string }>()
 
-  const [quiz, setQuiz] = useState<QuizDetail | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [state, setState] = useState<QuizLoadState>({
+    id: id ?? '',
+    status: 'loading'
+  })
 
   useEffect(() => {
-    let isCancelled = false
+    if (!id) return
 
-    if (!id) {
-      void Promise.resolve().then(() => {
-        if (!isCancelled) {
-          setError('Invalid quiz identifier.')
-          setLoading(false)
-        }
-      })
-
-      return () => {
-        isCancelled = true
-      }
-    }
-
-    setLoading(true)
-    setError(null)
+    let active = true
 
     void getQuizById(id)
       .then(data => {
-        if (!isCancelled) {
-          setQuiz(data)
-          setError(null)
-          setLoading(false)
-        }
+        if (!active) return
+
+        setState({
+          id,
+          status: 'ready',
+          quiz: data
+        })
       })
-      .catch(err => {
-        if (!isCancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
+      .catch(error => {
+        if (!active) return
+
+        setState({
+          id,
+          status: 'error',
+          message:
+            error instanceof Error
+              ? error.message
               : 'Unable to load quiz details.'
-          )
-          setLoading(false)
-        }
+        })
       })
 
     return () => {
-      isCancelled = true
+      active = false
     }
   }, [id])
 
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <p className={styles.status} role="status">
-          Loading quiz details…
-        </p>
-      </div>
-    )
-  }
+  /*
+   * If the URL changes, old quiz information
+   * is not displayed while the new quiz loads.
+   */
+  const currentState: QuizLoadState =
+    id && state.id === id
+      ? state
+      : {
+          id: id ?? '',
+          status: 'loading'
+        }
 
-  if (error || !quiz) {
+  if (!id || currentState.status === 'error') {
+    const errorMessage = !id
+      ? 'Invalid quiz identifier.'
+      : currentState.status === 'error'
+        ? currentState.message
+        : 'Quiz could not be found.'
+
     return (
       <div className={styles.page}>
         <Link
@@ -79,20 +94,34 @@ export default function QuizViewPage() {
           ← Back to Quizzes
         </Link>
 
-        <div className={styles.alertError} role="alert">
+        <div
+          className={styles.alertError}
+          role="alert"
+        >
           <h2>Quiz Unavailable</h2>
-
-          <p>
-            {error ?? 'Quiz could not be found.'}
-          </p>
+          <p>{errorMessage}</p>
         </div>
       </div>
     )
   }
 
+  if (currentState.status === 'loading') {
+    return (
+      <div className={styles.page}>
+        <p
+          className={styles.status}
+          role="status"
+        >
+          Loading quiz details…
+        </p>
+      </div>
+    )
+  }
+
+  const quiz = currentState.quiz
+
   return (
     <div className={styles.page}>
-
       <Link
         to="/quizzes"
         className={styles.backLink}
@@ -118,13 +147,15 @@ export default function QuizViewPage() {
           {quiz.createdAt && (
             <div className={styles.metaItem}>
               <strong>Created:</strong>{' '}
-              {new Date(quiz.createdAt).toLocaleDateString()}
+              {new Date(
+                quiz.createdAt
+              ).toLocaleDateString()}
             </div>
           )}
         </div>
       </article>
 
-      {/* CSMQ-41: Start actual quiz attempt */}
+      {/* CSMQ-41: Real quiz attempt navigation */}
       <div className={styles.startQuizActions}>
         {quiz.questionCount > 0 ? (
           <Link

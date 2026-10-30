@@ -1,7 +1,13 @@
 
 import { useEffect, useState } from 'react'
+
 import QuizAttemptPage from './QuizAttemptPage'
-import { loadQuizForAttempt, type LoadedQuiz } from '../services/quizAttemptDataService'
+
+import {
+  loadQuizForAttempt,
+  type LoadedQuiz
+} from '../services/quizAttemptDataService'
+
 import styles from './QuizAttemptPage.module.css'
 
 type LoadState =
@@ -13,50 +19,90 @@ interface QuizAttemptLoaderProps {
   quizId: string
 }
 
+interface QuizRequestProps {
+  quizId: string
+  onRetry: () => void
+}
+
+/*
+ * The outer component manages retries.
+ * Changing the key creates a new request component
+ * with its own initial loading state.
+ */
 export default function QuizAttemptLoader({
   quizId
 }: QuizAttemptLoaderProps) {
+  const [retryCount, setRetryCount] = useState(0)
+
+  return (
+    <QuizAttemptRequest
+      key={`${quizId}:${retryCount}`}
+      quizId={quizId}
+      onRetry={() => {
+        setRetryCount(count => count + 1)
+      }}
+    />
+  )
+}
+
+function QuizAttemptRequest({
+  quizId,
+  onRetry
+}: QuizRequestProps) {
   const [state, setState] = useState<LoadState>({
     status: 'loading'
   })
 
-  const [retryCount, setRetryCount] = useState(0)
-
   useEffect(() => {
     let active = true
 
-    setState({ status: 'loading' })
-
     void loadQuizForAttempt(quizId)
       .then(quiz => {
-        if (active) {
-          setState({ status: 'ready', quiz })
-        }
-      })
-      .catch(error => {
-        if (active) {
+        if (!active) return
+
+        if (quiz.quizId !== quizId) {
           setState({
             status: 'error',
-            message: error instanceof Error
+            message: 'The requested quiz could not be verified.'
+          })
+          return
+        }
+
+        setState({
+          status: 'ready',
+          quiz
+        })
+      })
+      .catch(error => {
+        if (!active) return
+
+        setState({
+          status: 'error',
+          message:
+            error instanceof Error
               ? error.message
               : 'Unable to load quiz.'
-          })
-        }
+        })
       })
 
     return () => {
       active = false
     }
-  }, [quizId, retryCount])
+  }, [quizId])
 
-  if (state.status === 'loading' ||
-      (state.status === 'ready' && state.quiz.quizId !== quizId)) {
+  if (state.status === 'loading') {
     return (
       <div className={styles.page}>
         <div className={styles.shell}>
           <header className={styles.examHeader}>
-            <h1 className={styles.title}>Preparing your quiz</h1>
-            <p role="status" className={styles.subtitle}>
+            <h1 className={styles.title}>
+              Preparing your quiz
+            </h1>
+
+            <p
+              role="status"
+              className={styles.subtitle}
+            >
               Loading questions securely...
             </p>
           </header>
@@ -74,14 +120,17 @@ export default function QuizAttemptLoader({
               Unable to open quiz
             </h1>
 
-            <p role="alert" className={styles.subtitle}>
+            <p
+              role="alert"
+              className={styles.subtitle}
+            >
               {state.message}
             </p>
 
             <button
               type="button"
               className={styles.navButton}
-              onClick={() => setRetryCount(count => count + 1)}
+              onClick={onRetry}
             >
               Try again
             </button>
