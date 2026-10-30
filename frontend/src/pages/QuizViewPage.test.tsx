@@ -69,8 +69,8 @@ describe('QuizViewPage (CSMQ-51)', () => {
     expect(screen.getByText('What is the default port for secure web browsing (HTTPS)?')).toBeInTheDocument();
     expect(screen.getByText('Easy')).toBeInTheDocument();
     expect(screen.getByText('Medium')).toBeInTheDocument();
-    expect(screen.getByText('1 mark')).toBeInTheDocument();
-    expect(screen.getByText('2 marks')).toBeInTheDocument();
+    expect(screen.getAllByText('1 point if correct')).toHaveLength(2);
+    expect(screen.queryByText('2 marks')).not.toBeInTheDocument();
 
     expect(screen.getByText('TCP')).toBeInTheDocument();
     expect(screen.getByText('443')).toBeInTheDocument();
