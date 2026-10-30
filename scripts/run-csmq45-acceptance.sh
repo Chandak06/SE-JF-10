@@ -6,7 +6,7 @@ cd "$ROOT"
 mkdir -p reports/csmq45
 
 echo 'CSMQ-45: backend TypeScript build'
-(cd backend && npm run build) 2>&1 | tee reports/csmq45/backend-build.log
+npm run build 2>&1 | tee reports/csmq45/backend-build.log
 
 echo 'CSMQ-45: backend acceptance and full regression suite (run from repo root)'
 npx vitest run backend/tests 2>&1 | tee reports/csmq45/backend-tests.log
