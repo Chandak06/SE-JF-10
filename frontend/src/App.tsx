@@ -18,7 +18,6 @@ import MaterialsPage from './pages/MaterialsPage'
 import AdminPage from './pages/AdminPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import StudentDashboardPage from './pages/StudentDashboardPage'
-import QuizAttemptPage from './pages/QuizAttemptPage'
 import QuizAttemptLoader from './pages/QuizAttemptLoader'
 import QuizResultPage from './pages/QuizResultPage'
 import QuizHistoryPage from './pages/QuizHistoryPage'
@@ -64,7 +63,7 @@ function StudentRoute({
 function AttemptRoute() {
   return (
     <StudentRoute>
-      <QuizAttemptPage />
+      <Navigate to="/quizzes" replace />
     </StudentRoute>
   )
 }
