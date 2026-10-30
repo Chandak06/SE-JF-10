@@ -6,7 +6,7 @@ Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated 
 | --- | --- | --- |
 | F-001/002/004 | Real register/login/logout, server-validated refresh; security/runtime/auth/browser tests | Validated for integrated accounts |
 | F-010 | PDF metadata/content/size validation and MongoDB/file storage; runtime and browser tests | Validated |
-| F-012 | Material title/subject/description search, combined subject filter, paging and searchable subject UI; HTTP/browser tests | Validated for delivered search flow; folders tracked separately |
+| F-012 | Material title/subject/description search, combined subject filter, paging and searchable subject UI; HTTP/browser tests | Validated for delivered search flow; folder management dropped by Harshit on 30 October |
 | F-013 | Protected PDF download/retrieval, removal exclusion and browser downloads | Validated |
 | F-041 | Confirmed atomic material removal, retained bytes/audit and read exclusions | Validated |
 | F-020/022 | Real Admin MCQ creation/classification/filtering and student-safe serializer; model/API/UI/browser tests | Validated |
@@ -24,4 +24,4 @@ Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated 
 | SR-004 | Strict body/ID/filter validation, query-injection tests, safe errors and confirmed deletion | Validated on integrated routes |
 | SR-005 | Production transport gate and trusted gateway; dedicated certificate-validated local HTTPS deployment/sensitive-operation smoke in CI, plus direct plaintext rejection | Verify final PR CI; no public host/certificate claim or TLS verification bypass |
 
-All 17 functional, five NFR and five security requirement groups remain represented. CSMQ-32's folder phrase conflicts with the frozen baseline and is recorded separately, not assigned to Dharani or used to rewrite submitted requirements. Final peer cross-testing, RTM/defect review, Project Guide acceptance, final demo and release freeze remain genuine human acceptance gates. Current modules are no longer marked missing simply because earlier dated reports predate their PRs.
+All 17 functional, five NFR and five security requirement groups remain represented. Harshit dropped folder management on 30 October; CSMQ-32 now excludes it, and it is not counted as unfinished work. Submitted requirements remain unchanged. Final peer cross-testing, RTM/defect review, Project Guide acceptance, final demo and release freeze remain genuine human acceptance gates. Current modules are no longer marked missing simply because earlier dated reports predate their PRs.
