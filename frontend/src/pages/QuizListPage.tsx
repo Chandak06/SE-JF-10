@@ -10,6 +10,10 @@ export default function QuizListPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('');
+  const queryKey = JSON.stringify([searchTerm.trim(), subjectFilter.trim()]);
+  const [resolvedQuery, setResolvedQuery] = useState<string | null>(null);
+  const waitingForQuery = loading || resolvedQuery !== queryKey;
+  const currentError = resolvedQuery === queryKey ? error : null;
 
   const activeRequestId = useRef(0);
 
@@ -24,6 +28,7 @@ export default function QuizListPage() {
       .then((data) => {
         if (!isCancelled && reqId === activeRequestId.current) {
           setQuizzes(data);
+          setResolvedQuery(queryKey);
           setError(null);
           setLoading(false);
         }
@@ -33,6 +38,8 @@ export default function QuizListPage() {
           setError(
             err instanceof Error ? err.message : 'Unable to load quizzes.'
           );
+          setQuizzes([]);
+          setResolvedQuery(queryKey);
           setLoading(false);
         }
       });
@@ -40,7 +47,7 @@ export default function QuizListPage() {
     return () => {
       isCancelled = true;
     };
-  }, [searchTerm, subjectFilter]);
+  }, [searchTerm, subjectFilter, queryKey]);
 
   function handleClearFilters() {
     setSearchTerm('');
@@ -58,6 +65,7 @@ export default function QuizListPage() {
       .then((data) => {
         if (reqId === activeRequestId.current) {
           setQuizzes(data);
+          setResolvedQuery(queryKey);
           setError(null);
           setLoading(false);
         }
@@ -67,6 +75,8 @@ export default function QuizListPage() {
           setError(
             err instanceof Error ? err.message : 'Unable to load quizzes.'
           );
+          setQuizzes([]);
+          setResolvedQuery(queryKey);
           setLoading(false);
         }
       });
@@ -127,20 +137,20 @@ export default function QuizListPage() {
         )}
       </section>
 
-      {error && (
+      {currentError && (
         <div className={styles.alertError} role="alert">
-          <span>{error}</span>
+          <span>{currentError}</span>
           <button type="button" className={styles.retryBtn} onClick={handleRetry}>
             Retry
           </button>
         </div>
       )}
 
-      {loading ? (
+      {waitingForQuery ? (
         <p className={styles.status} role="status">
           Loading quizzes…
         </p>
-      ) : quizzes.length === 0 ? (
+      ) : currentError ? null : quizzes.length === 0 ? (
         <div className={styles.emptyState}>
           <span className={styles.emptyIcon} aria-hidden="true">
             📋
