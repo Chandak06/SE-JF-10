@@ -4,10 +4,10 @@ import { getMaterialDetails, getSessionUser, type MaterialDetails } from '../ser
 import { getRecentMaterials, type RecentMaterial } from '../services/recentMaterials'
 import styles from './StudentDashboardPage.module.css'
 
-type DashboardDestination = { title: string; description: string; icon: string; href?: string; action?: string; unavailable?: boolean }
+type DashboardDestination = { title: string; description: string; icon: string; href: string }
 const destinations: DashboardDestination[] = [
-  { title: 'Quiz Attempt History', description: 'Review your completed quiz attempts.', unavailable: true, icon: '↺' },
-  { title: 'Performance Dashboard', description: 'Track results and performance across subjects.', unavailable: true, icon: '▥' }
+  { title: 'Quiz Attempt History', description: 'Review your completed quiz attempts.', href: '/attempt-history', icon: '↺' },
+  { title: 'Performance Dashboard', description: 'Track results and performance across subjects.', href: '/attempt-insights', icon: '▥' }
 ]
 
 export default function StudentDashboardPage() {
@@ -29,10 +29,10 @@ export default function StudentDashboardPage() {
     <p className={styles.intro}>Your starting point for study materials and quizzes.</p>
     <div className={styles.dashboardGrid}>
       <section className={styles.toolsSection} aria-label="Quiz activity shortcuts">
-        <div className={styles.grid}>{destinations.map(destination => <button className={styles.card} type="button" disabled key={destination.title} title={`${destination.title} is unavailable`}>
+        <div className={styles.grid}>{destinations.map(destination => <Link className={styles.card} to={destination.href} key={destination.title}>
           <span className={styles.icon} aria-hidden="true">{destination.icon}</span>
           <span className={styles.cardCopy}><strong>{destination.title}</strong><small>{destination.description}</small></span>
-        </button>)}</div>
+        </Link>)}</div>
       </section>
       <section className={styles.recentSection} aria-labelledby="recent-materials-title">
         <div className={styles.recentHeading}><h2 id="recent-materials-title">Recently opened</h2></div>

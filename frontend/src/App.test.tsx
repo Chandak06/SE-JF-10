@@ -145,7 +145,7 @@ describe('Study Commons routes and forms', () => {
     expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
   })
 
-  it('shows student navigation destinations and marks owner pages that are not integrated', () => {
+  it('shows student navigation destinations including quiz history and performance', () => {
     authState.sessionToken = 'test-token'
     authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
     window.history.pushState({}, '', '/dashboard')
@@ -155,8 +155,8 @@ describe('Study Commons routes and forms', () => {
     expect(screen.queryByRole('link', { name: 'Open Study Materials' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Create a Quiz' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Search Quizzes' })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Quiz Attempt History/ })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /Performance Dashboard/ })).toBeDisabled()
+    expect(screen.getByRole('link', { name: /Quiz Attempt History/ })).toHaveAttribute('href', '/attempt-history')
+    expect(screen.getByRole('link', { name: /Performance Dashboard/ })).toHaveAttribute('href', '/attempt-insights')
     expect(screen.queryByRole('link', { name: 'Admin Dashboard' })).not.toBeInTheDocument()
   })
 

@@ -4,8 +4,9 @@
 .dashboardGrid { display: grid; grid-template-columns: minmax(300px, .8fr) minmax(0, 1.5fr); align-items: start; column-gap: clamp(2.75rem, 5.5vw, 5.75rem); row-gap: 2rem; margin-top: clamp(2rem, 4vw, 3.25rem); }
 .recentSection, .toolsSection { min-width: 0; }
 .grid { display: flex; flex-direction: column; gap: .8rem; }
-.card { display: grid; width: 100%; min-height: 104px; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 15px; color: var(--text-primary); background: var(--surface); text-align: left; cursor: not-allowed; opacity: 1; }
-.card:disabled { color: var(--text-primary); opacity: 1; }
+.card { display: grid; width: 100%; min-height: 104px; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 15px; color: var(--text-primary); background: var(--surface); text-align: left; text-decoration: none; cursor: pointer; transition: border-color .16s, background .16s, transform .16s; }
+.card:hover, .card:focus-visible { transform: translateY(-1px); border-color: var(--accent); background: var(--surface-subtle); }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .icon { display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border)); border-radius: 15px; color: var(--accent); background: var(--surface-subtle); font-size: 1.65rem; font-weight: 700; }
 .cardCopy { display: grid; gap: .32rem; }
 .cardCopy strong { font-size: .98rem; font-weight: 650; }
