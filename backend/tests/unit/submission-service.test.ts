@@ -79,6 +79,8 @@ describe('CSMQ-40: Quiz submission service', () => {
 
     expect(result).toEqual({
       attemptId: ATTEMPT_ID,
+      resultId: ATTEMPT_ID,
+      correctAnswers: [{ questionId: QUESTION_1, correctOptionId: 'B' }, { questionId: QUESTION_2, correctOptionId: 'A' }],
       quizId: QUIZ_ID,
       score: 1,
       total: 2,
