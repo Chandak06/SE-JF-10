@@ -334,7 +334,7 @@ export default function QuizAttemptPage({
               <p className={styles.subtitle}>
                 {isDemo
                   ? `${questions.length} sample questions · practice prototype · not sent for scoring`
-                  : `${questions.length} questions · server-scored quiz`} 
+                  : `${questions.length} questions · 1 point per correct answer · server-scored quiz`}
               </p>
             </div>
             <div className={styles.headerTools}>
@@ -372,11 +372,7 @@ export default function QuizAttemptPage({
                     {currentQuestion.difficulty}
                   </span>
                 )}
-                {currentQuestion.marks !== undefined && (
-                  <span className={styles.badge}>
-                    +{currentQuestion.marks} mark
-                  </span>
-                )}
+                <span className={styles.badge}>1 point if correct</span>
               </div>
             </div>
             <h2 className={styles.questionText}>
