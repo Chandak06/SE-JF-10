@@ -2,8 +2,8 @@
 .page {
   min-height: calc(100vh - 90px);
   padding: 36px 20px 70px;
-  background: #f5f7fc;
-  color: #17233c;
+  background: var(--page-bg);
+  color: var(--text-primary);
 }
 
 .container {
@@ -14,14 +14,14 @@
 .backLink {
   display: inline-block;
   margin-bottom: 22px;
-  color: #506281;
+  color: var(--accent);
   font-size: 14px;
   font-weight: 650;
   text-decoration: none;
 }
 
 .backLink:hover {
-  color: #2858b8;
+  color: var(--accent-hover);
 }
 
 .hero {
@@ -31,13 +31,13 @@
   gap: 30px;
   padding: 42px;
   border-radius: 24px;
-  background: linear-gradient(115deg, #13254c, #2d51a1);
-  color: white;
-  box-shadow: 0 20px 50px rgba(23, 42, 88, 0.12);
+  background: linear-gradient(115deg, color-mix(in srgb, var(--accent) 28%, var(--page-bg)), var(--surface-subtle));
+  color: var(--text-primary);
+  box-shadow: var(--shadow);
 }
 
 .eyebrow {
-  color: #bdd0ff;
+  color: var(--accent);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.15em;
@@ -52,7 +52,7 @@
 .hero p:not(.eyebrow) {
   max-width: 550px;
   margin-bottom: 0;
-  color: #dee8ff;
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.7;
 }
@@ -62,14 +62,14 @@
   flex-shrink: 0;
   padding: 14px 20px;
   border-radius: 11px;
-  background: white;
-  color: #214683;
+  background: var(--accent);
+  color: var(--accent-contrast);
   font-weight: 750;
   text-decoration: none;
 }
 
 .heroButton:hover {
-  background: #edf3ff;
+  background: var(--accent-hover);
 }
 
 .listHeading {
@@ -86,7 +86,7 @@
 }
 
 .listHeading span {
-  color: #71809a;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
@@ -101,8 +101,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 26px 30px;
-  background: white;
-  border: 1px solid #e6ebf4;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 17px;
   box-shadow: 0 5px 24px rgba(28, 48, 91, 0.035);
 }
@@ -115,8 +115,8 @@
   display: inline-flex;
   padding: 5px 10px;
   border-radius: 7px;
-  background: #eef3ff;
-  color: #355da6;
+  background: var(--surface-subtle);
+  color: var(--accent);
   font-size: 11px;
   font-weight: 750;
 }
@@ -131,12 +131,12 @@
 .date {
   margin: 0;
   font-size: 13px;
-  color: #6f7d95;
+  color: var(--text-secondary);
 }
 
 .reference {
   margin: 9px 0 0;
-  color: #9ca7b8;
+  color: var(--text-tertiary);
   font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   overflow-wrap: anywhere;
@@ -155,26 +155,26 @@
   gap: 7px;
   padding: 15px;
   border-radius: 12px;
-  background: #f6f8fc;
+  background: var(--surface-subtle);
   text-align: center;
 }
 
 .stat strong {
-  color: #244d9b;
+  color: var(--accent);
   font-size: 22px;
 }
 
 .stat span {
-  color: #71809a;
+  color: var(--text-secondary);
   font-size: 11px;
 }
 
 .messageCard {
   margin-top: 26px;
   padding: 70px 25px;
-  border: 1px solid #e5ebf4;
+  border: 1px solid var(--border);
   border-radius: 20px;
-  background: white;
+  background: var(--surface);
   text-align: center;
 }
 
@@ -184,12 +184,12 @@
 }
 
 .messageCard p {
-  color: #71809a;
+  color: var(--text-secondary);
   line-height: 1.7;
 }
 
 .emptyIcon {
-  color: #6986c2;
+  color: var(--accent);
   font-size: 54px;
 }
 
@@ -199,8 +199,8 @@
   padding: 13px 22px;
   border: none;
   border-radius: 10px;
-  background: #2855b8;
-  color: white;
+  background: var(--accent);
+  color: var(--accent-contrast);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -209,8 +209,8 @@
 }
 
 .primaryButton:hover {
-  background: #1c438e;
-  color: white;
+  background: var(--accent-hover);
+  color: var(--accent-contrast);
 }
 
 .pagination {
@@ -223,10 +223,10 @@
 
 .pageButton {
   padding: 11px 17px;
-  border: 1px solid #d7dfed;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: white;
-  color: #2b4d87;
+  background: var(--surface);
+  color: var(--text-primary);
   font-weight: 650;
   cursor: pointer;
 }
@@ -237,7 +237,7 @@
 }
 
 .pageCount {
-  color: #667791;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
@@ -245,7 +245,7 @@
 .heroButton:focus-visible,
 .primaryButton:focus-visible,
 .pageButton:focus-visible {
-  outline: 3px solid #8aaeff;
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
