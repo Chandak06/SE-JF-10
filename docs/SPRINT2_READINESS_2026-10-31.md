@@ -28,11 +28,11 @@ No missing teammate business module or dropped-folder requirement is used as a b
 
 The configured read-only authenticated ping still fails on 31 October. All three discovered servers fail TLS with `ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR` before database authentication. The diagnostic reports only allowlisted error codes; no URI, password or data is published. This alone does not identify the responsible network/Atlas setting.
 
-The Atlas console initially opened Campus-Lost-Found. No settings in that unrelated project were changed. Project selection/browser recovery stopped responding; SE project settings could not yet be inspected. Do not disable TLS validation or substitute a guessed connection string. The independently verified local deployment remains usable.
+The Atlas console initially opened Campus-Lost-Found; no settings in that unrelated project were changed. After Harshit supplied the exact SE project URL, the console confirmed **Collaborative_Study_Quiz_Platform**, project `6aca5007b549773ddcc6fe35`, with Cluster0 **Active** and an **Active** IP access rule explicitly including the current computer's IP. No access rule or credential was changed. Subsequent connection-wizard inspection timed out. An IP-list omission is not supported by this evidence; the pre-authentication TLS failure still requires network/Atlas troubleshooting. Do not disable TLS validation or substitute a guessed connection string. The independently verified local deployment remains usable.
 
 ## Final operator steps
 
 1. Run `./scripts/start-sprint2.ps1`; use `http://127.0.0.1:8080`. For trusted first-Admin provisioning, use the explicit procedure in [DEPLOYMENT.md](DEPLOYMENT.md); normal registration creates Students only. Keep `.local/sprint2-demo/database` to retain demo records.
 2. Demonstrate Student material upload/search/details/view/download; Admin Question creation; Student Quiz creation/search/start/submit/result/history/performance; Admin cancel/confirm moderation; removed content denied with history retained.
 3. Record genuine teammate cross-testing, final defect/RTM review, demo evidence and acceptance. Then agree the release freeze. No reviewer signature, video or final freeze is fabricated by automated verification.
-4. If Atlas is the chosen environment, restore access to the SE project console, verify its actual cluster and network access settings, then require a successful authenticated ping before claiming Atlas readiness.
+4. If Atlas is the chosen environment, investigate the pre-authentication TLS failure on the verified active SE cluster/current-IP configuration, then require a successful authenticated ping before claiming Atlas readiness. A verified local demonstration does not require Atlas.
