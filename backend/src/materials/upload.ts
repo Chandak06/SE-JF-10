@@ -140,9 +140,13 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
     }
   });
   const moderation: ModerationResource = {
-    async list(limit) {
-      const items = await Material.find({ removedAt: null }).sort({ _id: -1 }).limit(limit).select('title').lean();
-      return items.map(item => ({ id: item._id.toString(), title: item.title }));
+    async list(limit, filters) {
+      const items = await Material.find({ removedAt: null, ...(filters.subject ? { subject: filters.subject } : {}) }).sort({ _id: -1 }).limit(limit).select('title subject').lean();
+      return items.map(item => ({ id: item._id.toString(), title: item.title, subject: item.subject }));
+    },
+    async filterOptions() {
+      const subjects = await Material.distinct('subject', { removedAt: null });
+      return { subjects: subjects.sort((a, b) => a.localeCompare(b)), difficulties: [] };
     },
     async remove(id, administratorId) {
       // Atomic tombstone closes search/download access, retaining bytes for recoverable moderation.
@@ -150,6 +154,12 @@ export function createMaterialUpload(connection: Connection, maxBytes: number) {
         removedAt: new Date(), removedBy: new Types.ObjectId(administratorId)
       } });
       return result.modifiedCount === 1;
+    },
+    async removeAll(administratorId) {
+      const result = await Material.updateMany({ removedAt: null }, { $set: {
+        removedAt: new Date(), removedBy: new Types.ObjectId(administratorId)
+      } });
+      return result.modifiedCount;
     }
   };
   return { router, Material, bucket, moderation, async initialize() { await Material.init(); } };

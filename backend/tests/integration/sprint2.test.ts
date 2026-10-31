@@ -27,7 +27,9 @@ beforeAll(async () => {
   fixture = fixtureModel(connection);
   const resource: ModerationResource = {
     async list(limit) { return (await fixture.find().limit(limit)).map(row => ({ id: row.id, title: String(row.get('title')) })); },
-    async remove(id) { return (await fixture.deleteOne({ _id: id })).deletedCount === 1; }
+    async filterOptions() { return { subjects: [], difficulties: [] }; },
+    async remove(id) { return (await fixture.deleteOne({ _id: id })).deletedCount === 1; },
+    async removeAll() { const result = await fixture.deleteMany({}); return result.deletedCount; }
   };
   runtime = await createRuntime(connection, loadConfig({ NODE_ENV: 'test', MONGODB_URI: mongo.getUri(), BCRYPT_ROUNDS: '10' }), {
     authLimit: 1000, moderation: { questions: resource, quizzes: resource }
@@ -62,7 +64,7 @@ it('removes material atomically and closes both search and download while retain
   expect(Buffer.from(download.body)).toEqual(pdf);
   expect(download.headers['content-disposition']).toContain('attachment; filename="Sprint-notes.pdf"');
   const list = await request(runtime.app).get('/api/admin/materials').set(bearer(admin)).expect(200);
-  expect(list.body.items).toEqual([{ id, title: 'Sprint notes' }]);
+  expect(list.body.items).toEqual([{ id, title: 'Sprint notes', subject: 'SE' }]);
   await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
   await request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true }).expect(204);
   expect((await request(runtime.app).get('/api/materials').set(bearer(student)).expect(200)).body.materials).toEqual([]);

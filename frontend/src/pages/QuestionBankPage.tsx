@@ -54,6 +54,12 @@ export default function QuestionBankPage() {
   }, [filterSubject, filterTopic, filterDifficulty]);
 
   useEffect(() => {
+    if (!successMessage) return;
+    const timeout = window.setTimeout(() => setSuccessMessage(''), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [successMessage]);
+
+  useEffect(() => {
     filtersRef.current = {
       subject: filterSubject,
       topic: filterTopic,
@@ -214,7 +220,8 @@ export default function QuestionBankPage() {
 
       {successMessage && (
         <div className={styles.successBanner} role="status">
-          {successMessage}
+          <span>{successMessage}</span>
+          <button type="button" aria-label="Dismiss success message" onClick={() => setSuccessMessage('')}>×</button>
         </div>
       )}
 
@@ -381,6 +388,7 @@ export default function QuestionBankPage() {
             id="filter-subject"
             type="text"
             className={styles.input}
+            maxLength={100}
             placeholder="All subjects"
             value={filterSubject}
             onChange={(e) => setFilterSubject(e.target.value)}
@@ -395,6 +403,7 @@ export default function QuestionBankPage() {
             id="filter-topic"
             type="text"
             className={styles.input}
+            maxLength={100}
             placeholder="All topics"
             value={filterTopic}
             onChange={(e) => setFilterTopic(e.target.value)}

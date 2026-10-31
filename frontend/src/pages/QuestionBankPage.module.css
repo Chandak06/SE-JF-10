@@ -1,11 +1,12 @@
 .page {
-  padding: 2.5rem 1.5rem 4rem;
-  max-width: 1200px;
+  min-height: calc(100vh - 76px);
+  max-width: 1320px;
   margin: 0 auto;
+  padding: 12px 56px 110px;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -23,7 +24,7 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: clamp(1.55rem, 2vw, 1.85rem);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 0.5rem;
@@ -59,8 +60,8 @@
   border: 1px solid var(--border);
   border-radius: 1rem;
   box-shadow: var(--shadow);
-  padding: 1.75rem;
-  margin-bottom: 2rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .cardHeader {
@@ -179,12 +180,38 @@
 }
 
 .successBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   background: var(--success-bg);
   border: 1px solid var(--success);
   color: var(--success);
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.85rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.successBanner button {
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.successBanner button:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .formActions {
@@ -229,17 +256,17 @@
 }
 
 .filtersBar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.1rem;
 }
 
 .filterItem {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  min-width: 180px;
+  min-width: 0;
 }
 
 .filterLabel {
@@ -259,7 +286,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0.75rem;
-  padding: 1.25rem;
+  padding: 1rem;
   box-shadow: var(--shadow);
 }
 
@@ -334,7 +361,23 @@
 }
 
 .emptyState {
-  text-align: center;
-  padding: 3rem 1rem;
+  text-align: left;
+  padding: 1.5rem 1rem;
   color: var(--text-tertiary);
+}
+
+@media (max-width: 760px) {
+  .filtersBar {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 650px) {
+  .page {
+    padding: 8px 22px 100px;
+  }
 }

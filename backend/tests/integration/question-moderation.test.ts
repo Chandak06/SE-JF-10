@@ -34,7 +34,7 @@ it('moderates the actual Question model, excludes both read APIs and preserves p
   const Attempt = getQuizAttemptModel(db);
   const attempt = await Attempt.create({ user: user!._id, quiz: new Types.ObjectId(), responses: [{ questionId: id, selectedOption: 'B' }], score: 1, percentage: 100 });
   const list = await request(runtime.app).get('/api/admin/questions').set(bearer(admin)).expect(200);
-  expect(list.body.items).toEqual([{ id, title: question.questionText }]); expect(JSON.stringify(list.body)).not.toContain('correctAnswer');
+  expect(list.body.items).toEqual([{ id, title: question.questionText, subject: question.subject, difficulty: question.difficulty }]); expect(JSON.stringify(list.body)).not.toContain('correctAnswer');
   await request(runtime.app).delete('/api/admin/questions/' + id).set(bearer(admin)).send({ confirmed: true }).expect(204);
   expect((await request(runtime.app).get('/api/questions').set(bearer(admin))).body.questions).toEqual([]);
   expect((await request(runtime.app).get('/api/quiz-questions').set(bearer(student))).body.questions).toEqual([]);

@@ -117,6 +117,8 @@ describe('QuestionBankPage (CSMQ-23 / CSMQ-24)', () => {
     expect(
       await screen.findByText('MCQ question created successfully.')
     ).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Dismiss success message' }));
+    expect(screen.queryByText('MCQ question created successfully.')).not.toBeInTheDocument();
     expect(questionService.createQuestion).toHaveBeenCalledWith({
       questionText: 'What does IP stand for?',
       subject: 'Computer Networks',

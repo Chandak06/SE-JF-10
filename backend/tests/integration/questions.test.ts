@@ -209,6 +209,14 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
     expect(subjectRes.body.questions).toHaveLength(1);
     expect(subjectRes.body.questions[0].subject).toBe('Data Structures');
 
+    const partialSubjectRes = await request(runtime.app)
+      .get('/api/questions')
+      .query({ subject: 'data struct' })
+      .set(bearer(adminToken))
+      .expect(200);
+    expect(partialSubjectRes.body.questions).toHaveLength(1);
+    expect(partialSubjectRes.body.questions[0].subject).toBe('Data Structures');
+
     const topicRes = await request(runtime.app)
       .get('/api/questions')
       .query({ topic: 'OSI Model' })
@@ -216,6 +224,14 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
       .expect(200);
     expect(topicRes.body.questions).toHaveLength(1);
     expect(topicRes.body.questions[0].topic).toBe('OSI Model');
+
+    const partialTopicRes = await request(runtime.app)
+      .get('/api/questions')
+      .query({ topic: 'osi' })
+      .set(bearer(adminToken))
+      .expect(200);
+    expect(partialTopicRes.body.questions).toHaveLength(1);
+    expect(partialTopicRes.body.questions[0].topic).toBe('OSI Model');
 
     const diffRes = await request(runtime.app)
       .get('/api/questions')
@@ -229,8 +245,8 @@ describe('Question API integration (CSMQ-23 / IT-M2-01..02)', () => {
     const combinedRes = await request(runtime.app)
       .get('/api/questions')
       .query({
-        subject: 'Computer Networks',
-        topic: 'OSI Model',
+        subject: 'computer',
+        topic: 'osi',
         difficulty: 'Medium'
       })
       .set(bearer(adminToken))

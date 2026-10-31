@@ -1,15 +1,16 @@
 import { mkdir, mkdtemp, writeFile, rm, readdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { resolve, relative, isAbsolute } from 'node:path';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import request from 'supertest';
 import { startLocalDemo } from '../../scripts/local-demo.js';
 
-const fixtures = resolve('.local/local-demo-tests');
+let fixtures: string;
 let directory: string;
 let demo: Awaited<ReturnType<typeof startLocalDemo>> | undefined;
 const administrator = { name: 'Local Test Admin', email: 'local-admin@example.test', password: 'Disposable local test password!' };
 beforeAll(async () => {
-  await mkdir(fixtures, { recursive: true });
+  fixtures = await mkdtemp(resolve(tmpdir(), 'study-commons-local-demo-tests-'));
   directory = await mkdtemp(resolve(fixtures, 'run-'));
   await mkdir(resolve(directory, 'web'));
   await writeFile(resolve(directory, 'web/index.html'), '<!doctype html><title>Local demo fixture</title>');
@@ -20,6 +21,7 @@ afterAll(async () => {
   const child = relative(fixtures, directory);
   if (!child || child.startsWith('..') || isAbsolute(child)) throw new Error('Invalid fixture cleanup path.');
   await rm(directory, { recursive: true, force: true });
+  await rm(fixtures, { recursive: true, force: true });
 });
 function options() {
   return { dataDirectory: resolve(directory, 'db'), frontendDirectory: resolve(directory, 'web'),
