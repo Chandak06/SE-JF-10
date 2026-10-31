@@ -148,8 +148,8 @@ describe('CSMQ-28: Consolidated Member 2 Test Suite Verification', () => {
     });
 
     expect(filter.difficulty).toBe('Hard');
-    expect(filter.subject).toBe('Data Structures');
-    expect(filter.topic).toBe('Trees');
+    expect(filter.subject).toEqual(/Data Structures/i);
+    expect(filter.topic).toEqual(/Trees/i);
   });
 
   it('UT-M2-05: verifies student-safe question serializer completely omits answers', () => {

@@ -7,9 +7,14 @@ export interface QuestionFilterParams {
 }
 
 export interface QuestionMongoFilter {
-  subject?: string;
-  topic?: string;
+  subject?: RegExp;
+  topic?: RegExp;
   difficulty?: QuestionDifficulty;
+}
+
+function partialText(value: string): RegExp {
+  const escaped = value.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped, 'i');
 }
 
 const VALID_DIFFICULTIES: readonly QuestionDifficulty[] = [
@@ -24,11 +29,11 @@ export function buildQuestionFilter(
   const filter: QuestionMongoFilter = {};
 
   if (typeof params.subject === 'string' && params.subject.trim()) {
-    filter.subject = params.subject.trim();
+    filter.subject = partialText(params.subject);
   }
 
   if (typeof params.topic === 'string' && params.topic.trim()) {
-    filter.topic = params.topic.trim();
+    filter.topic = partialText(params.topic);
   }
 
   if (
