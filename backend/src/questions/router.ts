@@ -108,11 +108,10 @@ export function createQuestionsRouter(connection: Connection) {
 
   const moderation: ModerationResource = {
     async list(limit, filters) {
-      const items = await Question.find({
-        removedAt: null,
-        ...(filters.subject ? { subject: filters.subject } : {}),
-        ...(filters.difficulty ? { difficulty: filters.difficulty } : {})
-      }).sort({ _id: -1 }).limit(limit).select('questionText subject difficulty').lean();
+      const query = Question.find().where('removedAt').equals(null);
+      if (filters.subject) query.where('subject').equals(filters.subject);
+      if (filters.difficulty) query.where('difficulty').equals(filters.difficulty);
+      const items = await query.sort({ _id: -1 }).limit(limit).select('questionText subject difficulty').lean();
       return items.map(item => ({ id: item._id.toString(), title: item.questionText, subject: item.subject, difficulty: item.difficulty }));
     },
     async filterOptions() {
