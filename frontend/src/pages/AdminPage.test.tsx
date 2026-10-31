@@ -4,12 +4,12 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, expect, it, vi } from 'vitest'
 import AdminPage from './AdminPage'
 import * as auth from '../services/authService'
-vi.mock('../services/authService', () => ({ currentUser: vi.fn(), moderationKinds: vi.fn(), moderationItems: vi.fn(), removeItem: vi.fn() }))
+vi.mock('../services/authService', () => ({ currentUser: vi.fn(), moderationKinds: vi.fn(), moderationItems: vi.fn(), removeItem: vi.fn(), removeAllItems: vi.fn() }))
 beforeEach(() => {
   vi.clearAllMocks()
   vi.mocked(auth.currentUser).mockResolvedValue({ id: 'admin', name: 'Admin', email: 'admin@example.com', role: 'admin' })
   vi.mocked(auth.moderationKinds).mockResolvedValue(['materials'])
-  vi.mocked(auth.moderationItems).mockResolvedValue([{ id: 'material-1', title: 'Notes' }])
+  vi.mocked(auth.moderationItems).mockResolvedValue({ items: [{ id: 'material-1', title: 'Notes', subject: 'Math' }], filters: { subjects: ['Math'], difficulties: ['Easy'] } })
   vi.mocked(auth.removeItem).mockResolvedValue(undefined)
 })
 const show = () => render(<MemoryRouter><AdminPage /></MemoryRouter>)
@@ -17,19 +17,20 @@ it('opens the moderation category selected from the dashboard', async () => {
   vi.mocked(auth.moderationKinds).mockResolvedValue(['materials', 'questions'])
   render(<MemoryRouter initialEntries={['/admin/moderation?kind=questions']}><AdminPage /></MemoryRouter>)
   await screen.findByRole('button', { name: 'Delete Notes' })
-  expect(auth.moderationItems).toHaveBeenCalledWith('questions')
+  expect(auth.moderationItems).toHaveBeenCalledWith('questions', { subject: undefined, difficulty: undefined })
   expect(screen.getByLabelText('Content type')).toHaveValue('questions')
+  expect(screen.getByLabelText('Subject')).toBeInTheDocument()
+  expect(screen.getByLabelText('Difficulty')).toBeInTheDocument()
 })
 it('blocks student moderation before loading resources', async () => {
   vi.mocked(auth.currentUser).mockResolvedValue({ id: 'student', name: 'Student', email: 'student@example.com', role: 'student' }); show()
   expect(await screen.findByText('Administrator access is required.')).toBeInTheDocument()
   expect(auth.moderationKinds).not.toHaveBeenCalled()
 })
-it('requires a distinct confirmation and permits cancellation without sending removal', async () => {
+it('offers per-item deletion with a separate confirmation and cancellation', async () => {
   const user = userEvent.setup(); show()
-  const select = await screen.findByRole('button', { name: 'Select Notes' })
-  await user.click(select)
-  expect(screen.getByRole('button', { name: 'Deselect Notes' })).toHaveAttribute('aria-pressed', 'true')
+  await screen.findByRole('button', { name: 'Delete Notes' })
+  expect(screen.queryByRole('button', { name: 'Select Notes' })).not.toBeInTheDocument()
   await user.click(await screen.findByRole('button', { name: 'Delete Notes' }))
   expect(screen.getByRole('dialog')).toBeInTheDocument(); expect(auth.removeItem).not.toHaveBeenCalled()
   await user.click(screen.getByRole('button', { name: 'Cancel' }))

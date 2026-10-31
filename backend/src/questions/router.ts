@@ -107,13 +107,31 @@ export function createQuestionsRouter(connection: Connection) {
   });
 
   const moderation: ModerationResource = {
-    async list(limit) {
-      const items = await Question.find({ removedAt: null }).sort({ _id: -1 }).limit(limit).select('questionText').lean();
-      return items.map(item => ({ id: item._id.toString(), title: item.questionText }));
+    async list(limit, filters) {
+      const items = await Question.find({
+        removedAt: null,
+        ...(filters.subject ? { subject: filters.subject } : {}),
+        ...(filters.difficulty ? { difficulty: filters.difficulty } : {})
+      }).sort({ _id: -1 }).limit(limit).select('questionText subject difficulty').lean();
+      return items.map(item => ({ id: item._id.toString(), title: item.questionText, subject: item.subject, difficulty: item.difficulty }));
+    },
+    async filterOptions() {
+      const [subjects, difficulties] = await Promise.all([
+        Question.distinct('subject', { removedAt: null }),
+        Question.distinct('difficulty', { removedAt: null })
+      ]);
+      return {
+        subjects: subjects.sort((a, b) => a.localeCompare(b)),
+        difficulties: difficulties.sort((a, b) => a.localeCompare(b))
+      };
     },
     async remove(id, administratorId) {
       const result = await Question.updateOne({ _id: id, removedAt: null }, { $set: { removedAt: new Date(), removedBy: new Types.ObjectId(administratorId) } });
       return result.modifiedCount === 1;
+    },
+    async removeAll(administratorId) {
+      const result = await Question.updateMany({ removedAt: null }, { $set: { removedAt: new Date(), removedBy: new Types.ObjectId(administratorId) } });
+      return result.modifiedCount;
     }
   };
   return {

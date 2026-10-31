@@ -27,7 +27,9 @@ beforeAll(async () => {
   fixture = fixtureModel(connection);
   const resource: ModerationResource = {
     async list(limit) { return (await fixture.find().limit(limit)).map(row => ({ id: row.id, title: String(row.get('title')) })); },
-    async remove(id) { return (await fixture.deleteOne({ _id: id })).deletedCount === 1; }
+    async filterOptions() { return { subjects: [], difficulties: [] }; },
+    async remove(id) { return (await fixture.deleteOne({ _id: id })).deletedCount === 1; },
+    async removeAll() { const result = await fixture.deleteMany({}); return result.deletedCount; }
   };
   runtime = await createRuntime(connection, loadConfig({ NODE_ENV: 'test', MONGODB_URI: mongo.getUri(), BCRYPT_ROUNDS: '10' }), {
     authLimit: 1000, moderation: { questions: resource, quizzes: resource }

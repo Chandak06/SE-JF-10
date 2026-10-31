@@ -6,6 +6,7 @@ import { createQuizSchema, validateQuizBody } from './validation.js';
 import { buildQuizFilter } from './filters.js';
 import { toStudentSafeQuestions } from '../questions/serializer.js';
 import { AppError, unauthorized } from '../errors.js';
+import type { ModerationFilters } from '../admin/moderation.js';
 import { z } from 'zod';
 
 export function createQuizzesRouter(connection: Connection) {
@@ -145,19 +146,30 @@ export function createQuizzesRouter(connection: Connection) {
   });
 
   const moderation = {
-    async list(limit: number) {
-      const items = await Quiz.find({ removedAt: null })
+    async list(limit: number, filters: ModerationFilters) {
+      const items = await Quiz.find({ removedAt: null, ...(filters.subject ? { subject: filters.subject } : {}) })
         .sort({ _id: -1 })
         .limit(limit)
-        .select('title')
+        .select('title subject')
         .lean();
       return items.map((item) => ({
         id: item._id.toString(),
-        title: item.title
+        title: item.title,
+        subject: item.subject
       }));
+    },
+    async filterOptions() {
+      const subjects = await Quiz.distinct('subject', { removedAt: null });
+      return { subjects: subjects.sort((a, b) => a.localeCompare(b)), difficulties: [] };
     },
     async remove(id: string, administratorId: string) {
       return softDeleteQuizById(Quiz, id, administratorId);
+    },
+    async removeAll(administratorId: string) {
+      const result = await Quiz.updateMany({ removedAt: null }, { $set: {
+        removedAt: new Date(), removedBy: new Types.ObjectId(administratorId)
+      } });
+      return result.modifiedCount;
     }
   };
 

@@ -5,16 +5,11 @@ import {
   moderationKinds,
   moderationItems,
   removeItem,
+  removeAllItems,
   type ModerationKind,
   type ModerationItem
 } from '../services/authService'
 import styles from './AdminPage.module.css'
-
-function SelectIcon({ selected }: { selected: boolean }) {
-  return selected
-    ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
-    : <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /></svg>
-}
 
 function DeleteIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-.8 13H6.8L6 7m4 4v5m4-5v5" /></svg>
@@ -29,8 +24,11 @@ export default function AdminPage() {
   const [kinds, setKinds] = useState<ModerationKind[]>([])
   const [kind, setKind] = useState<ModerationKind>('materials')
   const [items, setItems] = useState<ModerationItem[]>([])
-  const [selected, setSelected] = useState<ModerationItem | null>(null)
+  const [filterOptions, setFilterOptions] = useState({ subjects: [] as string[], difficulties: [] as string[] })
+  const [subjectFilter, setSubjectFilter] = useState('')
+  const [difficultyFilter, setDifficultyFilter] = useState('')
   const [pending, setPending] = useState<ModerationItem | null>(null)
+  const [pendingDeleteAll, setPendingDeleteAll] = useState(false)
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(true)
   const [permitted, setPermitted] = useState(false)
@@ -40,6 +38,7 @@ export default function AdminPage() {
     let active = true
     live.current = true
     const requestId = ++latest.current
+    setBusy(true)
 
     async function load() {
       try {
@@ -52,18 +51,23 @@ export default function AdminPage() {
         }
 
         const first = available.find(value => value === requested) ?? available[0]
-        const rows = first ? await moderationItems(first) : []
+        const listing = first ? await moderationItems(first, {
+          subject: subjectFilter || undefined,
+          difficulty: difficultyFilter || undefined
+        }) : { items: [], filters: { subjects: [], difficulties: [] } }
         if (active && requestId === latest.current) {
           setKinds(available)
           if (first) setKind(first)
-          setItems(rows)
-          setSelected(null)
+          setItems(listing.items)
+          setFilterOptions(listing.filters)
           setPermitted(true)
           setMessage('')
         }
       } catch (error) {
         if (active && requestId === latest.current) {
           setPermitted(false)
+          setItems([])
+          setFilterOptions({ subjects: [], difficulties: [] })
           setMessage(error instanceof Error ? error.message : 'Unable to load moderation.')
         }
       } finally {
@@ -76,13 +80,15 @@ export default function AdminPage() {
 
     void load()
     return () => { active = false; live.current = false }
-  }, [requested])
+  }, [requested, subjectFilter, difficultyFilter])
 
   function selectCategory(next: ModerationKind) {
     setBusy(true)
     setPending(null)
-    setSelected(null)
+    setPendingDeleteAll(false)
     setItems([])
+    setSubjectFilter('')
+    setDifficultyFilter('')
     setKind(next)
     setParams({ kind: next })
   }
@@ -96,13 +102,35 @@ export default function AdminPage() {
       await removeItem(kind, removed.id)
       if (live.current && requestId === latest.current) {
         setItems(rows => rows.filter(item => item.id !== removed.id))
-        setSelected(current => current?.id === removed.id ? null : current)
         setPending(null)
         setMessage('Resource removed.')
       }
     } catch (error) {
       if (live.current && requestId === latest.current) {
         setMessage(error instanceof Error ? error.message : 'Removal failed. Try again.')
+      }
+    } finally {
+      if (live.current && requestId === latest.current) setBusy(false)
+    }
+  }
+
+  async function confirmDeleteAll() {
+    if (loading) return
+    const requestId = ++latest.current
+    setBusy(true)
+    try {
+      const removedCount = await removeAllItems(kind)
+      if (live.current && requestId === latest.current) {
+        setItems([])
+        setFilterOptions({ subjects: [], difficulties: [] })
+        setSubjectFilter('')
+        setDifficultyFilter('')
+        setPendingDeleteAll(false)
+        setMessage(`Deleted ${removedCount} ${kind === 'materials' ? 'study materials' : kind}.`)
+      }
+    } catch (error) {
+      if (live.current && requestId === latest.current) {
+        setMessage(error instanceof Error ? error.message : 'Delete all failed. Try again.')
       }
     } finally {
       if (live.current && requestId === latest.current) setBusy(false)
@@ -117,7 +145,7 @@ export default function AdminPage() {
         <div>
           <p className={styles.eyebrow}>ADMINISTRATION</p>
           <h1 id="moderation-title">Content moderation</h1>
-          <p className={styles.description}>Select a resource to review it, or delete it after confirmation.</p>
+          <p className={styles.description}>Filter resources and remove individual items or clear the selected content type.</p>
         </div>
         {permitted && <label className={styles.categoryField}>
           <span>Content type</span>
@@ -130,50 +158,60 @@ export default function AdminPage() {
       {message && <p className={styles.notice} role="status">{message}</p>}
       {loading && <p className={styles.state} role="status">Loading moderation items…</p>}
       {!loading && permitted && <>
+        {(kind === 'materials' || kind === 'questions') && <div className={styles.filters} aria-label="Moderation filters">
+          <label className={styles.filterField}>
+            <span>Subject</span>
+            <select value={subjectFilter} onChange={event => setSubjectFilter(event.target.value)}>
+              <option value="">All subjects</option>
+              {filterOptions.subjects.map(subject => <option key={subject} value={subject}>{subject}</option>)}
+            </select>
+          </label>
+          {kind === 'questions' && <label className={styles.filterField}>
+            <span>Difficulty</span>
+            <select value={difficultyFilter} onChange={event => setDifficultyFilter(event.target.value)}>
+              <option value="">All difficulties</option>
+              {filterOptions.difficulties.map(difficulty => <option key={difficulty} value={difficulty}>{difficulty}</option>)}
+            </select>
+          </label>}
+        </div>}
         <div className={styles.listHeader}>
           <h2>{kind === 'materials' ? 'Study materials' : kind === 'questions' ? 'Questions' : 'Quizzes'}</h2>
-          <span>{items.length} {items.length === 1 ? 'item' : 'items'}</span>
+          <div className={styles.listActions}>
+            <span>{items.length} {items.length === 1 ? 'item' : 'items'} shown</span>
+            <button className={styles.deleteAllButton} type="button" disabled={loading || items.length === 0} onClick={() => setPendingDeleteAll(true)}><DeleteIcon />Delete all</button>
+          </div>
         </div>
         {!items.length
-          ? <p className={styles.state}>No {kind === 'materials' ? 'study materials' : kind} available for moderation.</p>
+          ? <p className={styles.state}>{subjectFilter || difficultyFilter
+            ? 'No content matches the selected filters.'
+            : `No ${kind === 'materials' ? 'study materials' : kind} available for moderation.`}</p>
           : <ul className={styles.itemList} aria-label={`${kind} available for moderation`}>
-            {items.map(item => {
-              const isSelected = selected?.id === item.id
-              return <li className={`${styles.item} ${isSelected ? styles.itemSelected : ''}`} key={item.id}>
+            {items.map(item => <li className={styles.item} key={item.id}>
                 <span className={styles.itemTitle}>{item.title}</span>
                 <div className={styles.itemActions}>
-                  <button
-                    className={`${styles.iconButton} ${isSelected ? styles.selectActive : ''}`}
-                    type="button"
-                    aria-label={isSelected ? `Deselect ${item.title}` : `Select ${item.title}`}
-                    aria-pressed={isSelected}
-                    title={isSelected ? 'Deselect item' : 'Select item'}
-                    disabled={loading}
-                    onClick={() => setSelected(isSelected ? null : item)}
-                  ><SelectIcon selected={isSelected} /></button>
                   <button
                     className={`${styles.iconButton} ${styles.deleteButton}`}
                     type="button"
                     aria-label={`Delete ${item.title}`}
                     title={`Delete ${categoryLabel}`}
                     disabled={loading}
-                    onClick={() => { setSelected(item); setPending(item) }}
+                    onClick={() => setPending(item)}
                   ><DeleteIcon /></button>
                 </div>
-              </li>
-            })}
+              </li>)}
           </ul>}
-        {selected && !pending && <p className={styles.selectionNote} role="status">Selected: {selected.title}</p>}
       </>}
 
-      {pending && <div className={styles.dialogBackdrop}>
+      {(pending || pendingDeleteAll) && <div className={styles.dialogBackdrop}>
         <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="remove-heading">
           <p className={styles.eyebrow}>CONFIRM ACTION</p>
-          <h2 id="remove-heading">Delete this {categoryLabel}?</h2>
-          <p><strong>{pending.title}</strong> will no longer be available to students.</p>
+          <h2 id="remove-heading">{pendingDeleteAll ? `Delete all ${kind === 'materials' ? 'study materials' : kind}?` : `Delete this ${categoryLabel}?`}</h2>
+          <p>{pendingDeleteAll
+            ? `This removes every active ${kind === 'materials' ? 'study material' : kind.slice(0, -1)} in this content type, including items hidden by the current filters. This cannot be undone from this page.`
+            : <><strong>{pending?.title}</strong> will no longer be available to students.</>}</p>
           <div className={styles.dialogActions}>
-            <button className={styles.cancelButton} type="button" disabled={loading} onClick={() => setPending(null)}>Cancel</button>
-            <button className={styles.confirmButton} type="button" disabled={loading} onClick={() => void confirmRemoval()}>{loading ? 'Deleting…' : 'Delete'}</button>
+            <button className={styles.cancelButton} type="button" disabled={loading} onClick={() => { setPending(null); setPendingDeleteAll(false) }}>Cancel</button>
+            <button className={styles.confirmButton} type="button" disabled={loading} onClick={() => void (pendingDeleteAll ? confirmDeleteAll() : confirmRemoval())}>{loading ? 'Deleting…' : pendingDeleteAll ? 'Delete all' : 'Confirm removal'}</button>
           </div>
         </section>
       </div>}

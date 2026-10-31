@@ -11,7 +11,7 @@ beforeEach(() => {
   vi.mocked(auth.moderationKinds).mockResolvedValue(['materials', 'questions'])
 })
 const show = () => render(<MemoryRouter><AdminDashboardPage /></MemoryRouter>)
-it('shows only available moderation actions and identifies missing Quiz integration', async () => {
+it('shows available moderation actions and identifies missing Quiz integration', async () => {
   show()
   expect(await screen.findByRole('link', { name: 'Moderate materials' })).toHaveAttribute('href', '/admin/moderation?kind=materials')
   expect(screen.getByRole('link', { name: 'Moderate questions' })).toHaveAttribute('href', '/admin/moderation?kind=questions')
