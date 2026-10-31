@@ -20,7 +20,7 @@ export default function AdminPage() {
   const requested = params.get('kind')
   const latest = useRef(0)
   const live = useRef(true)
-  const [loadedCategory, setLoadedCategory] = useState<string | null | undefined>(undefined)
+  const [loadedQuery, setLoadedQuery] = useState<string | undefined>(undefined)
   const [kinds, setKinds] = useState<ModerationKind[]>([])
   const [kind, setKind] = useState<ModerationKind>('materials')
   const [items, setItems] = useState<ModerationItem[]>([])
@@ -32,13 +32,13 @@ export default function AdminPage() {
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(true)
   const [permitted, setPermitted] = useState(false)
-  const loading = busy || loadedCategory !== requested
+  const queryKey = JSON.stringify([requested, subjectFilter, difficultyFilter])
+  const loading = busy || loadedQuery !== queryKey
 
   useEffect(() => {
     let active = true
     live.current = true
     const requestId = ++latest.current
-    setBusy(true)
 
     async function load() {
       try {
@@ -73,14 +73,14 @@ export default function AdminPage() {
       } finally {
         if (active && requestId === latest.current) {
           setBusy(false)
-          setLoadedCategory(requested)
+          setLoadedQuery(queryKey)
         }
       }
     }
 
     void load()
     return () => { active = false; live.current = false }
-  }, [requested, subjectFilter, difficultyFilter])
+  }, [requested, subjectFilter, difficultyFilter, queryKey])
 
   function selectCategory(next: ModerationKind) {
     setBusy(true)
