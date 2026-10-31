@@ -134,3 +134,11 @@ Integrated Karan’s available history and performance pages through their stude
 
 
 The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px.
+
+### Admin UI follow-up, CSMQ-55 integration
+
+**Date:** 31 October 2026
+
+Removed page-level navigation duplicated by the admin navbar and the repeated Question Bank and Materials shortcuts from the admin dashboard. Replaced per-item text removal controls with accessible select and delete icon actions, retained the confirmation dialog, and restyled moderation for the shared light and dark themes. Removed the redundant administration eyebrow from the dashboard.
+
+Updated moderation and dashboard UI assertions. Tests were not run for this update.

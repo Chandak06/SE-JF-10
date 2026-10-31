@@ -11,11 +11,12 @@ beforeEach(() => {
   vi.mocked(auth.moderationKinds).mockResolvedValue(['materials', 'questions'])
 })
 const show = () => render(<MemoryRouter><AdminDashboardPage /></MemoryRouter>)
-it('reuses Question Bank and the available moderation routes and identifies missing Quiz integration', async () => {
+it('shows only available moderation actions and identifies missing Quiz integration', async () => {
   show()
-  expect(await screen.findByRole('link', { name: 'Open Question Bank' })).toHaveAttribute('href', '/questions')
-  expect(screen.getByRole('link', { name: 'Moderate materials' })).toHaveAttribute('href', '/admin/moderation?kind=materials')
+  expect(await screen.findByRole('link', { name: 'Moderate materials' })).toHaveAttribute('href', '/admin/moderation?kind=materials')
   expect(screen.getByRole('link', { name: 'Moderate questions' })).toHaveAttribute('href', '/admin/moderation?kind=questions')
+  expect(screen.queryByRole('link', { name: 'Open Question Bank' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Browse study materials' })).not.toBeInTheDocument()
   expect(screen.getByText('Quiz module integration is pending.')).toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Moderate quizzes' })).not.toBeInTheDocument()
 })
