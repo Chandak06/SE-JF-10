@@ -64,7 +64,7 @@ it('removes material atomically and closes both search and download while retain
   expect(Buffer.from(download.body)).toEqual(pdf);
   expect(download.headers['content-disposition']).toContain('attachment; filename="Sprint-notes.pdf"');
   const list = await request(runtime.app).get('/api/admin/materials').set(bearer(admin)).expect(200);
-  expect(list.body.items).toEqual([{ id, title: 'Sprint notes' }]);
+  expect(list.body.items).toEqual([{ id, title: 'Sprint notes', subject: 'SE' }]);
   await request(runtime.app).get('/api/materials/' + id).set(bearer(student)).expect(200);
   await request(runtime.app).delete('/api/admin/materials/' + id).set(bearer(admin)).send({ confirmed: true }).expect(204);
   expect((await request(runtime.app).get('/api/materials').set(bearer(student)).expect(200)).body.materials).toEqual([]);
