@@ -239,7 +239,7 @@ test('student uploads, administrator confirms removal and removed content cannot
   await page.getByRole('button', { name: 'Delete Browser notes' }).click()
   await page.getByRole('button', { name: 'Confirm removal' }).click()
   await expect(page.getByRole('status')).toContainText('Resource removed.')
-  await page.getByRole('link', { name: 'Study materials' }).click()
+  await page.getByRole('link', { name: 'Materials', exact: true }).click()
   await expect(page.getByText('Nothing exists yet')).toBeVisible()
 })
 
