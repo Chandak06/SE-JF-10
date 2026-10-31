@@ -10,6 +10,8 @@ Run root `npm ci`, `npm run check`, `npm run db:check` and the backend; in front
 
 The 31 October read-only diagnostic still fails before authentication: all three discovered Atlas servers return `ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR`. Inspect the SE project's actual cluster and network access settings; this error alone does not establish whether the cause is Atlas configuration or the local network. Credentials/access settings were not changed and certificate validation stays enabled. Disposable test passes do not prove live Atlas reachability. The Campus-Lost-Found project is unrelated and must not be changed for this application.
 
+The SE console was subsequently verified at the project URL supplied by Harshit: **Collaborative_Study_Quiz_Platform** (`6aca5007b549773ddcc6fe35`). Cluster0 is **Active**, and an existing **Active** IP rule explicitly includes this computer's current IP. No rule was added, and the TLS failure remains unresolved. Do not treat another IP-list entry or a password reset as an established fix for a failure that occurs before authentication.
+
 ## Local Node demo on this Windows machine (no Docker or Atlas)
 
 Install the locked root and frontend dependencies first (`npm ci` in each directory). From the repository root run:
