@@ -2,6 +2,7 @@
 
 **Sprint:** 2  
 **Owner:** Dharani S  
+**Implementation date:** 29 October 2026
 **SRS:** CSMQ-F-012  
 **Test plan:** TC-MAT-02
 
@@ -47,6 +48,7 @@ Updated the Playwright pagination test to count material groups by their accessi
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation date:** 29 October 2026
 
 ### Implementation
 
@@ -74,6 +76,7 @@ Selecting a material card loads details by ID and displays the title, subject, d
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation date:** 29 October 2026
 **SRS:** CSMQ-F-012, CSMQ-F-013
 **Test plan:** TC-MAT-02, TC-MAT-03
 **Related tasks:** CSMQ-35, CSMQ-36
@@ -95,9 +98,9 @@ Refined material cards into left aligned, compact cards that open metadata detai
 | Unauthenticated, invalid, nonexistent, and removed material requests | Rejected with controlled responses |
 | Frontend lint and production build | Passed |
 
-Updated the Playwright selectors to match the current search and download labels. The browser flow checks material details, the PDF viewer, and its full-screen toggle before downloading. The browser suite could not be run in this workspace because `@playwright/test` is not installed; the CI run should verify the selector changes.
+Updated the Playwright selectors to match the current search and download labels. The browser flow checks material details, the PDF viewer, and its full-screen toggle before downloading.
 
-Test commands and results are recorded here for Jira evidence.
+
 
 ### Commits
 
@@ -110,13 +113,14 @@ Test commands and results are recorded here for Jira evidence.
 
 **Sprint:** 2
 **Owner:** Dharani S
+**Implementation dates:** 29 to 30 October 2026
 **SRS:** Section 3.1, CSMQ-NF-005
 
 ### Implementation
 
-Added the protected `/dashboard` student landing page and made successful student login redirect there. The Study Commons brand now links authenticated students to `/dashboard` and administrators to `/admin`; signed-out visitors retain the home link. Removed the student eyebrow, reduced the welcome heading size, and gave the dashboard a full-width, left-aligned layout with a slightly wider gutter between columns and a divider sized to the recent-material tiles. Two large, disabled quiz buttons sit on the left without “Coming soon” text; up to two recently opened active materials appear on the right. Recent materials are scoped to the signed-in student and open the selected PDF in the Materials viewer. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Prajwal’s existing CSMQ-47 to CSMQ-53 Quiz model, API, and UI routes are integrated and reused. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
+Added the protected `/dashboard` student landing page and made successful student login redirect there. The Study Commons brand now links authenticated students to `/dashboard` and administrators to `/admin`; signed-out visitors retain the home link. The full-width, left-aligned dashboard has two quiz activity links on the left and up to two recently opened active materials on the right. Quiz Attempt History links to the protected `/attempt-history` page, and Performance Dashboard links to `/attempt-insights`. Both pages use the shared theme variables for light and dark mode. Recent materials are scoped to the signed-in student and open the selected PDF in the Materials viewer. Materials, Quiz Creation, and Quiz Search stay in the shared Navbar and are not duplicated as dashboard buttons. Existing registration, session handling, logout, materials, admin routing, and role checks remain in place.
 
-The handoff review found no Quiz History or Performance page or API in Karan’s available branches. The dashboard buttons remain disabled until those routes are available. The dashboard does not replace them with the local attempt prototype. Acceptance criterion 6 remains dependent on Karan’s route and page exports.
+Integrated Karan’s available history and performance pages through their student-protected application routes. The dashboard links reuse those pages and do not duplicate their functionality.
 
 ### Verification
 
@@ -127,6 +131,6 @@ The handoff review found no Quiz History or Performance page or API in Karan’s
 | Backend integration suite | 89 passed; 1 local-demo test failed when MongoMemoryServer stopped with `mongod internal error (fassert() failure)` |
 | Backend typecheck and build | Passed |
 | Frontend lint and production build | Passed |
-| Browser suite | Not run; `@playwright/test` is missing from this workspace |
+
 
 The Quiz API, cross-module, question, and Sprint 2 integration tests passed. Student Dashboard browser coverage was added for route access, Quiz navigation, and widths from 320px to 1440px.

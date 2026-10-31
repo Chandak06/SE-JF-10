@@ -157,7 +157,7 @@ describe('Study Commons routes and forms', () => {
     expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument()
   })
 
-  it('shows student navigation destinations and marks owner pages that are not integrated', () => {
+  it('shows student navigation destinations including quiz history and performance', () => {
     authState.sessionToken = 'test-token'
     authState.user = { id: 'student-1', name: 'Student', email: 'student@example.com', role: 'student' }
     window.history.pushState({}, '', '/dashboard')
