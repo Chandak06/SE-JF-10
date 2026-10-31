@@ -2,13 +2,15 @@
 
 **30 October:** Real Attempt/Result/History/Performance modules are integrated, and Dashboard navigation is connected. The [current execution/acceptance report](SPRINT2_HARSHIT_FINAL_2026-10-30.md) supersedes older missing-module/prototype statements below. The built local verifier now exercises real Question/Quiz, idempotent scoring, SAD result/download contracts, PDF bytes and saved history through actual MongoDB restart. Submitted SRS/SAD/Test Plan files remain unchanged.
 
-Use supported Node 24.15+ and locked dependencies. Keep credentials/environment files out of Git, images, screenshots and logs. This branch packages available modules; missing production modules, public deployment and final freeze are not claimed complete.
+Use supported Node 24.15+ and locked dependencies. Keep credentials/environment files out of Git, images, screenshots and logs. The integrated application contains the real team modules. Local release validation is separate from Atlas readiness, public deployment and final acceptance/freeze.
 
 ## Existing local configuration / Atlas
 
 Run root `npm ci`, `npm run check`, `npm run db:check` and the backend; in frontend run `npm ci`, tests/lint/build and the development server. The supported-runtime Windows launcher remains available. The exact configured URI selects the database; no database name is guessed.
 
-On 28 October configuration and DNS checks passed but all three Atlas TLS handshakes failed before authentication. The operator must verify the actual cluster/network environment. Credentials/access settings were not changed and certificate validation stays enabled. Disposable test passes do not prove live Atlas reachability.
+The first 31 October read-only diagnostic failed TLS before authentication. Subsequent certificate-verified TLS probes, authenticated driver pings and the unchanged application's `scripts/check-database.mjs` all passed. The compiled backend also started against the configured Atlas database, returned `/ready` = `ready`, and denied anonymous protected access with 401. No accounts, content or attempts were created. The exact cause of the transient failure was not established; credentials/access settings were not changed, and certificate validation stays enabled. The Campus-Lost-Found project is unrelated and must not be changed for this application.
+
+The SE console was verified at the project URL supplied by Harshit: **Collaborative_Study_Quiz_Platform** (`6aca5007b549773ddcc6fe35`). Cluster0 is **Active**, and an existing **Active** IP rule explicitly includes this computer's current IP. No rule was added. Rerun the authenticated ping before an Atlas-backed demonstration; the separately tested local deployment does not depend on Atlas availability.
 
 ## Local Node demo on this Windows machine (no Docker or Atlas)
 

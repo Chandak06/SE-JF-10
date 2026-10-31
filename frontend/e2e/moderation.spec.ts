@@ -74,6 +74,18 @@ test('complete Student attempt, result, history and subject performance survive 
   await measured('Student Dashboard', () => page.goto(url + '/dashboard'), () => expect(page.getByRole('link', { name: /Quiz Attempt History/ })).toBeVisible())
   await page.getByRole('link', { name: /Quiz Attempt History/ }).click()
   await expect(page.getByRole('heading', { name: 'My quiz history', exact: true })).toBeVisible()
+  const pageColors = async (heading: string) => page.getByRole('heading', { name: heading, exact: true }).evaluate(node => {
+    const surface = node.closest('[class*="_page_"]')
+    if (!surface) throw new Error('Page surface unavailable')
+    const style = getComputedStyle(surface)
+    return { background: style.backgroundColor, text: style.color }
+  })
+  const lightHistory = await pageColors('My quiz history')
+  await page.getByRole('switch', { name: 'Dark theme' }).click()
+  const darkHistory = await pageColors('My quiz history')
+  expect(darkHistory.background).not.toBe(lightHistory.background)
+  expect(darkHistory.text).not.toBe(lightHistory.text)
+  await testInfo.attach('history-dark-theme', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' })
   for (const answer of ['TCP', 'UDP']) {
     await measured('Quiz View', () => page.goto(url + '/quizzes/' + quiz.id), () => expect(page.getByRole('link', { name: 'Start Quiz', exact: true })).toBeVisible())
     await measured('Quiz Attempt', () => page.getByRole('link', { name: 'Start Quiz', exact: true }).click(), () => expect(page.getByRole('radio', { name: /TCP/ })).toBeVisible())
@@ -92,6 +104,11 @@ test('complete Student attempt, result, history and subject performance survive 
   await measured('Subject Performance', () => page.getByRole('link', { name: 'Performance insights', exact: true }).click(), () => expect(page.getByText('50%', { exact: true }).first()).toBeVisible())
   await expect(page.getByText('50%', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Full Flow Networks', { exact: true })).toBeVisible()
+  const darkInsights = await pageColors('Know your progress.')
+  await page.getByRole('switch', { name: 'Dark theme' }).click()
+  const lightInsights = await pageColors('Know your progress.')
+  expect(darkInsights.background).not.toBe(lightInsights.background)
+  expect(darkInsights.text).not.toBe(lightInsights.text)
   for (const width of [375, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
