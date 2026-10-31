@@ -1,7 +1,10 @@
-.page { width: 100%; max-width: none; margin: 0; padding: clamp(1rem, 2.5vw, 2rem) clamp(1rem, 4vw, 4rem); color: var(--text-primary, #25312c); }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1rem; margin: 2rem 0; }
-.grid article { padding: 1.5rem; border: 1px solid var(--border, #cbd5ce); border-radius: 16px; background: var(--surface, #fff); overflow-wrap: anywhere; }
-.grid h2 { font-size: 1.2rem; margin-top: 0; }
+.page { width: 100%; min-height: calc(100vh - 76px); max-width: 1320px; margin: 0 auto; padding: 12px 56px 110px; color: var(--text-primary, #25312c); }
+.page h1 { margin: 0 0 .5rem; font-size: clamp(1.55rem, 2vw, 1.85rem); }
+.page > p { margin: 0; color: var(--text-secondary); font-size: .95rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; margin: 1.5rem 0; }
+.grid article { padding: 1.2rem; border: 1px solid var(--border, #cbd5ce); border-radius: 13px; background: var(--surface, #fff); overflow-wrap: anywhere; }
+.grid h2 { font-size: 1.1rem; margin: 0 0 .65rem; }
 .grid a, .page button { display: inline-block; padding: .7rem 1rem; border: 1px solid color-mix(in srgb, var(--accent) 65%, var(--border)); border-radius: 8px; color: var(--accent-contrast); background: var(--accent); text-decoration: none; cursor: pointer; }
 .grid a:hover, .page button:hover { background: var(--accent-hover); }
 .grid a:focus-visible, .page button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (max-width: 650px) { .page { padding: 8px 22px 100px; } .grid { grid-template-columns: 1fr; } }
