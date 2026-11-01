@@ -117,17 +117,32 @@ export async function currentUser(): Promise<AuthenticatedUser> {
   return result.authenticatedUser
 }
 export type ModerationKind = 'materials' | 'questions' | 'quizzes'
-export type ModerationItem = { id: string; title: string }
+export type ModerationItem = { id: string; title: string; subject?: string; difficulty?: string }
+export type ModerationFilters = { subject?: string; difficulty?: string }
+export type ModerationFilterOptions = { subjects: string[]; difficulties: string[] }
+export type ModerationListing = { items: ModerationItem[]; filters: ModerationFilterOptions }
 export async function moderationKinds(): Promise<ModerationKind[]> {
   return ((await (await authorized('/api/admin/resources')).json()) as { resources: ModerationKind[] }).resources
 }
-export async function moderationItems(kind: ModerationKind): Promise<ModerationItem[]> {
-  return ((await (await authorized('/api/admin/' + kind)).json()) as { items: ModerationItem[] }).items
+export async function moderationItems(kind: ModerationKind, filters: ModerationFilters = {}): Promise<ModerationListing> {
+  const query = new URLSearchParams({ limit: '50' })
+  if (filters.subject) query.set('subject', filters.subject)
+  if (filters.difficulty) query.set('difficulty', filters.difficulty)
+  return (await (await authorized('/api/admin/' + kind + '?' + query.toString())).json()) as ModerationListing
 }
 export async function removeItem(kind: ModerationKind, id: string) {
   await authorized('/api/admin/' + kind + '/' + encodeURIComponent(id), {
     method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true })
   })
+}
+export async function removeAllItems(kind: ModerationKind): Promise<number> {
+  const result = await (await authorized('/api/admin/' + kind, {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true })
+  })).json() as { removedCount?: unknown }
+  if (typeof result.removedCount !== 'number' || !Number.isSafeInteger(result.removedCount) || result.removedCount < 0) {
+    throw new Error('The server returned an invalid removal count.')
+  }
+  return result.removedCount
 }
 export type MaterialSummary = StudyMaterial
 export type MaterialPage = { materials: MaterialSummary[]; nextCursor: string | null }

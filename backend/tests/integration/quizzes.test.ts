@@ -352,7 +352,7 @@ describe('Quiz API integration (CSMQ-48 / SRS CSMQ-F-030)', () => {
     const quizId = createRes.body.quiz.id;
 
     // Test moderation list
-    const items = await runtime.quizzes.moderation.list(10);
+    const items = await runtime.quizzes.moderation.list(10, {});
     expect(items.some((item) => item.id === quizId && item.title === 'Moderated Quiz')).toBe(true);
 
     // Test moderation remove

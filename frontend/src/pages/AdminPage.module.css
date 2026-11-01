@@ -1,0 +1,38 @@
+.page { width: 100%; min-height: calc(100vh - 76px); margin: 0; padding: clamp(1rem, 2.5vw, 2rem) clamp(1rem, 4vw, 4rem); color: var(--text-primary); }
+.panel { width: 100%; min-height: calc(100vh - 140px); padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--border); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); }
+.header { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.eyebrow { margin: 0 0 .55rem; color: var(--accent); font-size: .7rem; font-weight: 750; letter-spacing: .13em; }
+.header h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.25rem); letter-spacing: -.035em; }
+.description { margin: .6rem 0 0; color: var(--text-secondary); line-height: 1.55; }
+.categoryField { display: grid; min-width: min(100%, 220px); gap: .45rem; color: var(--text-secondary); font-size: .8rem; font-weight: 650; }
+.categoryField select { min-height: 44px; padding: 0 .8rem; border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); background: var(--input-bg); font: inherit; font-weight: 500; }
+.filters { display: flex; flex-wrap: wrap; gap: .85rem; margin: 1.25rem 0 0; }
+.filterField { display: grid; min-width: min(100%, 220px); gap: .4rem; color: var(--text-secondary); font-size: .78rem; font-weight: 650; }
+.filterField select { min-height: 40px; padding: 0 .75rem; border: 1px solid var(--border); border-radius: 9px; color: var(--text-primary); background: var(--input-bg); font: inherit; font-weight: 500; }
+.notice, .state { margin: 1rem 0 0; padding: 1rem; border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); background: var(--surface-subtle); }
+.listHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 1.5rem 0 .75rem; }
+.listHeader h2 { margin: 0; font-size: 1.1rem; }
+.listHeader span { color: var(--text-tertiary); font-size: .8rem; }
+.listActions { display: flex; align-items: center; gap: .85rem; }
+.deleteAllButton { display: inline-flex; min-height: 40px; align-items: center; gap: .45rem; padding: 0 .85rem; border: 1px solid color-mix(in srgb, var(--error) 55%, var(--border)); border-radius: 9px; color: var(--error); background: var(--error-bg); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.deleteAllButton:hover { border-color: var(--error); }
+.deleteAllButton:disabled { opacity: .55; cursor: not-allowed; }
+.deleteAllButton svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.itemList { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
+.item { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 1rem; padding: .65rem .75rem .65rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); transition: border-color .15s, background .15s; }
+.itemTitle { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.itemActions { display: flex; flex: 0 0 auto; gap: .45rem; }
+.iconButton { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid var(--border); border-radius: 10px; color: var(--text-secondary); background: var(--surface-subtle); cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+.iconButton:hover { border-color: var(--error); color: var(--error); background: var(--error-bg); }
+.iconButton svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.iconButton:disabled { opacity: .55; cursor: wait; }
+.dialogBackdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(10 8 9 / 55%); }
+.dialog { width: min(100%, 440px); padding: 1.5rem; border: 1px solid var(--border); border-radius: 18px; color: var(--text-primary); background: var(--surface); box-shadow: var(--shadow); }
+.dialog h2 { margin: 0; font-size: 1.35rem; }
+.dialog > p:not(.eyebrow) { color: var(--text-secondary); line-height: 1.55; }
+.dialogActions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.25rem; }
+.cancelButton, .confirmButton { min-height: 42px; padding: 0 1rem; border: 1px solid var(--border); border-radius: 9px; color: var(--text-primary); background: var(--surface-subtle); font: inherit; font-weight: 650; cursor: pointer; }
+.confirmButton { border-color: var(--error); color: var(--accent-contrast); background: var(--error); }
+.cancelButton:disabled, .confirmButton:disabled { opacity: .6; cursor: wait; }
+.page button:focus-visible, .categoryField select:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (max-width: 640px) { .page { padding-inline: .75rem; } .panel { min-height: calc(100vh - 112px); padding: 1rem; } .header { align-items: stretch; flex-direction: column; } .categoryField { min-width: 0; } .listHeader { align-items: flex-start; flex-direction: column; } .listActions { width: 100%; justify-content: space-between; } }
