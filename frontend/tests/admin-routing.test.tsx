@@ -35,6 +35,6 @@ it('routes successful Admin login to the dashboard with Question Bank and modera
   await user.click(screen.getByRole('button', { name: 'Log in', exact: true }))
   expect(await screen.findByRole('heading', { name: 'Administrator Dashboard' })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Study Commons admin dashboard' })).toHaveAttribute('href', '/admin')
-  expect(await screen.findByRole('link', { name: 'Open Question Bank' })).toHaveAttribute('href', '/questions')
-  expect(screen.getByRole('link', { name: 'Moderate questions' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Question Bank', exact: true })).toHaveAttribute('href', '/questions')
+  expect(await screen.findByRole('link', { name: 'Moderate questions' })).toBeInTheDocument()
 })
