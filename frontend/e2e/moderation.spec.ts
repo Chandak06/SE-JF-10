@@ -18,6 +18,44 @@ let backend: Server
 let frontend: ViteDevServer
 let url: string
 let runtime: Awaited<ReturnType<typeof createRuntime>>
+
+test('bulk material moderation confirms hidden scope, supports cancellation and retains PDF audit data', async ({ page }) => {
+  const password = 'Bulk browser review password!'
+  await runtime.auth.register({ name: 'Bulk Browser Student', email: 'bulk-browser-student@example.test', password })
+  const student = await runtime.auth.login('bulk-browser-student@example.test', password)
+  await provisionAdmin(connection, { name: 'Bulk Browser Admin', email: 'bulk-browser-admin@example.test', password }, 10)
+  const document = await PDFDocument.create(); document.addPage()
+  const pdf = Buffer.from(await document.save())
+  for (const subject of ['Bulk visible subject', 'Bulk hidden subject']) {
+    const response = await page.request.post(url + '/api/materials', { headers: { Authorization: 'Bearer ' + student.token }, multipart: {
+      title: subject, subject, description: 'Disposable browser moderation fixture',
+      file: { name: 'bulk.pdf', mimeType: 'application/pdf', buffer: pdf }
+    } })
+    expect(response.status()).toBe(201)
+  }
+  const activeCount = await runtime.materials.Material.countDocuments({ removedAt: null })
+  const bytesCount = await connection.collection('materialFiles.files').countDocuments()
+  await page.goto(url + '/login')
+  await page.getByLabel('Email', { exact: true }).fill('bulk-browser-admin@example.test')
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Log in', exact: true }).click()
+  await page.getByRole('link', { name: 'Moderate materials', exact: true }).click()
+  await page.getByRole('combobox', { name: /^Subject/ }).selectOption('Bulk visible subject')
+  await expect(page.getByRole('button', { name: 'Delete Bulk visible subject', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Delete Bulk hidden subject', exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Delete all', exact: true }).click()
+  await expect(page.getByRole('dialog')).toContainText('including items hidden by the current filters')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  expect(await runtime.materials.Material.countDocuments({ removedAt: null })).toBe(activeCount)
+  await page.getByRole('button', { name: 'Delete all', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete all', exact: true }).click()
+  await expect(page.getByText('No study materials available for moderation.', { exact: true })).toBeVisible()
+  expect(await runtime.materials.Material.countDocuments({ removedAt: null })).toBe(0)
+  expect(await connection.collection('materialFiles.files').countDocuments()).toBe(bytesCount)
+  const retained = await runtime.materials.Material.findOne({ title: 'Bulk hidden subject' }).select('+removedBy')
+  expect(retained?.removedAt).toBeInstanceOf(Date)
+  expect(retained?.removedBy).toBeTruthy()
+})
 test.beforeAll(async () => {
   test.setTimeout(180000)
   mongo = await MongoMemoryServer.create({ binary: { downloadDir: process.env.MONGOMS_DOWNLOAD_DIR ?? fileURLToPath(new URL('../../node_modules/.cache/mongodb-memory-server', import.meta.url)) }, instance: { launchTimeout: 60000 } })

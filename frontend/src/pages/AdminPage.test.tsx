@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, expect, it, vi } from 'vitest'
@@ -13,6 +13,22 @@ beforeEach(() => {
   vi.mocked(auth.removeItem).mockResolvedValue(undefined)
 })
 const show = () => render(<MemoryRouter><AdminPage /></MemoryRouter>)
+it('confirms that Delete all includes filtered-out items and cancellation sends no request', async () => {
+  const user = userEvent.setup(); show()
+  await screen.findByRole('button', { name: 'Delete Notes' })
+  await user.selectOptions(screen.getByLabelText('Subject'), 'Math')
+  await screen.findByRole('button', { name: 'Delete Notes' })
+  await user.click(screen.getByRole('button', { name: 'Delete all' }))
+  expect(screen.getByRole('dialog')).toHaveTextContent('including items hidden by the current filters')
+  await user.click(screen.getByRole('button', { name: 'Cancel' }))
+  expect(auth.removeAllItems).not.toHaveBeenCalled()
+  vi.mocked(auth.removeAllItems).mockResolvedValueOnce(2)
+  vi.mocked(auth.moderationItems).mockResolvedValue({ items: [], filters: { subjects: [], difficulties: [] } })
+  await user.click(screen.getByRole('button', { name: 'Delete all' }))
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete all' }))
+  expect(auth.removeAllItems).toHaveBeenCalledWith('materials')
+  await screen.findByText('No study materials available for moderation.')
+})
 it('opens the moderation category selected from the dashboard', async () => {
   vi.mocked(auth.moderationKinds).mockResolvedValue(['materials', 'questions'])
   render(<MemoryRouter initialEntries={['/admin/moderation?kind=questions']}><AdminPage /></MemoryRouter>)
