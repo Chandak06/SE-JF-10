@@ -34,7 +34,7 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
-          npm run test:ci
+          npm run test:coverage
           npm run lint
           npm run build
       - name: Build and verify local Node release without Docker or Atlas
@@ -50,6 +50,7 @@ jobs:
             reports/
             coverage/
             frontend/reports/
+            frontend/coverage/
           if-no-files-found: warn
           retention-days: 14
       - name: Retain frontend build
