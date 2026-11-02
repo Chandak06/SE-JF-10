@@ -22,7 +22,7 @@ This task extends **existing integration and unit suites**, rather than replacin
 | Result-screen response integration | `frontend/src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx`; existing `QuizResultPage.test.tsx` and `QuizAttemptPage.result-navigation.test.tsx` | API result and safe display |
 | Student attempt history retrieval | New `csmq45-history-isolation.test.ts`; existing `attempt-history-route.test.ts` | HTTP 200 with persisted fields |
 | No retrieval of other student's history | New MongoDB isolation test | Separate student tokens/identities return disjoint records |
-| Subject-wise performance aggregation | `frontend/src/services/attemptInsights.csmq45-acceptance.test.ts` | Expected weighted averages by subject |
+| Subject-wise performance aggregation | `frontend/src/services/attemptInsights.csmq45-acceptance.test.ts`; `frontend/src/services/final-integration.test.ts` | Arithmetic means of saved attempt percentages by subject, including the 51st record across pagination |
 | Cannot read another student's performance | The performance page consumes `/api/attempts/history`; new MongoDB student isolation + frontend history service tests verify auth-bound data path | Review that **no independent unguarded performance endpoint** was added |
 | Empty history/performance | New MongoDB empty-history and frontend aggregation tests; existing `QuizInsightsPage.test.tsx` and `QuizHistoryPage.test.tsx` | Empty UI and empty API payload |
 | Frontend submission/result/history/performance regression | Run complete `frontend` Vitest suite | JUnit and terminal logs |
@@ -33,6 +33,6 @@ This task extends **existing integration and unit suites**, rather than replacin
 
 - An Express router unit/integration test with an injected student identity does **not**, by itself, prove that the application-level admin guard works. That guard is covered by the existing app-level integration tests and must remain enabled on `/api/attempts`.
 - The history isolation test uses an in-memory MongoDB instance. It verifies persistence and student filtering in a real database engine; it is not a deployed production smoke test.
-- Subject-wise insights are calculated on the **latest 50 authenticated history records** returned by the API, not all historical records if more exist. The UI states this limit.
+- Updated 2 November: the integrated performance page retrieves **all authenticated history pages** and rejects incomplete/inconsistent page sets. Subject-wise insights use the arithmetic mean of completed attempt percentages, not a total-marks weighted score. The 51-record regression verifies that older attempts are included; the previous latest-50 statement described an older implementation.
 - The matrix is an *acceptance-criteria coverage map*, not numeric line or branch coverage. If numerical coverage is explicitly required, generate it separately with the version-matched Vitest coverage provider.
 - Do not claim Jira completion until the **new** and **existing** tests pass, GitHub checks are green, and the reviewer has reviewed the PR.
