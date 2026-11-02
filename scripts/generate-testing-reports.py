@@ -94,6 +94,9 @@ for layer, path in sources:
 
 if any(c['status'] != 'PASS' for c in cases):
     raise SystemExit('This passing-report generator requires a complete passing run. Retain failures separately and investigate before rerunning.')
+channels = {c['suite'].split(']')[0].lstrip('[') for c in cases if c['layer'] == 'browser'}
+if channels != {'chrome', 'edge', 'firefox'}:
+    raise SystemExit('Browser evidence is partial. Supply the complete matrix, or --browser-junit with explicitly combined evidence and retained initial outcomes.')
 
 coverage = {}
 for layer, folder in [('backend', ROOT / 'coverage'), ('frontend', ROOT / 'frontend/coverage')]:
@@ -188,7 +191,8 @@ manifest = {'generatedUtc': datetime.now(timezone.utc).isoformat(), 'execution':
             'testCounts': counts, 'browserVersions': versions,
             'coverageTotals': {layer: data['total'] for layer, data in coverage.items()},
             'acceptance': 'Automated validation passed; manual/independent Test Plan exit pending.',
-            'evidenceSha256': {str(p.relative_to(OUT)).replace(os.sep, '/'): hashlib.sha256(p.read_bytes()).hexdigest()
+            'hashNormalization': 'SHA-256 of UTF-8 text bytes with CRLF normalized to LF, matching portable Git text storage.',
+            'evidenceSha256': {str(p.relative_to(OUT)).replace(os.sep, '/'): hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
                                for p in sorted(OUT.rglob('*')) if p.is_file() and p.name != 'manifest.json'}}
 (EVIDENCE / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
 print(json.dumps({'reportDirectory': str(OUT), 'tests': len(cases), 'counts': counts}, indent=2))
