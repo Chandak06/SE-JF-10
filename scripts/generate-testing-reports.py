@@ -14,7 +14,7 @@ import re
 import subprocess
 import atexit
 import shutil
-import tempfile
+import uuid
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
@@ -41,7 +41,11 @@ if any(not any(command.startswith(name) for command in execution['commands']) fo
 if any(code != 0 for code in execution['commands'].values()):
     raise SystemExit('A required command did not pass; retain the failing evidence and investigate.')
 (ROOT / '.local').mkdir(exist_ok=True)
-OUT = Path(tempfile.mkdtemp(prefix=f'testing-report-{args.date}-', dir=ROOT / '.local'))
+# mkdtemp's Windows mode-700 ACL survives rename and can make the published
+# files unreadable to the operator/Git outside the sandbox. Reports contain
+# sanitized evidence; inherit the workspace ACL while keeping staging ignored.
+OUT = ROOT / '.local' / f'testing-report-{args.date}-{uuid.uuid4().hex}'
+OUT.mkdir()
 
 
 def discard_staging():
