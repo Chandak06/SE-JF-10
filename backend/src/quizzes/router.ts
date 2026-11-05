@@ -95,21 +95,20 @@ export function createQuizzesRouter(connection: Connection) {
       throw new AppError(400, 'INVALID_ID', 'Invalid quiz identifier.');
     }
 
-    const quiz = await Quiz.findOne({
+    const stored = await Quiz.findOne({
       _id: new Types.ObjectId(req.params.id),
       removedAt: null
-    })
-      .populate({ path: 'questions', match: { removedAt: null } })
-      .lean();
+    }).lean();
 
-    if (!quiz) {
+    if (!stored) {
       throw new AppError(404, 'NOT_FOUND', 'Quiz not found.');
     }
 
     // Do not silently offer a shorter quiz after a referenced question is removed.
     // Discovery and submission must agree on the same active question set.
-    const stored = await Quiz.findById(quiz._id).select('questions').lean();
-    if (!stored || quiz.questions.length !== stored.questions.length) {
+    const expectedQuestionCount = stored.questions.length;
+    const quiz = await Quiz.populate(stored, { path: 'questions', match: { removedAt: null } });
+    if (quiz.questions.length !== expectedQuestionCount) {
       throw new AppError(409, 'QUIZ_QUESTION_MISSING', 'A question required by this quiz is unavailable.');
     }
 
