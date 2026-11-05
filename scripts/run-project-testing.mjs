@@ -33,7 +33,7 @@ for (const path of [local, destination]) {
 }
 await mkdir(local);
 const steps = []; const commands = {};
-async function run(name, executable, args, command) {
+async function run(name, executable, args, command, allowFailure = false) {
   const log = createWriteStream(join(local, name + '.log'));
   const startedUtc = new Date().toISOString();
   console.log('Running ' + command);
@@ -47,7 +47,8 @@ async function run(name, executable, args, command) {
   steps.push(step); commands[command] = code;
   await writeFile(join(local, 'progress.json'), JSON.stringify({ sourceRevision: sha, steps }, null, 2));
   console.log((code === 0 ? 'PASS ' : 'FAIL ') + command);
-  if (code !== 0) throw new Error('Testing stopped at ' + command + '; raw evidence is retained under ' + local + '. Fix the failure and use a new label.');
+  if (code !== 0 && !allowFailure) throw new Error('Testing stopped at ' + command + '; raw evidence is retained under ' + local + '. Fix the failure and use a new label.');
+  return code;
 }
 const npmStep = (name, args) => run(name, process.execPath, [npmCli, ...args], 'npm ' + args.join(' '));
 await npmStep('backend', ['run','check']);
@@ -56,18 +57,18 @@ await npmStep('lint', ['run','lint','--prefix','frontend']);
 await npmStep('build', ['run','demo:build']);
 await npmStep('release', ['run','demo:verify']);
 await run('report-integrity', python, ['scripts/tests/test_testing_reports.py','-v'], 'python scripts/tests/test_testing_reports.py -v');
-await npmStep('browser', ['run','test:browser','--prefix','frontend']);
+const browserExit = await run('browser', process.execPath, [npmCli,'run','test:browser','--prefix','frontend'], 'npm run test:browser --prefix frontend', true);
 await run('submitted', process.execPath, ['scripts/check-submitted-documents.mjs'], 'node scripts/check-submitted-documents.mjs');
 if (git('rev-parse','HEAD') !== sha || git('status','--porcelain','--untracked-files=no')) throw new Error('Source changed during testing. Evidence retained; publication refused.');
 
 const browserJson = JSON.parse(await readFile(join(root,'frontend/reports/browser-results.json'),'utf8'));
-if (browserJson.errors.length || browserJson.stats.unexpected || browserJson.stats.flaky || browserJson.stats.skipped) throw new Error('Browser results are incomplete or flaky.');
+if (browserExit === 0 && (browserJson.errors.length || browserJson.stats.unexpected || browserJson.stats.flaky || browserJson.stats.skipped)) throw new Error('Browser status and command exit disagree.');
 const concurrency = []; const attachments = [];
 function visit(suites) {
   for (const suite of suites) {
     for (const spec of suite.specs ?? []) for (const test of spec.tests ?? []) {
       const result = test.results.at(-1);
-      if (result?.status !== 'passed') throw new Error('A browser case did not pass: ' + spec.title);
+      if (browserExit === 0 && result?.status !== 'passed') throw new Error('A browser case did not pass: ' + spec.title);
       for (const attachment of result.attachments ?? []) attachments.push({ ...attachment, channel:test.projectName, title:spec.title });
     }
     visit(suite.suites ?? []);
@@ -78,8 +79,17 @@ for (const attachment of attachments.filter(a => a.name === 'concurrent-browser-
   const content = attachment.body ? Buffer.from(attachment.body, 'base64').toString('utf8') : await readFile(attachment.path, 'utf8');
   concurrency.push({ channel:attachment.channel, ...JSON.parse(content) });
 }
-if (concurrency.length !== 3 || new Set(concurrency.map(x=>x.channel)).size !== 3 || concurrency.some(x=>x.sessions!==10 || x.completed!==10 || x.pageErrors)) throw new Error('Ten-user concurrency evidence is incomplete.');
+const completeConcurrency = concurrency.length === 3 && new Set(concurrency.map(x=>x.channel)).size === 3 && concurrency.every(x=>x.sessions===10 && x.completed===10 && !x.pageErrors);
+if (browserExit === 0 && !completeConcurrency) throw new Error('Ten-user concurrency evidence is incomplete.');
 const versions = Object.fromEntries(concurrency.map(row=>[row.channel,row.browser]));
+if (Object.keys(versions).length !== 3) {
+  const { chromium, firefox } = await import('../frontend/node_modules/playwright/index.mjs');
+  for (const [name,type,opts] of [['chrome',chromium,{channel:'chrome'}],['edge',chromium,{channel:'msedge'}],['firefox',firefox,{}]]) {
+    if (versions[name]) continue;
+    const browser = await type.launch({headless:true,...opts});
+    try { versions[name]=browser.version(); } finally { await browser.close(); }
+  }
+}
 const systemTimings = [];
 for (const attachment of attachments.filter(a=>['single-user-primary-content-timings','dashboard-single-user-timing'].includes(a.name))) {
   const content = attachment.body ? Buffer.from(attachment.body,'base64').toString('utf8') : await readFile(attachment.path,'utf8');
@@ -101,9 +111,12 @@ try {
 const guards = (await readFile(join(local,'report-integrity.log'),'utf8')).match(/Ran (\d+) tests?/);
 const execution = {date,runLabel:label,sourceRevision:sha,commands,steps,projectScope:true,testCaseDocument:'TEST_CASES_WHOLE_PROJECT.md',
   sourceTrees:Object.fromEntries(['backend/src','backend/tests','frontend/src','frontend/e2e','frontend/tests'].map(p=>[p,git('rev-parse',`HEAD:${p}`)])),
-  browserConcurrency:concurrency,systemTimings,ciForTestedSource:ci,
+  browserConcurrency:completeConcurrency ? concurrency : [],systemTimings,ciForTestedSource:ci,
+  observations:browserExit ? ['The local browser command returned a nonzero exit. Actual failed/skipped outcomes remain in the catalogue and JUnit; successful CI is separate evidence and does not erase local failures.'] : [],
   reportIntegrityChecks:{passed:guards ? Number(guards[1]) : null,exitCode:0,scope:'Synthetic publisher fixtures; separate from product tests.'},
   scope:'All four members and all integrated SRS modules. Disposable local MongoDB only; no Atlas or saved-demo mutations. Submitted documents unchanged.'};
 await writeFile(join(local,'execution.json'),JSON.stringify(execution,null,2));
-await run('publish',python,['scripts/generate-testing-reports.py','--date',date,'--run-label',label],`python scripts/generate-testing-reports.py --date ${date} --run-label ${label}`);
+const publishArgs = ['scripts/generate-testing-reports.py','--date',date,'--run-label',label,...(browserExit ? ['--include-failures'] : [])];
+await run('publish',python,publishArgs,'python ' + publishArgs.join(' '));
 console.log('Whole-project report pack: ' + destination);
+process.exitCode = browserExit;
