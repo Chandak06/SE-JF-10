@@ -382,3 +382,86 @@ test('Admin dashboard integrates real Question Bank moderation, responsive navig
   await expect(page.getByRole('link', { name: 'Admin Dashboard' })).toHaveCount(0)
   expect((await fetch(api + '/api/admin/resources', { headers: { Authorization: 'Bearer ' + student.token } })).status).toBe(403)
 })
+
+test('ten isolated browser sessions concurrently upload, create quizzes, submit and read their own history', async ({ browser }, info) => {
+  test.setTimeout(180000)
+  const subject = 'Concurrent browser ' + info.project.name
+  const questionText = 'Concurrent browser: choose the reliable protocol'
+  await runtime.questions.Question.create({ questionText, options: [{ id: 'A', text: 'TCP' }, { id: 'B', text: 'UDP' }],
+    correctAnswer: 'A', subject, topic: 'Session isolation', difficulty: 'Easy', marks: 1 })
+  const document = await PDFDocument.create(); document.addPage()
+  const pdf = Buffer.from(await document.save())
+  const password = 'Disposable concurrent browser password!'
+  const contexts: Awaited<ReturnType<typeof browser.newContext>>[] = []
+  const errors: string[] = []
+  const students = await Promise.all(Array.from({ length: 10 }, async (_, index) => {
+    const email = `concurrent-${index}@example.test`
+    const account = await runtime.auth.register({ name: 'Concurrent Student ' + index, email, password })
+    const context = await browser.newContext()
+    contexts.push(context)
+    const page = await context.newPage()
+    page.setDefaultTimeout(15000)
+    page.on('pageerror', error => errors.push(error.name))
+    return { page, account, email, title: 'Concurrent Quiz ' + index }
+  }))
+  const started = Date.now()
+  try {
+    // All ten isolated sessionStorage/account contexts remain open together.
+    await Promise.all(students.map(async ({ page, email }) => {
+      await page.goto(url + '/login')
+      await page.getByLabel('Email', { exact: true }).fill(email)
+      await page.getByLabel('Password', { exact: true }).fill(password)
+      await page.getByRole('button', { name: 'Log in', exact: true }).click()
+      await expect(page).toHaveURL(url + '/dashboard', { timeout: 15000 })
+    }))
+    const completed = await Promise.all(students.map(async ({ page, account, title }, index) => {
+      await page.getByRole('link', { name: 'Materials', exact: true }).click()
+      await page.getByRole('button', { name: 'Upload a material' }).click()
+      await page.getByLabel('Material title', { exact: true }).fill('Concurrent PDF ' + index)
+      await page.getByLabel('Subject', { exact: true }).fill(subject)
+      await page.getByLabel('Description', { exact: true }).fill('Isolated concurrent UI fixture')
+      await page.getByLabel('PDF file').setInputFiles({ name: 'concurrent.pdf', mimeType: 'application/pdf', buffer: pdf })
+      await page.getByRole('button', { name: 'Upload material', exact: true }).click()
+      await expect(page.getByRole('status')).toContainText('Your material has been uploaded.', { timeout: 15000 })
+      await expect(page.getByRole('button', { name: 'Upload material', exact: true })).toBeEnabled()
+      await page.getByRole('button', { name: 'Close upload form' }).click()
+      await page.getByRole('link', { name: 'Create Quiz', exact: true }).click()
+      await page.getByLabel(/Quiz Title/i).fill(title)
+      await page.getByLabel(/^Subject/i).fill(subject)
+      await page.getByLabel('Filter questions by subject', { exact: true }).fill(subject)
+      await page.getByRole('checkbox', { name: 'Select question: ' + questionText }).check()
+      await page.getByRole('button', { name: 'Create Quiz', exact: true }).click()
+      await expect(page.getByRole('status')).toContainText('created successfully', { timeout: 15000 })
+      const quiz = await runtime.quizzes.Quiz.findOne({ title, creator: account.id })
+      expect(quiz).not.toBeNull()
+      await page.goto(url + '/quizzes/' + quiz!.id + '/attempt')
+      await page.getByRole('radio', { name: /TCP/ }).click()
+      await page.getByRole('button', { name: 'Submit quiz', exact: true }).click()
+      await page.getByRole('dialog').getByRole('button', { name: 'Submit quiz', exact: true }).click()
+      await expect(page.getByRole('heading', { name: 'Quiz results', exact: true })).toBeVisible({ timeout: 15000 })
+      await page.getByRole('link', { name: 'My attempt history', exact: true }).click()
+      await expect(page.getByText(title, { exact: true })).toBeVisible()
+      const token = await page.evaluate(() => sessionStorage.getItem('study-commons-session-token'))
+      expect(token).toBeTruthy()
+      const response = await page.request.get(url + '/api/attempts/history', { headers: { Authorization: 'Bearer ' + token } })
+      expect(response.status()).toBe(200)
+      const history = await response.json()
+      expect(history.total).toBe(1)
+      expect(history.attempts[0]).toMatchObject({ quizId: quiz!.id, score: 1, percentage: 100 })
+      await page.getByRole('link', { name: 'Performance insights', exact: true }).click()
+      await expect(page.getByText('100%', { exact: true }).first()).toBeVisible()
+      const me = await page.request.get(url + '/api/auth/me', { headers: { Authorization: 'Bearer ' + token } })
+      expect((await me.json()).authenticatedUser.id).toBe(account.id)
+      return { userId: account.id, attemptId: history.attempts[0].attemptId }
+    }))
+    expect(new Set(completed.map(value => value.userId)).size).toBe(10)
+    expect(new Set(completed.map(value => value.attemptId)).size).toBe(10)
+    expect(await runtime.materials.Material.countDocuments({ subject, removedAt: null })).toBe(10)
+    expect(errors).toEqual([])
+    await info.attach('concurrent-browser-session-results', { body: JSON.stringify({ sessions: 10, completed: completed.length,
+      browser: browser.version(), elapsedMs: Date.now() - started, isolatedStorage: true,
+      operations: ['login', 'PDF upload', 'Quiz creation', 'submission', 'history', 'performance'], pageErrors: errors.length }), contentType: 'application/json' })
+  } finally {
+    await Promise.allSettled(contexts.map(context => context.close()))
+  }
+})
