@@ -1,8 +1,10 @@
 # Whole-project Test Case Document — 5 November 2026
 
-Owner/coordinator: Harshit Chandak (PES2UG24CS185), Team 10. Testing window: **2–6 November 2026**. This supplementary revision updates the test cases for the integrated Sprint 1 and Sprint 2 application. The submitted SRS, SAD and Test Plan remain unchanged. Execution results are in [the dated report pack](testing/2026-11-05-whole-project/README.md); the generated case catalogue records every executed automated case, its source, duration and outcome.
+Owner/coordinator: Harshit Chandak (PES2UG24CS185), Team 10. Testing window: **2–6 November 2026**. This supplementary revision updates the test cases for the integrated Sprint 1 and Sprint 2 application. The submitted SRS, SAD and Test Plan remain unchanged. Current execution results are in [the production report pack](testing/2026-11-05-production-validation/README.md); the generated case catalogue records every executed automated case, its source, duration and outcome. The [earlier failed execution](testing/2026-11-05-whole-project/README.md) remains preserved.
 
 ## Execution rules and fixtures
+
+Browser system and performance cases build the actual production frontend and serve it with a same-origin API proxy against disposable MongoDB. Production mode and the unchanged 3,000 ms timing limit are identified in Playwright metadata and verified by the report runner. Development-server timing failures remain historical evidence; production loopback passes do not establish representative-network or human acceptance.
 
 Use a disposable database, never the saved demonstration or Atlas database, for destructive tests. Prepare two Students (A and B), an explicitly provisioned Admin, a valid small PDF, a non-PDF, an oversized PDF, four-option MCQs across two subjects/difficulties, and a Quiz with correct, incorrect and unanswered responses. The automated scripts create and clean their own fixtures. Manual testers must record browser/version, build SHA, time, actual result and any Jira defect; an expected result alone is not a pass.
 
