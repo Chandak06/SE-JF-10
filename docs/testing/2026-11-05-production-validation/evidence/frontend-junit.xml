@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="frontend">
+  <testsuite tests="16" failures="0" errors="0" skipped="0" time="6.4730527" timestamp="2026-11-05T07:42:09.437Z" name="src/App.test.tsx">
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; redirects anonymous quiz access to login" time="0.1095492" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; redirects the retired prototype URL to real quiz discovery without starting an attempt" time="0.0708605" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; keeps independent answers in the isolated Sprint 1 component" time="0.375171" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows landing navigation and opens registration" time="0.1207072" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; switches theme and remembers the choice" time="0.0798764" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; validates registration fields before calling the API" time="0.1712877" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows a success message after successful registration" time="1.1826842" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows a duplicate-email error during registration" time="1.1737071" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows a useful error when registration cannot reach the server" time="1.1440499" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows login validation and API errors" time="0.827334" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; does not accept invalid email or short password on login" time="0.0469971" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; redirects logged-out visitors from materials to login" time="0.0149561" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; redirects anonymous dashboard access to login" time="0.0169227" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; shows student navigation destinations including quiz history and performance" time="0.0478428" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; navigates to the student dashboard after successful login" time="0.9436181" />
+    <testcase classname="frontend/src/App.test.tsx" name="Study Commons routes and forms &gt; logs out and returns to login with logged-out navigation" time="0.145977" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.2362492" timestamp="2026-11-05T07:42:09.443Z" name="src/pages/AdminDashboardPage.test.tsx">
+    <testcase classname="frontend/src/pages/AdminDashboardPage.test.tsx" name="shows available moderation actions and identifies missing Quiz integration" time="0.110607" />
+    <testcase classname="frontend/src/pages/AdminDashboardPage.test.tsx" name="refuses a server-identified Student without querying administrator resources" time="0.0163584" />
+    <testcase classname="frontend/src/pages/AdminDashboardPage.test.tsx" name="shows controlled loading/error states and retries a failed resource request" time="0.0862617" />
+    <testcase classname="frontend/src/pages/AdminDashboardPage.test.tsx" name="offers Quiz moderation when a real owner adapter has been registered" time="0.0216096" />
+  </testsuite>
+  <testsuite tests="5" failures="0" errors="0" skipped="0" time="0.9189429" timestamp="2026-11-05T07:42:09.444Z" name="src/pages/AdminPage.test.tsx">
+    <testcase classname="frontend/src/pages/AdminPage.test.tsx" name="confirms that Delete all includes filtered-out items and cancellation sends no request" time="0.4601283" />
+    <testcase classname="frontend/src/pages/AdminPage.test.tsx" name="opens the moderation category selected from the dashboard" time="0.0346713" />
+    <testcase classname="frontend/src/pages/AdminPage.test.tsx" name="blocks student moderation before loading resources" time="0.0115234" />
+    <testcase classname="frontend/src/pages/AdminPage.test.tsx" name="offers per-item deletion with a separate confirmation and cancellation" time="0.2423128" />
+    <testcase classname="frontend/src/pages/AdminPage.test.tsx" name="retains the resource and confirmation when removal fails" time="0.1683999" />
+  </testsuite>
+  <testsuite tests="10" failures="0" errors="0" skipped="0" time="3.2255766" timestamp="2026-11-05T07:42:09.446Z" name="src/pages/CreateQuizPage.test.tsx">
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; prevents selecting stale questions while filters load and distinguishes errors from no matches" time="0.1284534" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; renders page header, title, subject, and question picker" time="0.0216876" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; shows error if question bank fetch fails" time="0.0147943" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; validates empty title on submission" time="0.0804516" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; validates empty subject on submission" time="0.3655931" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; validates zero questions selected on submission" time="0.7511383" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; toggles question selection and updates counter" time="0.1911491" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; supports select all and deselect all buttons" time="0.1453023" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; submits valid quiz and displays success message" time="0.7923761" />
+    <testcase classname="frontend/src/pages/CreateQuizPage.test.tsx" name="CreateQuizPage (CSMQ-49) &gt; displays API error message when creation fails" time="0.7327905" />
+  </testsuite>
+  <testsuite tests="15" failures="0" errors="0" skipped="0" time="3.2429931" timestamp="2026-11-05T07:42:09.449Z" name="src/pages/MaterialsPage.test.tsx">
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="shows the empty library state and opens a separate upload form" time="0.184791" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="submits PDF metadata through the shared authenticated service" time="0.7471882" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="loads the 26th material and resets pagination when a new search is submitted" time="0.5226279" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="retries a failed next page with the same search and cursor, keeping existing results" time="0.1108998" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="preserves the submitted search after upload and resets the native PDF picker" time="0.3162099" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="ignores an older initial response after an upload refresh and finishes loading" time="0.0822619" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="does not append an older page after a different search completes" time="0.0786196" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="retries a failed first-page search with the same query" time="0.064518" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="combines keyword and subject filters and explains unmatched results" time="0.3798767" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="searches existing subjects in the filter menu and applies a selected subject" time="0.4401244" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="loads and displays metadata for a selected material" time="0.0469026" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="opens the recent material PDF directly from the dashboard link" time="0.0229941" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="shows an unavailable message when selected material details cannot be loaded" time="0.0481863" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="opens the selected PDF inline and releases its object URL when closed" time="0.1575273" />
+    <testcase classname="frontend/src/pages/MaterialsPage.test.tsx" name="downloads the selected PDF with a title based PDF filename" time="0.0389101" />
+  </testsuite>
+  <testsuite tests="9" failures="0" errors="0" skipped="0" time="7.3015416" timestamp="2026-11-05T07:42:09.454Z" name="src/pages/QuestionBankPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; renders Question Bank header and empty state initially" time="0.0746897" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; opens Add MCQ form when clicking + Add New MCQ" time="0.1071501" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; submits valid MCQ form and displays success message" time="2.557197" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; renders questions list when questions exist" time="0.0153376" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; triggers listQuestions with subject filter" time="0.0948766" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; triggers listQuestions with difficulty filter" time="0.0469186" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; clears listing error banner when subsequent filter request succeeds" time="0.0993519" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; ensures only results for current filters update the list when filter changes during save" time="2.6090281" />
+    <testcase classname="frontend/src/pages/QuestionBankPage.test.tsx" name="QuestionBankPage (CSMQ-23 / CSMQ-24) &gt; clears loading state and displays results when an MCQ is saved while initial list is still loading" time="1.6947709" />
+  </testsuite>
+  <testsuite tests="5" failures="0" errors="0" skipped="0" time="0.1314142" timestamp="2026-11-05T07:42:09.457Z" name="src/pages/QuizAttemptLoader.test.tsx">
+    <testcase classname="frontend/src/pages/QuizAttemptLoader.test.tsx" name="CSMQ-41: Real quiz attempt loader &gt; accepts the canonical lowercase ID returned for an uppercase MongoDB URL" time="0.0252177" />
+    <testcase classname="frontend/src/pages/QuizAttemptLoader.test.tsx" name="CSMQ-41: Real quiz attempt loader &gt; loads and renders real quiz questions" time="0.0555977" />
+    <testcase classname="frontend/src/pages/QuizAttemptLoader.test.tsx" name="CSMQ-41: Real quiz attempt loader &gt; shows errors when quiz loading fails" time="0.0155943" />
+    <testcase classname="frontend/src/pages/QuizAttemptLoader.test.tsx" name="CSMQ-41: Real quiz attempt loader &gt; retries after a failed request" time="0.0195374" />
+    <testcase classname="frontend/src/pages/QuizAttemptLoader.test.tsx" name="CSMQ-41: Real quiz attempt loader &gt; loads new questions when quiz ID changes" time="0.0140243" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.2036295" timestamp="2026-11-05T07:42:09.460Z" name="src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx">
+    <testcase classname="frontend/src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx" name="CSMQ-45 / real frontend submission service to result callback &gt; POSTs authenticated answers to the server and uses its result" time="0.1418875" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx" name="CSMQ-45 / real frontend submission service to result callback &gt; does not advance to a result when the server rejects a submission" time="0.0603549" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.2004176" timestamp="2026-11-05T07:42:09.462Z" name="src/pages/QuizAttemptPage.result-navigation.test.tsx">
+    <testcase classname="frontend/src/pages/QuizAttemptPage.result-navigation.test.tsx" name="CSMQ-42: result navigation triggered only by saved attempts &gt; calls the success handler with the server result" time="0.1386453" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.result-navigation.test.tsx" name="CSMQ-42: result navigation triggered only by saved attempts &gt; does not navigate after a failed submission" time="0.0599817" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.2387624" timestamp="2026-11-05T07:42:09.464Z" name="src/pages/QuizAttemptPage.session-expiry.test.tsx">
+    <testcase classname="frontend/src/pages/QuizAttemptPage.session-expiry.test.tsx" name="keeps the quiz and original user draft available when submission expires the session" time="0.1838741" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.session-expiry.test.tsx" name="does not submit or reassign a draft after a different account logs in" time="0.0537542" />
+  </testsuite>
+  <testsuite tests="6" failures="0" errors="0" skipped="0" time="0.4176528" timestamp="2026-11-05T07:42:09.465Z" name="src/pages/QuizAttemptPage.submit.test.tsx">
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; describes SRS scoring as one point per correct response regardless of marks metadata" time="0.0296977" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; does not invent a time limit or expire an unsubmitted real quiz" time="0.0902223" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; sends selected answers to the real API" time="0.0805607" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; preserves answers when submission fails" time="0.0978921" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; prevents duplicate clicks while submitting" time="0.0490955" />
+    <testcase classname="frontend/src/pages/QuizAttemptPage.submit.test.tsx" name="CSMQ-41: Quiz Attempt frontend integration &gt; keeps the sample quiz in local demo mode" time="0.0687775" />
+  </testsuite>
+  <testsuite tests="1" failures="0" errors="0" skipped="0" time="0.0856577" timestamp="2026-11-05T07:42:09.467Z" name="src/pages/QuizHistoryPage.insights-navigation.test.tsx">
+    <testcase classname="frontend/src/pages/QuizHistoryPage.insights-navigation.test.tsx" name="performance insights navigation &gt; provides a link from history to performance insights" time="0.0842551" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.1895433" timestamp="2026-11-05T07:42:09.467Z" name="src/pages/QuizHistoryPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuizHistoryPage.test.tsx" name="CSMQ-43: Quiz History page &gt; renders saved quiz attempts" time="0.1003387" />
+    <testcase classname="frontend/src/pages/QuizHistoryPage.test.tsx" name="CSMQ-43: Quiz History page &gt; shows an empty state" time="0.0336095" />
+    <testcase classname="frontend/src/pages/QuizHistoryPage.test.tsx" name="CSMQ-43: Quiz History page &gt; supports retrying failed requests" time="0.0360932" />
+    <testcase classname="frontend/src/pages/QuizHistoryPage.test.tsx" name="CSMQ-43: Quiz History page &gt; loads the next history page" time="0.0180786" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.1674002" timestamp="2026-11-05T07:42:09.468Z" name="src/pages/QuizInsightsPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuizInsightsPage.test.tsx" name="QuizInsightsPage &gt; loads the complete history and shows saved metrics" time="0.1067906" />
+    <testcase classname="frontend/src/pages/QuizInsightsPage.test.tsx" name="QuizInsightsPage &gt; does not pretend a limited sample represents the full history" time="0.0117942" />
+    <testcase classname="frontend/src/pages/QuizInsightsPage.test.tsx" name="QuizInsightsPage &gt; handles an empty history" time="0.0155869" />
+    <testcase classname="frontend/src/pages/QuizInsightsPage.test.tsx" name="QuizInsightsPage &gt; retries a failed history request" time="0.0317847" />
+  </testsuite>
+  <testsuite tests="7" failures="0" errors="0" skipped="0" time="0.8204066" timestamp="2026-11-05T07:42:09.470Z" name="src/pages/QuizListPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; hides previous results while a new filter loads and does not call a failed search empty" time="0.1286385" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; renders header, search inputs, and loads available quizzes" time="0.0256236" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; displays empty state when no quizzes exist" time="0.0287908" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; filters quizzes by search keyword and subject inputs" time="0.2917701" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; clears filters when Clear Filters button is clicked" time="0.1896695" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; shows error banner and retries successfully" time="0.1106527" />
+    <testcase classname="frontend/src/pages/QuizListPage.test.tsx" name="QuizListPage (CSMQ-51) &gt; links to quiz view details page" time="0.0438494" />
+  </testsuite>
+  <testsuite tests="6" failures="0" errors="0" skipped="0" time="0.193461" timestamp="2026-11-05T07:42:09.472Z" name="src/pages/QuizResultPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; shows submitted-SAD answer feedback only in a matching successful result" time="0.100226" />
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; renders trusted submission metrics and navigation" time="0.0533964" />
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; never exposes question answer keys" time="0.0071966" />
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; shows a safe empty state when navigated to directly" time="0.0125359" />
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; rejects a result that does not match the URL" time="0.0098304" />
+    <testcase classname="frontend/src/pages/QuizResultPage.test.tsx" name="CSMQ-42: Quiz Result screen &gt; does not display malformed or inflated scores" time="0.0085349" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.1453864" timestamp="2026-11-05T07:42:09.474Z" name="src/pages/QuizViewPage.navigation.test.tsx">
+    <testcase classname="frontend/src/pages/QuizViewPage.navigation.test.tsx" name="CSMQ-41: Quiz start navigation &gt; opens the real quiz attempt route" time="0.1268926" />
+    <testcase classname="frontend/src/pages/QuizViewPage.navigation.test.tsx" name="CSMQ-41: Quiz start navigation &gt; does not allow starting an empty quiz" time="0.0169207" />
+  </testsuite>
+  <testsuite tests="3" failures="0" errors="0" skipped="0" time="0.166153" timestamp="2026-11-05T07:42:09.475Z" name="src/pages/QuizViewPage.test.tsx">
+    <testcase classname="frontend/src/pages/QuizViewPage.test.tsx" name="QuizViewPage (CSMQ-51) &gt; renders quiz header, subject badge, question count, and questions list" time="0.1238365" />
+    <testcase classname="frontend/src/pages/QuizViewPage.test.tsx" name="QuizViewPage (CSMQ-51) &gt; CRITICAL SECURITY: never displays or contains correctAnswer or answer keys" time="0.0161269" />
+    <testcase classname="frontend/src/pages/QuizViewPage.test.tsx" name="QuizViewPage (CSMQ-51) &gt; renders error state and back link when quiz is not found" time="0.0242614" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.1575368" timestamp="2026-11-05T07:42:09.476Z" name="src/pages/StudentDashboardPage.test.tsx">
+    <testcase classname="frontend/src/pages/StudentDashboardPage.test.tsx" name="shows recently opened active materials and links back to their details" time="0.1409896" />
+    <testcase classname="frontend/src/pages/StudentDashboardPage.test.tsx" name="keeps each student recent list separate and shows a first-open empty state" time="0.0154832" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.003824" timestamp="2026-11-05T07:42:09.477Z" name="src/services/attemptHistoryCsv.test.ts">
+    <testcase classname="frontend/src/services/attemptHistoryCsv.test.ts" name="createAttemptHistoryCsv &gt; includes column headers and the actual saved scores" time="0.0016576" />
+    <testcase classname="frontend/src/services/attemptHistoryCsv.test.ts" name="createAttemptHistoryCsv &gt; escapes comma and double quotes" time="0.0001772" />
+    <testcase classname="frontend/src/services/attemptHistoryCsv.test.ts" name="createAttemptHistoryCsv &gt; prevents spreadsheet formulas from executing on import" time="0.0001564" />
+    <testcase classname="frontend/src/services/attemptHistoryCsv.test.ts" name="createAttemptHistoryCsv &gt; includes headers even with no attempts" time="0.000664" />
+  </testsuite>
+  <testsuite tests="3" failures="0" errors="0" skipped="0" time="0.0069213" timestamp="2026-11-05T07:42:09.479Z" name="src/services/attemptHistoryService.csmq45-boundaries.test.ts">
+    <testcase classname="frontend/src/services/attemptHistoryService.csmq45-boundaries.test.ts" name="CSMQ-45 / history API frontend authorization boundaries &gt; fetches only the current session history, never requesting a user ID" time="0.0031986" />
+    <testcase classname="frontend/src/services/attemptHistoryService.csmq45-boundaries.test.ts" name="CSMQ-45 / history API frontend authorization boundaries &gt; rejects expired sessions and forbidden history access" time="0.0013895" />
+    <testcase classname="frontend/src/services/attemptHistoryService.csmq45-boundaries.test.ts" name="CSMQ-45 / history API frontend authorization boundaries &gt; rejects malformed history payloads rather than displaying untrusted data" time="0.0003952" />
+  </testsuite>
+  <testsuite tests="5" failures="0" errors="0" skipped="0" time="0.0070391" timestamp="2026-11-05T07:42:09.480Z" name="src/services/attemptHistoryService.test.ts">
+    <testcase classname="frontend/src/services/attemptHistoryService.test.ts" name="CSMQ-43: Attempt history service &gt; fetches authenticated student history" time="0.003615" />
+    <testcase classname="frontend/src/services/attemptHistoryService.test.ts" name="CSMQ-43: Attempt history service &gt; requires authentication" time="0.0012629" />
+    <testcase classname="frontend/src/services/attemptHistoryService.test.ts" name="CSMQ-43: Attempt history service &gt; handles expired sessions" time="0.000286" />
+    <testcase classname="frontend/src/services/attemptHistoryService.test.ts" name="CSMQ-43: Attempt history service &gt; rejects malformed history responses" time="0.0002383" />
+    <testcase classname="frontend/src/services/attemptHistoryService.test.ts" name="CSMQ-43: Attempt history service &gt; rejects invalid pagination" time="0.0004163" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.0053077" timestamp="2026-11-05T07:42:09.482Z" name="src/services/attemptInsights.csmq45-acceptance.test.ts">
+    <testcase classname="frontend/src/services/attemptInsights.csmq45-acceptance.test.ts" name="CSMQ-45 / performance acceptance and export safety &gt; groups only provided student attempts by subject with correct averages" time="0.0025688" />
+    <testcase classname="frontend/src/services/attemptInsights.csmq45-acceptance.test.ts" name="CSMQ-45 / performance acceptance and export safety &gt; does not mix attempts from different accounts when analyzing their separate API responses" time="0.0002929" />
+    <testcase classname="frontend/src/services/attemptInsights.csmq45-acceptance.test.ts" name="CSMQ-45 / performance acceptance and export safety &gt; handles empty performance and unknown subjects without fabricated scores" time="0.0005993" />
+    <testcase classname="frontend/src/services/attemptInsights.csmq45-acceptance.test.ts" name="CSMQ-45 / performance acceptance and export safety &gt; protects exported CSV fields against spreadsheet formula execution" time="0.0004196" />
+  </testsuite>
+  <testsuite tests="5" failures="0" errors="0" skipped="0" time="0.0046743" timestamp="2026-11-05T07:42:09.483Z" name="src/services/attemptInsights.test.ts">
+    <testcase classname="frontend/src/services/attemptInsights.test.ts" name="calculateAttemptInsights &gt; returns a useful empty state" time="0.0019143" />
+    <testcase classname="frontend/src/services/attemptInsights.test.ts" name="calculateAttemptInsights &gt; computes average, best, latest and subject summaries" time="0.0004985" />
+    <testcase classname="frontend/src/services/attemptInsights.test.ts" name="calculateAttemptInsights &gt; shows the trend in chronological order" time="0.0001822" />
+    <testcase classname="frontend/src/services/attemptInsights.test.ts" name="calculateAttemptInsights &gt; limits the displayed chart to 12 most recent dated attempts" time="0.0007556" />
+    <testcase classname="frontend/src/services/attemptInsights.test.ts" name="calculateAttemptInsights &gt; groups missing subject under General" time="0.000135" />
+  </testsuite>
+  <testsuite tests="8" failures="0" errors="0" skipped="0" time="0.0092474" timestamp="2026-11-05T07:42:09.485Z" name="src/services/attemptService.test.ts">
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; submits responses with authentication" time="0.0031079" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; rejects submission without login" time="0.0017497" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; handles expired sessions" time="0.0006118" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; displays backend validation errors" time="0.0003806" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; handles network failures" time="0.0004822" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; rejects incomplete results" time="0.0004769" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; rejects invalid numeric results" time="0.000452" />
+    <testcase classname="frontend/src/services/attemptService.test.ts" name="CSMQ-41: Quiz Attempt API Service &gt; handles server errors" time="0.000419" />
+  </testsuite>
+  <testsuite tests="19" failures="0" errors="0" skipped="0" time="0.0191129" timestamp="2026-11-05T07:42:09.487Z" name="src/services/authService.test.ts">
+    <testcase classname="frontend/src/services/authService.test.ts" name="registers without creating a client session" time="0.0043945" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="sends the session in a header and multipart data without setting a false content type" time="0.0024762" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="invalidates locally after server logout and refuses further upload" time="0.0016274" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="clears expired authentication on protected-route rejection" time="0.0006038" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="keeps the session when the logout request fails so revocation can be retried" time="0.0004713" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="preserves a newer login when an older upload request finishes" time="0.0007606" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="preserves a newer login when an older list request finishes" time="0.0005844" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="preserves a newer login when an older logout request finishes" time="0.000444" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="rejects an incomplete login response and shows controlled login errors" time="0.0005216" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="restores only a token after refresh and obtains the current role from the server" time="0.0009982" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="fails closed on rejected restoration and clears stored credentials (401)" time="0.0003907" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="fails closed on rejected restoration and clears stored credentials (503)" time="0.0003116" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="fails closed on offline restoration" time="0.0003693" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="deduplicates restoration and does not resurrect a session after logout during restoration" time="0.0003903" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="retains in-memory login if browser session storage is unavailable" time="0.0007016" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="preserves pagination metadata and sends the search, cursor and abort signal" time="0.0007503" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="rejects malformed pagination responses instead of silently losing the cursor" time="0.0006656" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="loads validated available material subjects using the authenticated endpoint" time="0.0006069" />
+    <testcase classname="frontend/src/services/authService.test.ts" name="requests inline and attachment PDFs through the authenticated material endpoint" time="0.0007946" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.0135298" timestamp="2026-11-05T07:42:09.491Z" name="src/services/final-integration.test.ts">
+    <testcase classname="frontend/src/services/final-integration.test.ts" name="includes the 51st attempt in subject averages rather than truncating performance to the newest page" time="0.0089134" />
+    <testcase classname="frontend/src/services/final-integration.test.ts" name="rejects an incomplete or shifting history instead of presenting an incorrect subject average" time="0.0017903" />
+    <testcase classname="frontend/src/services/final-integration.test.ts" name="clears expired shared authentication for history" time="0.0009526" />
+    <testcase classname="frontend/src/services/final-integration.test.ts" name="clears expired shared authentication for submission" time="0.0007749" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.0079202" timestamp="2026-11-05T07:42:09.493Z" name="src/services/quiz-security.test.ts">
+    <testcase classname="frontend/src/services/quiz-security.test.ts" name="clears the expired session consistently when Quiz discovery returns 401" time="0.0059024" />
+    <testcase classname="frontend/src/services/quiz-security.test.ts" name="does not clear a newer login when an older Quiz request is rejected" time="0.000998" />
+  </testsuite>
+  <testsuite tests="10" failures="0" errors="0" skipped="0" time="0.0128247" timestamp="2026-11-05T07:42:09.494Z" name="src/services/quizAttemptDataService.test.ts">
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; loads student-safe quiz questions" time="0.0065626" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; rejects an invalid quiz ID" time="0.0012509" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; requires authentication" time="0.0003153" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; handles unavailable quizzes" time="0.0002685" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; handles network failures" time="0.0004017" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; rejects empty quizzes" time="0.0003031" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; rejects malformed question data" time="0.000384" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; rejects mismatched quiz IDs" time="0.0003298" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; does not expose correct answers" time="0.0008539" />
+    <testcase classname="frontend/src/services/quizAttemptDataService.test.ts" name="CSMQ-41: Real quiz loading service &gt; rejects duplicate question IDs" time="0.0005543" />
+  </testsuite>
+  <testsuite tests="7" failures="0" errors="0" skipped="0" time="0.0042046" timestamp="2026-11-05T07:42:09.496Z" name="src/services/quizDraft.test.ts">
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="ignores malformed draft null" time="0.0022565" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="ignores malformed draft []" time="0.0001711" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="ignores malformed draft 42" time="9.08e-05" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="ignores malformed draft &quot;text&quot;" time="8.89e-05" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="ignores malformed draft {broken" time="0.0001249" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="retains only valid options for known questions" time="0.0002896" />
+    <testcase classname="frontend/src/services/quizDraft.test.ts" name="survives disabled browser storage" time="0.0001228" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="0.0040971" timestamp="2026-11-05T07:42:09.499Z" name="src/services/recentMaterials.test.ts">
+    <testcase classname="frontend/src/services/recentMaterials.test.ts" name="ignores corrupted/out-of-range recent dates rather than crashing the dashboard" time="0.0027041" />
+    <testcase classname="frontend/src/services/recentMaterials.test.ts" name="keeps recent materials scoped to the current user and deduplicates repeated opens" time="0.0003943" />
+  </testsuite>
+  <testsuite tests="4" failures="0" errors="0" skipped="0" time="0.9289718" timestamp="2026-11-05T07:42:09.499Z" name="tests/admin-routing.test.tsx">
+    <testcase classname="frontend/tests/admin-routing.test.tsx" name="redirects unauthenticated dashboard access to common login" time="0.1023265" />
+    <testcase classname="frontend/tests/admin-routing.test.tsx" name="keeps Students away from /admin and opens the student dashboard" time="0.072613" />
+    <testcase classname="frontend/tests/admin-routing.test.tsx" name="keeps Students away from /admin/moderation and opens the student dashboard" time="0.0445199" />
+    <testcase classname="frontend/tests/admin-routing.test.tsx" name="routes successful Admin login to the dashboard with Question Bank and moderation links" time="0.7083956" />
+  </testsuite>
+  <testsuite tests="3" failures="0" errors="0" skipped="0" time="0.4265127" timestamp="2026-11-05T07:42:09.501Z" name="tests/admin-session.integration.test.tsx">
+    <testcase classname="frontend/tests/admin-session.integration.test.tsx" name="waits for server validation before restoring Admin navigation and Question Bank after refresh" time="0.259859" />
+    <testcase classname="frontend/tests/admin-session.integration.test.tsx" name="ignores a forged browser role and redirects a server-identified Student to their dashboard" time="0.1088065" />
+    <testcase classname="frontend/tests/admin-session.integration.test.tsx" name="redirects an expired stored session to the common login page after refresh" time="0.0558274" />
+  </testsuite>
+  <testsuite tests="3" failures="0" errors="0" skipped="0" time="1.1776133" timestamp="2026-11-05T07:42:09.502Z" name="tests/auth.integration.test.ts">
+    <testcase classname="frontend/tests/auth.integration.test.ts" name="connects the actual frontend client to registration, login, PDF storage and revoking logout" time="0.3400243" />
+    <testcase classname="frontend/tests/auth.integration.test.ts" name="rejects an anonymous real multipart upload before storing bytes" time="0.0026431" />
+    <testcase classname="frontend/tests/auth.integration.test.ts" name="retrieves all 26 matching materials through the real paginated client and backend" time="0.0930142" />
+  </testsuite>
+  <testsuite tests="2" failures="0" errors="0" skipped="0" time="1.0841498" timestamp="2026-11-05T07:42:09.503Z" name="tests/quiz-prototype.integration.test.tsx">
+    <testcase classname="frontend/tests/quiz-prototype.integration.test.tsx" name="IT-M3-02/03: renders Member 2 payload and evaluates mixed correct, incorrect and unanswered… from the actual UI" time="0.4883571" />
+    <testcase classname="frontend/tests/quiz-prototype.integration.test.tsx" name="IT-M3-02/03: renders Member 2 payload and evaluates all correct selections from the actual UI" time="0.594388" />
+  </testsuite>
+</testsuites>
