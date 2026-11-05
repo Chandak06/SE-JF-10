@@ -62,6 +62,7 @@ await run('submitted', process.execPath, ['scripts/check-submitted-documents.mjs
 if (git('rev-parse','HEAD') !== sha || git('status','--porcelain','--untracked-files=no')) throw new Error('Source changed during testing. Evidence retained; publication refused.');
 
 const browserJson = JSON.parse(await readFile(join(root,'frontend/reports/browser-results.json'),'utf8'));
+if (browserJson.config.metadata?.frontendMode !== 'production-build' || browserJson.config.metadata?.timingLimitMs !== 3000) throw new Error('Expected compiled production browser evidence with the unchanged 3000 ms limit.');
 if (browserExit === 0 && (browserJson.errors.length || browserJson.stats.unexpected || browserJson.stats.flaky || browserJson.stats.skipped)) throw new Error('Browser status and command exit disagree.');
 const concurrency = []; const attachments = [];
 function visit(suites) {
@@ -112,7 +113,8 @@ const guards = (await readFile(join(local,'report-integrity.log'),'utf8')).match
 const execution = {date,runLabel:label,sourceRevision:sha,commands,steps,projectScope:true,testCaseDocument:'TEST_CASES_WHOLE_PROJECT.md',
   sourceTrees:Object.fromEntries(['backend/src','backend/tests','frontend/src','frontend/e2e','frontend/tests'].map(p=>[p,git('rev-parse',`HEAD:${p}`)])),
   browserConcurrency:completeConcurrency ? concurrency : [],systemTimings,ciForTestedSource:ci,
-  observations:browserExit ? ['The local browser command returned a nonzero exit. Actual failed/skipped outcomes remain in the catalogue and JUnit; successful CI is separate evidence and does not erase local failures.'] : [],
+  browserEnvironment:browserJson.config.metadata,
+  observations:['Browser journeys and page-load timings use the compiled production frontend with same-origin API proxying and disposable real MongoDB. The 3000 ms assertion is unchanged. Earlier development-server timing failures remain in their original dated pack.', ...(browserExit ? ['The local browser command returned a nonzero exit. Actual failed/skipped outcomes remain in the catalogue and JUnit; successful CI is separate evidence and does not erase local failures.'] : [])],
   reportIntegrityChecks:{passed:guards ? Number(guards[1]) : null,exitCode:0,scope:'Synthetic publisher fixtures; separate from product tests.'},
   scope:'All four members and all integrated SRS modules. Disposable local MongoDB only; no Atlas or saved-demo mutations. Submitted documents unchanged.'};
 await writeFile(join(local,'execution.json'),JSON.stringify(execution,null,2));
