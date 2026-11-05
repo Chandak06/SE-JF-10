@@ -1,0 +1,567 @@
+{
+  "generatedUtc": "2026-11-05T07:48:11.102571+00:00",
+  "execution": {
+    "date": "2026-11-05",
+    "runLabel": "production-validation",
+    "sourceRevision": "888c0666ae78e14be134a6c090be860d254ddb00",
+    "commands": {
+      "npm run check": 0,
+      "npm run test:coverage --prefix frontend": 0,
+      "npm run lint --prefix frontend": 0,
+      "npm run demo:build": 0,
+      "npm run demo:verify": 0,
+      "python scripts/tests/test_testing_reports.py -v": 0,
+      "npm run test:browser --prefix frontend": 0,
+      "node scripts/check-submitted-documents.mjs": 0
+    },
+    "steps": [
+      {
+        "command": "npm run check",
+        "startedUtc": "2026-11-05T07:39:53.916Z",
+        "finishedUtc": "2026-11-05T07:41:04.623Z",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run test:coverage --prefix frontend",
+        "startedUtc": "2026-11-05T07:41:04.624Z",
+        "finishedUtc": "2026-11-05T07:42:09.845Z",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run lint --prefix frontend",
+        "startedUtc": "2026-11-05T07:42:09.847Z",
+        "finishedUtc": "2026-11-05T07:42:21.567Z",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run demo:build",
+        "startedUtc": "2026-11-05T07:42:21.568Z",
+        "finishedUtc": "2026-11-05T07:42:22.566Z",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run demo:verify",
+        "startedUtc": "2026-11-05T07:42:22.567Z",
+        "finishedUtc": "2026-11-05T07:42:29.734Z",
+        "exitCode": 0
+      },
+      {
+        "command": "python scripts/tests/test_testing_reports.py -v",
+        "startedUtc": "2026-11-05T07:42:29.735Z",
+        "finishedUtc": "2026-11-05T07:42:32.503Z",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run test:browser --prefix frontend",
+        "startedUtc": "2026-11-05T07:42:32.504Z",
+        "finishedUtc": "2026-11-05T07:48:05.417Z",
+        "exitCode": 0
+      },
+      {
+        "command": "node scripts/check-submitted-documents.mjs",
+        "startedUtc": "2026-11-05T07:48:05.418Z",
+        "finishedUtc": "2026-11-05T07:48:05.504Z",
+        "exitCode": 0
+      }
+    ],
+    "projectScope": true,
+    "testCaseDocument": "TEST_CASES_WHOLE_PROJECT.md",
+    "sourceTrees": {
+      "backend/src": "b81211899f63d400f3a51f9af23784b367971977",
+      "backend/tests": "edb7d75e7e7d38a59cb5cf2c78dc51d0985ef175",
+      "frontend/src": "243a0deb025cb7d87c6c265f002e595ed7ea8764",
+      "frontend/e2e": "8d5a8542f1a0299c6ad6f1e5b686317e19355db9",
+      "frontend/tests": "2ab8b10c78fa3f877cdcda8d3f234ad5f0894d82"
+    },
+    "browserConcurrency": [
+      {
+        "channel": "chrome",
+        "sessions": 10,
+        "completed": 10,
+        "browser": "156.0.8078.80",
+        "elapsedMs": 37058,
+        "isolatedStorage": true,
+        "operations": [
+          "login",
+          "PDF upload",
+          "Quiz creation",
+          "submission",
+          "history",
+          "performance"
+        ],
+        "pageErrors": 0
+      },
+      {
+        "channel": "edge",
+        "sessions": 10,
+        "completed": 10,
+        "browser": "156.0.4314.58",
+        "elapsedMs": 38609,
+        "isolatedStorage": true,
+        "operations": [
+          "login",
+          "PDF upload",
+          "Quiz creation",
+          "submission",
+          "history",
+          "performance"
+        ],
+        "pageErrors": 0
+      },
+      {
+        "channel": "firefox",
+        "sessions": 10,
+        "completed": 10,
+        "browser": "157.0",
+        "elapsedMs": 51149,
+        "isolatedStorage": true,
+        "operations": [
+          "login",
+          "PDF upload",
+          "Quiz creation",
+          "submission",
+          "history",
+          "performance"
+        ],
+        "pageErrors": 0
+      }
+    ],
+    "systemTimings": [
+      {
+        "channel": "chrome",
+        "page": "Materials",
+        "milliseconds": 250
+      },
+      {
+        "channel": "chrome",
+        "page": "Create Quiz",
+        "milliseconds": 373
+      },
+      {
+        "channel": "chrome",
+        "page": "Quiz Search",
+        "milliseconds": 218
+      },
+      {
+        "channel": "chrome",
+        "page": "Student Dashboard",
+        "milliseconds": 368
+      },
+      {
+        "channel": "chrome",
+        "page": "Quiz View",
+        "milliseconds": 207
+      },
+      {
+        "channel": "chrome",
+        "page": "Quiz Attempt",
+        "milliseconds": 325
+      },
+      {
+        "channel": "chrome",
+        "page": "Submission and Result",
+        "milliseconds": 590
+      },
+      {
+        "channel": "chrome",
+        "page": "Attempt History",
+        "milliseconds": 184
+      },
+      {
+        "channel": "chrome",
+        "page": "Quiz View",
+        "milliseconds": 358
+      },
+      {
+        "channel": "chrome",
+        "page": "Quiz Attempt",
+        "milliseconds": 180
+      },
+      {
+        "channel": "chrome",
+        "page": "Submission and Result",
+        "milliseconds": 429
+      },
+      {
+        "channel": "chrome",
+        "page": "Attempt History",
+        "milliseconds": 351
+      },
+      {
+        "channel": "chrome",
+        "page": "Subject Performance",
+        "milliseconds": 303
+      },
+      {
+        "channel": "chrome",
+        "page": "Admin Dashboard",
+        "milliseconds": 207
+      },
+      {
+        "channel": "edge",
+        "page": "Materials",
+        "milliseconds": 188
+      },
+      {
+        "channel": "edge",
+        "page": "Create Quiz",
+        "milliseconds": 276
+      },
+      {
+        "channel": "edge",
+        "page": "Quiz Search",
+        "milliseconds": 162
+      },
+      {
+        "channel": "edge",
+        "page": "Student Dashboard",
+        "milliseconds": 146
+      },
+      {
+        "channel": "edge",
+        "page": "Quiz View",
+        "milliseconds": 141
+      },
+      {
+        "channel": "edge",
+        "page": "Quiz Attempt",
+        "milliseconds": 126
+      },
+      {
+        "channel": "edge",
+        "page": "Submission and Result",
+        "milliseconds": 324
+      },
+      {
+        "channel": "edge",
+        "page": "Attempt History",
+        "milliseconds": 169
+      },
+      {
+        "channel": "edge",
+        "page": "Quiz View",
+        "milliseconds": 213
+      },
+      {
+        "channel": "edge",
+        "page": "Quiz Attempt",
+        "milliseconds": 169
+      },
+      {
+        "channel": "edge",
+        "page": "Submission and Result",
+        "milliseconds": 360
+      },
+      {
+        "channel": "edge",
+        "page": "Attempt History",
+        "milliseconds": 118
+      },
+      {
+        "channel": "edge",
+        "page": "Subject Performance",
+        "milliseconds": 238
+      },
+      {
+        "channel": "edge",
+        "page": "Admin Dashboard",
+        "milliseconds": 350
+      },
+      {
+        "channel": "firefox",
+        "page": "Materials",
+        "milliseconds": 294
+      },
+      {
+        "channel": "firefox",
+        "page": "Create Quiz",
+        "milliseconds": 275
+      },
+      {
+        "channel": "firefox",
+        "page": "Quiz Search",
+        "milliseconds": 326
+      },
+      {
+        "channel": "firefox",
+        "page": "Student Dashboard",
+        "milliseconds": 204
+      },
+      {
+        "channel": "firefox",
+        "page": "Quiz View",
+        "milliseconds": 250
+      },
+      {
+        "channel": "firefox",
+        "page": "Quiz Attempt",
+        "milliseconds": 150
+      },
+      {
+        "channel": "firefox",
+        "page": "Submission and Result",
+        "milliseconds": 400
+      },
+      {
+        "channel": "firefox",
+        "page": "Attempt History",
+        "milliseconds": 138
+      },
+      {
+        "channel": "firefox",
+        "page": "Quiz View",
+        "milliseconds": 241
+      },
+      {
+        "channel": "firefox",
+        "page": "Quiz Attempt",
+        "milliseconds": 117
+      },
+      {
+        "channel": "firefox",
+        "page": "Submission and Result",
+        "milliseconds": 367
+      },
+      {
+        "channel": "firefox",
+        "page": "Attempt History",
+        "milliseconds": 187
+      },
+      {
+        "channel": "firefox",
+        "page": "Subject Performance",
+        "milliseconds": 194
+      },
+      {
+        "channel": "firefox",
+        "page": "Admin Dashboard",
+        "milliseconds": 401
+      }
+    ],
+    "ciForTestedSource": [
+      {
+        "id": 41988979219,
+        "head": "888c0666ae78e14be134a6c090be860d254ddb00",
+        "branch": "PES2UG24CS185-Sprint-2",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Chandak06/SE-JF-10/actions/runs/41988979219",
+        "jobs": [
+          {
+            "name": "backend",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "containers",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (firefox)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (edge)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (chrome)",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 41988972978,
+        "head": "888c0666ae78e14be134a6c090be860d254ddb00",
+        "branch": "PES2UG24CS185-Sprint-2",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Chandak06/SE-JF-10/actions/runs/41988972978",
+        "jobs": [
+          {
+            "name": "backend",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "containers",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (firefox)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (chrome)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (edge)",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "browserEnvironment": {
+      "frontendMode": "production-build",
+      "timingLimitMs": 3000,
+      "actualWorkers": 1
+    },
+    "observations": [
+      "Browser journeys and page-load timings use the compiled production frontend with same-origin API proxying and disposable real MongoDB. The 3000 ms assertion is unchanged. Earlier development-server timing failures remain in their original dated pack."
+    ],
+    "reportIntegrityChecks": {
+      "passed": 9,
+      "exitCode": 0,
+      "scope": "Synthetic publisher fixtures; separate from product tests."
+    },
+    "scope": "All four members and all integrated SRS modules. Disposable local MongoDB only; no Atlas or saved-demo mutations. Submitted documents unchanged."
+  },
+  "os": "Windows",
+  "node": "v24.22.1",
+  "testCounts": {
+    "backend integration": {
+      "PASS": 131,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "backend unit": {
+      "PASS": 199,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "browser system": {
+      "PASS": 21,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "frontend component/service/integration": {
+      "PASS": 190,
+      "FAIL": 0,
+      "SKIP": 0
+    }
+  },
+  "browserVersions": {
+    "chrome": "156.0.8078.80",
+    "edge": "156.0.4314.58",
+    "firefox": "157.0"
+  },
+  "coverageTotals": {
+    "backend": {
+      "lines": {
+        "total": 606,
+        "covered": 593,
+        "skipped": 0,
+        "pct": 97.85
+      },
+      "statements": {
+        "total": 689,
+        "covered": 672,
+        "skipped": 0,
+        "pct": 97.53
+      },
+      "functions": {
+        "total": 185,
+        "covered": 183,
+        "skipped": 0,
+        "pct": 98.91
+      },
+      "branches": {
+        "total": 464,
+        "covered": 427,
+        "skipped": 0,
+        "pct": 92.02
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "frontend": {
+      "lines": {
+        "total": 1241,
+        "covered": 1014,
+        "skipped": 0,
+        "pct": 81.7
+      },
+      "statements": {
+        "total": 1569,
+        "covered": 1234,
+        "skipped": 0,
+        "pct": 78.64
+      },
+      "functions": {
+        "total": 415,
+        "covered": 329,
+        "skipped": 0,
+        "pct": 79.27
+      },
+      "branches": {
+        "total": 1386,
+        "covered": 998,
+        "skipped": 0,
+        "pct": 72
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    }
+  },
+  "wholeProjectCoverage": {
+    "lines": {
+      "covered": 1607,
+      "total": 1847,
+      "pct": 87.01
+    },
+    "statements": {
+      "covered": 1906,
+      "total": 2258,
+      "pct": 84.41
+    },
+    "functions": {
+      "covered": 512,
+      "total": 600,
+      "pct": 85.33
+    },
+    "branches": {
+      "covered": 1425,
+      "total": 1850,
+      "pct": 77.03
+    }
+  },
+  "result": "PASS",
+  "acceptance": "Automated validation passed; manual/independent Test Plan exit pending.",
+  "hashNormalization": "SHA-256 of UTF-8 text bytes with CRLF normalized to LF, matching portable Git text storage.",
+  "evidenceSha256": {
+    "AUTOMATED_TEST_CASE_CATALOGUE.csv": "7bfef909fb8fb502b709ef110d35ff139a112459922e62258f9d18c3d9f58736",
+    "AUTOMATED_TEST_CASE_CATALOGUE.md": "b9c6cb07c96ea5cc0161bbece8ae1b2f49f690edae9199bc11ff1e05c29e05ca",
+    "BRANCH_COVERAGE_REPORT.md": "df5fbeca0f4a8af464e1d8b447e769a8cd66c97bdf6d162f1e06ce4c1b3f112d",
+    "CODE_COVERAGE_REPORT.md": "81570dd5c4c9ff2ff81e5134a55f0d6ea1110485ec1079271e2e2e9800d70a92",
+    "evidence/backend-coverage-summary.json": "7617e0a19a99f4c9e7e34742f714d295766a289a42759ba30f1cd30f0f8d15eb",
+    "evidence/backend-junit.xml": "eccf5508fc518d5c6fd490e5a3236452e55f2781ff8e9a4309aaf1b214a4a8c7",
+    "evidence/backend-lcov.info": "49680f60d49b04317889ad9db126a0b045b4f9460e43f8aef43cf61dd73a10d3",
+    "evidence/browser-junit.xml": "3aa1c31064d8b6f7e51ac1ed6e393089c9abdf947cd20e721f7ee90b28a23ee0",
+    "evidence/browser-versions.json": "f903e125f80c01cb705d40658c684cd8d1ecff9c821ba741faae889133e1c80f",
+    "evidence/execution-log.json": "f24fd48d0a02b49a7c789c14af64431c90bd9d1b097079f10152bb8177924bd8",
+    "evidence/frontend-coverage-summary.json": "39b645777e629b5bbaa903195782b0e05b4a45c0fdb76936e908a6a990243061",
+    "evidence/frontend-junit.xml": "f78aaedd40c7692295e0069d40b796e59e8837fd660488dc32fb863325ed4077",
+    "evidence/frontend-lcov.info": "0cd25d97c4f1fb47d6a9d698d88cbea5d4209b25a771db13eead798950ea0809",
+    "evidence/system-timings.json": "f0c44b7bd2e9a74d2ac7e8a94249a122fe35e0fbf8f0e5610dca1041e5965c7c",
+    "README.md": "5ed91c3ffdcf891fdfc8f717fae10df6e331f8637d49e3c5ce97fe4958556679",
+    "SYSTEM_VALIDATION_REPORT.md": "0dda0e4791189317b9d3457a7b58fc78d2196e761ee4f9941099e00b72a52f1c",
+    "UNIT_TEST_REPORT.md": "c13547a4437790e00958b625fbba86cfb8df3d1d207fb074cc85fb96e5f4b645"
+  }
+}
