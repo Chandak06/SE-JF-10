@@ -1,0 +1,20 @@
+# Whole-project test data
+
+All automated suites allocate disposable MongoDB fixtures. The runner never uses Atlas or the saved demo database for data mutation. Real credentials are not test data and must not be copied into reports. Executable fixture setup lives beside each test; this table explains the data classes used across the two sprints.
+
+| Data set | Valid fixtures | Invalid/boundary fixtures | Expected observation |
+| --- | --- | --- | --- |
+| Accounts and roles | Unique Students A/B, ten concurrent Students, explicitly provisioned Admin | Duplicate normalized email, malformed/long email, blank name, invalid password bytes, forged role, disabled/deleted account | Controlled validation/RBAC, hashed passwords, Student-only public registration |
+| Sessions | Current token, separate users/tabs, fresh login after earlier request | Missing/random/revoked/expired token; delayed old upload/list/logout; expiry during attempt | Correct owner maintained; old sessions denied; newer session and owner draft retained |
+| Study materials | `pdf-lib` one-page PDFs with title, subject, description and byte equality checks | Fake PDF, unsupported MIME/extension, encrypted/malformed/empty PDF, missing metadata, oversized configured fixture limit, missing storage | Valid bytes/metadata persist; invalid content rejected and failed metadata leaves no accessible orphan |
+| Material queries | Titles/descriptions/subjects; 26+ matching records for pagination | Empty/nonmatching search, regex metacharacters, malformed cursor, stale request response | Correct combined filters and paging; safe literal matching; errors distinct from empty results |
+| Questions | 2–6 unique options, correct answer among options, subject/topic/difficulty; marks metadata | Missing/duplicate options, invalid key/difficulty, unknown fields, invalid classification | Strict validation and student-safe payload without keys |
+| Quizzes | Selected existing active MCQs, title and subject, multiple subjects | Empty/duplicate/unknown/removed Question IDs; invalid metadata; malformed filters/ID | Real references saved; invalid selection rejected; unavailable sources cannot be attempted |
+| Evaluation | Known correct, incorrect and unanswered responses; empty response array | Forged score/user/key, duplicate response IDs, option not belonging to Question | One point per correct answer; trusted server score/percentage only |
+| Retry identities | Same key/same answers, racing retries, fresh deliberate attempt key | Reused key with changed answers; malformed key | One saved attempt per retry identity; conflict for changed payload; intentional repeat allowed |
+| History/performance | Two different owners; 51+ attempts across subject groups; known percentages | Empty history, invalid pages, inconsistent/failed later page, duplicate records | Owner-specific complete history; arithmetic subject mean over all attempts; no silently partial average |
+| Moderation | Active/removed material, Question and Quiz; pre-existing completed attempts | Student/anonymous delete, missing/false confirmation, missing ID, repeated deletion; hidden filtered items during Delete all | Confirmed Admin-only soft removal; warning includes hidden scope; bytes/audit/history preserved |
+| Persistence/release | Compiled same-origin frontend, stored accounts/PDFs/Quiz/attempts/removal | Actual application/MongoDB stop and restart, invalid release prerequisites | Saved records and session/removal semantics survive; readiness and safe failure behavior |
+| Concurrency | Ten isolated real browser sessions per engine; separate 10/50 HTTP-session workloads | Cross-user result/history comparisons, page errors, lost/duplicate saved results | Ten browser users complete normal operations together without cross-user data or crashes |
+
+The upload API default limit is configured independently of the smaller disposable-fixture limits used to exercise exact boundary behavior efficiently. The SRS scoring rule remains one point per correct answer; Question marks metadata does not change it. Test fixture passwords/tokens are ephemeral examples, not production accounts.
