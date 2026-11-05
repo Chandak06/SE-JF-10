@@ -18,7 +18,7 @@ On 5 November, GitHub submitted reviews were checked for PRs #8, #23–43: all 2
 | Karan tests Harshit | TC-ADMIN-01/02/Bulk/Nav, TC-SEC-01–04; denial/cancel/confirm, removal/audit/history and HTTPS | Not supplied in inspected current evidence | Pending named execution record | Pending |
 | All members, integration | TC-SYS-01, TC-Rel-01; complete Student/Admin flow and restart | Automated execution supplied separately; independent result not recorded | Pending team record | Pending |
 | Representative user | TC-UX-01; register, use materials, create and attempt Quiz without external help | Not recorded | Pending user observation | Pending |
-| Typical network confirmation | TC-Perf-01; content ready under 3 seconds on stated campus/broadband device/network | Local automated timings supplied separately; representative external-network observation not recorded | Pending environment/measurement record | Pending |
+| Typical network confirmation | TC-Perf-01; content ready under 3 seconds on stated campus/broadband device/network | Local Create Quiz exceeded the limit once (3,726 ms); CI passed and isolated rechecks are separate evidence. Representative network confirmation is not recorded | Pending timing follow-up and environment/measurement record | Pending |
 | Browser acceptance matrix | TC-Compat-01; latest and previous stable major of Chrome/Edge/Firefox at acceptance time | One installed channel per engine is automated; second-major slots not recorded | Pending version/date/core-flow matrix | Pending |
 | QA/Dev Lead/Project Guide | TC-UAT-01; review all results/defects, accept build and approve release/demo/freeze | Not supplied | Actual approver, date and evidence required | Pending |
 
