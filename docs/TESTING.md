@@ -10,6 +10,7 @@ Testing window: **2–6 November 2026**. Current complete automated execution: *
 - [Code Coverage Report](testing/2026-11-05-whole-project/CODE_COVERAGE_REPORT.md)
 - [Branch Coverage Report](testing/2026-11-05-whole-project/BRANCH_COVERAGE_REPORT.md)
 - [Whole-project execution summary, case catalogue and machine evidence](testing/2026-11-05-whole-project/README.md)
+- [Final whole-project test summary, defects and load observations](testing/WHOLE_PROJECT_SUMMARY_2026-11-05.md)
 - [Test data and boundary classes](testing/TEST_DATA.md)
 - [Independent/manual acceptance register](testing/MANUAL_ACCEPTANCE.md)
 - [GitHub review-evidence inspection](testing/GITHUB_ACCEPTANCE_EVIDENCE_2026-11-05.md)
@@ -37,7 +38,9 @@ npm ci --prefix frontend
 npm run test:project -- --date 2026-11-05 --label whole-project
 ```
 
-Use today's actual Asia/Kolkata date. Use a fresh label for a later run on the same date; existing snapshots and failed raw executions are preserved. The runner requires committed source, executes all test/build/release stages, records actual command exits and timestamps, captures browser versions/concurrency/timings from test attachments and generates all four reports. A failing/incomplete run stops before a passing pack is published. Ignored raw logs remain under `.local/testing-<date>-<label>/`; sanitized JUnit, counters, per-case results and the execution log are retained in the repository pack. GitHub Actions also runs the tests and retains complete browser/coverage artifacts.
+Use today's actual Asia/Kolkata date. Use a fresh label for a later run on the same date; existing snapshots and failed raw executions are preserved. The runner requires committed source, executes all test/build/release stages, records actual command exits and timestamps, captures browser versions/concurrency/timings from test attachments and generates all four reports. Browser failures are published as failed outcomes and the command returns nonzero; they are never converted into a passing pack. Missing build/evidence prerequisites stop publication. Ignored raw logs remain under `.local/testing-<date>-<label>/`; sanitized JUnit, counters, per-case results and the execution log are retained in the repository pack. GitHub Actions also runs the tests and retains complete browser/coverage artifacts.
+
+The recorded local whole-project run found a Create Quiz timing violation (3,726 ms against 3,000 ms) while the exact source passed all five CI jobs. The main case catalogue retains that failed local result; later isolated rechecks and CI are separate evidence. The summary records the resulting performance follow-up and 50-session load latency, rather than declaring every acceptance criterion complete.
 
 ## Acceptance boundary
 
