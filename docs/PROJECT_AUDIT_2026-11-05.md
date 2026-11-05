@@ -19,6 +19,8 @@ The four requested reports are available in the [5 November testing pack](testin
 
 No additional confirmed defect was found in the executed Question Bank/Quiz authoring, PDF, scoring/history/performance or moderation checks. This is a bounded audit, not a proof that every possible input/environment is defect-free.
 
+Publication follow-up: Windows temporary-directory ACLs initially prevented normal Git from reading the generated pack. Its inherited workspace permissions were restored without changing report contents. Future staging directories inherit normal workspace ACLs; the seven publisher-integrity checks were rerun after this correction.
+
 ## Executed verification and metrics
 
 | Verification | Actual result |
