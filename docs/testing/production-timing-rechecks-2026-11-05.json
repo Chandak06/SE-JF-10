@@ -1,0 +1,561 @@
+{
+  "sourceRevision": "888c0666ae78e14be134a6c090be860d254ddb00",
+  "generatedUtc": "2026-11-05T07:49:58.173Z",
+  "environment": {
+    "frontendMode": "production-build",
+    "timingLimitMs": 3000,
+    "actualWorkers": 1
+  },
+  "command": "npm run test:browser --prefix frontend -- --grep \"complete Student attempt\" --repeat-each=3",
+  "statistics": {
+    "startTime": "2026-11-05T07:48:26.681Z",
+    "duration": 85091.368,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "channel": "chrome",
+      "repeat": 1,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 65
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 91
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 79
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 61
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 96
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 72
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 334
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 67
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 72
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 40
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 231
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 43
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 84
+        }
+      ]
+    },
+    {
+      "channel": "chrome",
+      "repeat": 2,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 62
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 78
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 63
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 52
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 86
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 85
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 103
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 73
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 70
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 64
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 351
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 43
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 65
+        }
+      ]
+    },
+    {
+      "channel": "chrome",
+      "repeat": 3,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 64
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 72
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 58
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 56
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 84
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 58
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 76
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 62
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 63
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 59
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 243
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 55
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 62
+        }
+      ]
+    },
+    {
+      "channel": "edge",
+      "repeat": 1,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 68
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 67
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 64
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 61
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 93
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 88
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 321
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 51
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 67
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 53
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 237
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 56
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 63
+        }
+      ]
+    },
+    {
+      "channel": "edge",
+      "repeat": 2,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 76
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 83
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 72
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 61
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 98
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 74
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 281
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 50
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 70
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 44
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 238
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 57
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 64
+        }
+      ]
+    },
+    {
+      "channel": "edge",
+      "repeat": 3,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 69
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 98
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 74
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 61
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 99
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 79
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 286
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 55
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 69
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 55
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 231
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 43
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 56
+        }
+      ]
+    },
+    {
+      "channel": "firefox",
+      "repeat": 1,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 124
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 275
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 144
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 117
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 200
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 71
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 328
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 88
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 111
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 76
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 277
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 88
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 77
+        }
+      ]
+    },
+    {
+      "channel": "firefox",
+      "repeat": 2,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 117
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 128
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 106
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 98
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 131
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 75
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 320
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 62
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 110
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 77
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 346
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 66
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 107
+        }
+      ]
+    },
+    {
+      "channel": "firefox",
+      "repeat": 3,
+      "title": "complete Student attempt, result, history and subject performance survive Quiz moderation",
+      "status": "passed",
+      "timings": [
+        {
+          "page": "Materials",
+          "milliseconds": 96
+        },
+        {
+          "page": "Create Quiz",
+          "milliseconds": 115
+        },
+        {
+          "page": "Quiz Search",
+          "milliseconds": 106
+        },
+        {
+          "page": "Student Dashboard",
+          "milliseconds": 84
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 105
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 80
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 346
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 63
+        },
+        {
+          "page": "Quiz View",
+          "milliseconds": 109
+        },
+        {
+          "page": "Quiz Attempt",
+          "milliseconds": 76
+        },
+        {
+          "page": "Submission and Result",
+          "milliseconds": 372
+        },
+        {
+          "page": "Attempt History",
+          "milliseconds": 66
+        },
+        {
+          "page": "Subject Performance",
+          "milliseconds": 78
+        }
+      ]
+    }
+  ],
+  "scope": "Nine additional scenario rechecks, separate from the original 541 whole-project invocations; disposable MongoDB and loopback API. No human or target-network acceptance inferred."
+}
