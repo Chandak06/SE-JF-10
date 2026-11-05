@@ -22,13 +22,17 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--date', required=True, help='Execution date, YYYY-MM-DD')
+parser.add_argument('--run-label', default='', help='Optional lowercase label for a separate run on the same date')
 parser.add_argument('--browser-junit', type=Path, help='Explicit combined browser evidence, if a rerun was required')
 args = parser.parse_args()
 datetime.strptime(args.date, '%Y-%m-%d')
-DESTINATION = ROOT / 'docs' / 'testing' / args.date
+if args.run_label and not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', args.run_label):
+    raise SystemExit('Use a lowercase alphanumeric run label with optional hyphens.')
+run_id = args.date + ('-' + args.run_label if args.run_label else '')
+DESTINATION = ROOT / 'docs' / 'testing' / run_id
 if DESTINATION.exists():
     raise SystemExit('A dated report snapshot already exists. Preserve it; choose a new execution date.')
-execution = json.loads((ROOT / '.local' / f'testing-{args.date}' / 'execution.json').read_text(encoding='utf-8-sig'))
+execution = json.loads((ROOT / '.local' / f'testing-{run_id}' / 'execution.json').read_text(encoding='utf-8-sig'))
 # Validate source/command provenance before creating any published evidence.
 current_revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 if execution['sourceRevision'] != current_revision or execution['date'] != args.date:
@@ -152,17 +156,17 @@ for layer, folder in [('backend', ROOT / 'coverage'), ('frontend', ROOT / 'front
     lcov = re.sub(r'^SF:(.*)$', source_record, lcov, flags=re.M)
     (EVIDENCE / f'{layer}-lcov.info').write_text(lcov, encoding='utf-8')
 
-execution = json.loads((ROOT / '.local' / f'testing-{args.date}' / 'execution.json').read_text(encoding='utf-8-sig'))
+execution = json.loads((ROOT / '.local' / f'testing-{run_id}' / 'execution.json').read_text(encoding='utf-8-sig'))
 if execution['sourceRevision'] != git('rev-parse', 'HEAD') or execution['date'] != args.date:
     raise SystemExit('Execution manifest does not match this revision/date.')
 if any(code != 0 for code in execution['commands'].values()):
     raise SystemExit('A required command did not pass; do not publish a passing summary.')
-versions = json.loads((ROOT / '.local' / f'testing-{args.date}' / 'browser-versions.json').read_text(encoding='utf-8-sig'))
+versions = json.loads((ROOT / '.local' / f'testing-{run_id}' / 'browser-versions.json').read_text(encoding='utf-8-sig'))
 if set(versions) != {'chrome', 'edge', 'firefox'} or any(not isinstance(v, str) or not v for v in versions.values()):
     raise SystemExit('Record one actual installed version for each browser channel.')
 (EVIDENCE / 'browser-versions.json').write_text(json.dumps(versions, indent=2) + '\n', encoding='utf-8')
 counts = {level: {state: sum(c['level'] == level and c['status'] == state for c in cases) for state in ['PASS', 'FAIL', 'SKIP']} for level in sorted({c['level'] for c in cases})}
-initial_path = ROOT / '.local' / f'testing-{args.date}' / 'browser-initial.xml'
+initial_path = ROOT / '.local' / f'testing-{run_id}' / 'browser-initial.xml'
 if initial_path.exists():
     initial = ET.parse(initial_path).getroot()
     portable = ET.Element('testsuites', name='initial browser matrix')
@@ -185,6 +189,8 @@ sha = execution['sourceRevision']
 header = f'Execution date: **{args.date}**, Asia/Calcutta. Source: `{sha}`. Branch: `{git("branch", "--show-current")}`. The execution manifest identifies the tested source and reporting configuration.\n\n'
 if execution.get('browserRunNote'):
     header += execution['browserRunNote'] + ' See [initial browser results](INITIAL_BROWSER_RUN.md).\n\n'
+if execution.get('projectScope'):
+    header += 'Scope: **the whole Team 10 project**, covering Auth/Materials (Dharani), Question Bank/Quiz (Prajwal), Attempt/Result/History/Performance (Karan), Admin/Security/CI and shared integration (Harshit). Execution coordination does not replace independent peer acceptance.\n\n'
 summary = table(['Test level', 'Passed', 'Failed', 'Skipped'], [(level, data['PASS'], data['FAIL'], data['SKIP']) for level, data in counts.items()])
 case_rows = [[c['id'], c['level'], c['source'], c['name'], c['status'], f'{c["seconds"]:.3f}'] for c in cases]
 write('AUTOMATED_TEST_CASE_CATALOGUE.md', '# Executed automated test cases\n\n' + header + 'Every concrete parameterized case from the fresh JUnit reports is included below. These evidence IDs identify this snapshot; the stable SRS test IDs/procedures are in [the updated Test Case Document](../../TEST_CASES_UPDATED_2026-11-02.md). Test titles and linked source assertions define each automated expected result. Frontend suites include mocks and DOM integration and are not all isolated unit tests.\n\n' + table(['Evidence ID', 'Level', 'Source', 'Test / expected behavior', 'Outcome', 'Seconds'], case_rows))
@@ -233,7 +239,10 @@ for name in ['README.md', 'SYSTEM_VALIDATION_REPORT.md', 'AUTOMATED_TEST_CASE_CA
     body = body.replace('# Testing reports — 2 November 2026', f'# Testing reports — {args.date}')
     body = body.replace('Day-one evidence for the', 'Execution evidence for the')
     body = body.replace('--date 2026-11-02', f'--date {args.date}')
-    current_cases = ROOT / 'docs' / f'TEST_CASES_UPDATED_{args.date}.md'
+    case_name = execution.get('testCaseDocument', f'TEST_CASES_UPDATED_{args.date}.md')
+    if Path(case_name).name != case_name:
+        raise SystemExit('Test case document must be a filename within docs.')
+    current_cases = ROOT / 'docs' / case_name
     if current_cases.exists():
         body = body.replace('TEST_CASES_UPDATED_2026-11-02.md', current_cases.name)
     body = body.replace('or future 3–6 November test result', 'or unexecuted test result')
@@ -244,6 +253,41 @@ for name in ['README.md', 'SYSTEM_VALIDATION_REPORT.md', 'AUTOMATED_TEST_CASE_CA
         body = body.replace('The final verified automated results pass. The initial Edge bulk-moderation timeout and isolated rerun are recorded above; its exact transient cause is not established. No new product-code defect was confirmed. Continue monitoring this case for flakiness.',
                             'The final automated run passed without failed or skipped cases. Historical failures remain recorded in their original dated packs; confirmed audit findings are listed below when applicable.')
     path.write_text(body, encoding='utf-8')
+
+concurrent = execution.get('browserConcurrency', [])
+if concurrent:
+    if {row['channel'] for row in concurrent} != {'chrome', 'edge', 'firefox'} or any(row['sessions'] != 10 or row['completed'] != 10 or row['pageErrors'] for row in concurrent):
+        raise SystemExit('Incomplete ten-session browser concurrency evidence.')
+    body = system_report.read_text(encoding='utf-8').replace(
+        '| NF-003 concurrent normal use | Automated 10/50 authenticated HTTP-session workloads | Team records at least 10 simultaneous browser sessions/devices covering ordinary operations |',
+        '| NF-003 concurrent normal use | 10 isolated browser contexts concurrently complete login, PDF upload, Quiz creation, saved submission, owner history and performance in each of Chrome/Edge/Firefox; 10/50 HTTP-session workloads also pass | Automated isolated-browser-session scenario passed; independent peer observation remains separate |')
+    body += '\n## Concurrent browser-session evidence\n\n' + table(
+        ['Channel', 'Actual version', 'Sessions', 'Completed', 'Page errors', 'Elapsed ms'],
+        [[r['channel'], r['browser'], r['sessions'], r['completed'], r['pageErrors'], r['elapsedMs']] for r in concurrent]) + '\n'
+    system_report.write_text(body, encoding='utf-8')
+if execution.get('steps'):
+    (EVIDENCE / 'execution-log.json').write_text(json.dumps(execution['steps'], indent=2) + '\n', encoding='utf-8')
+timings = execution.get('systemTimings', [])
+if timings:
+    (EVIDENCE / 'system-timings.json').write_text(json.dumps(timings, indent=2) + '\n', encoding='utf-8')
+    with system_report.open('a', encoding='utf-8') as stream:
+        stream.write('\n## Single-user primary-content timings\n\nLocal same-origin fixture, application already started; browser actions/content-ready assertions, 3,000 ms limit. Concurrency timings above are a separate functional workload.\n\n' + table(
+            ['Channel', 'Page/action', 'Milliseconds', 'Limit'],
+            [[r['channel'], r['page'], r['milliseconds'], 3000] for r in timings]) + '\n')
+
+# Whole-project coverage is weighted by measured counters, never an average of
+# backend/frontend percentages. Existing per-layer exclusions still apply.
+combined = {metric: {'covered': sum(report['total'][metric]['covered'] for report in coverage.values()),
+                     'total': sum(report['total'][metric]['total'] for report in coverage.values())} for metric in metrics}
+for metric in metrics:
+    values = combined[metric]
+    values['pct'] = round(100 * values['covered'] / values['total'], 2) if values['total'] else 100
+with (OUT / 'CODE_COVERAGE_REPORT.md').open('a', encoding='utf-8') as stream:
+    stream.write('\n## Whole measured project totals\n\nCounters below sum the backend and frontend measurements; percentages are covered / total, rounded to two decimals. They use the declared instrumentation scope and do not include browser execution.\n\n' + table(
+        ['Metric', 'Covered', 'Total', 'Percent'],
+        [[metric, combined[metric]['covered'], combined[metric]['total'], combined[metric]['pct']] for metric in metrics]) + '\n')
+with (OUT / 'BRANCH_COVERAGE_REPORT.md').open('a', encoding='utf-8') as stream:
+    stream.write(f'\nWhole measured project: **{combined["branches"]["covered"]}/{combined["branches"]["total"]} branches ({combined["branches"]["pct"]}%)**. This weighted total uses both layers; the existing 80% CI branch threshold applies to the backend only.\n')
 
 findings = execution.get('auditFindings', [])
 if findings:
@@ -256,6 +300,7 @@ manifest = {'generatedUtc': datetime.now(timezone.utc).isoformat(), 'execution':
             'os': platform.system(), 'node': subprocess.check_output(['node', '--version'], text=True).strip(),
             'testCounts': counts, 'browserVersions': versions,
             'coverageTotals': {layer: data['total'] for layer, data in coverage.items()},
+            'wholeProjectCoverage': combined,
             'acceptance': 'Automated validation passed; manual/independent Test Plan exit pending.',
             'hashNormalization': 'SHA-256 of UTF-8 text bytes with CRLF normalized to LF, matching portable Git text storage.',
             'evidenceSha256': {str(p.relative_to(OUT)).replace(os.sep, '/'): hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
