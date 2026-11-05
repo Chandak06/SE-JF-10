@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="browser">
+  <testsuite tests="6" failures="0" errors="0" skipped="0" time="43.377" timestamp="2026-11-05T05:30:22.999Z" name="[chrome] moderation.spec.ts">
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] bulk material moderation confirms hidden scope, supports cancellation and retains PDF audit data" time="5.316" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] complete Student attempt, result, history and subject performance survive Quiz moderation" time="15.006" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] real Quiz creation, discovery, trusted API scoring and confirmed Quiz moderation integrate" time="3.912" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] student uploads, administrator confirms removal and removed content cannot be downloaded" time="7.668" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] student loads the 26th search match and keeps the search after another upload" time="4.013" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[chrome] Admin dashboard integrates real Question Bank moderation, responsive navigation and Student denial" time="7.462" />
+  </testsuite>
+  <testsuite tests="6" failures="0" errors="0" skipped="0" time="42.897" timestamp="2026-11-05T05:30:22.999Z" name="[edge] moderation.spec.ts">
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] bulk material moderation confirms hidden scope, supports cancellation and retains PDF audit data" time="2.937" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] complete Student attempt, result, history and subject performance survive Quiz moderation" time="9.822" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] real Quiz creation, discovery, trusted API scoring and confirmed Quiz moderation integrate" time="7.805" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] student uploads, administrator confirms removal and removed content cannot be downloaded" time="8.392" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] student loads the 26th search match and keeps the search after another upload" time="6.783" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[edge] Admin dashboard integrates real Question Bank moderation, responsive navigation and Student denial" time="7.158" />
+  </testsuite>
+  <testsuite tests="6" failures="0" errors="0" skipped="0" time="20.242" timestamp="2026-11-05T05:30:22.999Z" name="[firefox] moderation.spec.ts">
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] bulk material moderation confirms hidden scope, supports cancellation and retains PDF audit data" time="4.63" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] complete Student attempt, result, history and subject performance survive Quiz moderation" time="5.788" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] real Quiz creation, discovery, trusted API scoring and confirmed Quiz moderation integrate" time="2.039" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] student uploads, administrator confirms removal and removed content cannot be downloaded" time="3.443" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] student loads the 26th search match and keeps the search after another upload" time="1.613" />
+    <testcase classname="frontend/e2e/moderation.spec.ts" name="[firefox] Admin dashboard integrates real Question Bank moderation, responsive navigation and Student denial" time="2.729" />
+  </testsuite>
+</testsuites>
