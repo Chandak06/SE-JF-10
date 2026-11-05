@@ -5,12 +5,13 @@ Testing window: **2–6 November 2026**. Current complete automated execution: *
 ## Submission documents
 
 - [Updated whole-project Test Case Document](TEST_CASES_WHOLE_PROJECT.md)
-- [Unit Test Report](testing/2026-11-05-whole-project/UNIT_TEST_REPORT.md)
-- [System Validation Report](testing/2026-11-05-whole-project/SYSTEM_VALIDATION_REPORT.md)
-- [Code Coverage Report](testing/2026-11-05-whole-project/CODE_COVERAGE_REPORT.md)
-- [Branch Coverage Report](testing/2026-11-05-whole-project/BRANCH_COVERAGE_REPORT.md)
-- [Whole-project execution summary, case catalogue and machine evidence](testing/2026-11-05-whole-project/README.md)
-- [Final whole-project test summary, defects and load observations](testing/WHOLE_PROJECT_SUMMARY_2026-11-05.md)
+- [Unit Test Report](testing/2026-11-05-production-validation/UNIT_TEST_REPORT.md)
+- [System Validation Report](testing/2026-11-05-production-validation/SYSTEM_VALIDATION_REPORT.md)
+- [Code Coverage Report](testing/2026-11-05-production-validation/CODE_COVERAGE_REPORT.md)
+- [Branch Coverage Report](testing/2026-11-05-production-validation/BRANCH_COVERAGE_REPORT.md)
+- [Whole-project execution summary, case catalogue and machine evidence](testing/2026-11-05-production-validation/README.md)
+- [Current production validation and defect follow-up](testing/PRODUCTION_VALIDATION_2026-11-05.md)
+- [Earlier failed execution and load observations, preserved](testing/WHOLE_PROJECT_SUMMARY_2026-11-05.md)
 - [Test data and boundary classes](testing/TEST_DATA.md)
 - [Independent/manual acceptance register](testing/MANUAL_ACCEPTANCE.md)
 - [GitHub review-evidence inspection](testing/GITHUB_ACCEPTANCE_EVIDENCE_2026-11-05.md)
@@ -35,12 +36,12 @@ Prerequisites: supported Node >=24.15 <25, Python 3, root/frontend locked depend
 ```powershell
 npm ci
 npm ci --prefix frontend
-npm run test:project -- --date 2026-11-05 --label whole-project
+npm run test:project -- --date 2026-11-05 --label production-validation
 ```
 
 Use today's actual Asia/Kolkata date. Use a fresh label for a later run on the same date; existing snapshots and failed raw executions are preserved. The runner requires committed source, executes all test/build/release stages, records actual command exits and timestamps, captures browser versions/concurrency/timings from test attachments and generates all four reports. Browser failures are published as failed outcomes and the command returns nonzero; they are never converted into a passing pack. Missing build/evidence prerequisites stop publication. Ignored raw logs remain under `.local/testing-<date>-<label>/`; sanitized JUnit, counters, per-case results and the execution log are retained in the repository pack. GitHub Actions also runs the tests and retains complete browser/coverage artifacts.
 
-The recorded local whole-project run found a Create Quiz timing violation (3,726 ms against 3,000 ms) while the exact source passed all five CI jobs. The main case catalogue retains that failed local result; later isolated rechecks and CI are separate evidence. The summary records the resulting performance follow-up and 50-session load latency, rather than declaring every acceptance criterion complete.
+The latest complete run passed **541/541** cases against source `888c0666ae78e14be134a6c090be860d254ddb00`. Browser validation now builds and serves the compiled production frontend instead of using Vite development transforms and React development diagnostics. All 42 recorded content timings across Chrome, Edge and Firefox were **117–590 ms**; the unchanged limit is **<3,000 ms**. These are loopback measurements, not target-network acceptance. The earlier development-server execution and its 3,726/3,082 ms failures remain unchanged in the [original pack](testing/2026-11-05-whole-project/README.md). See the current follow-up for the additional timing rechecks and fifty-session measurements.
 
 ## Acceptance boundary
 
