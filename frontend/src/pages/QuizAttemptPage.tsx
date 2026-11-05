@@ -165,8 +165,12 @@ export default function QuizAttemptPage({
   const isDemo = !quizId
   // Never mix sample questions with a real MongoDB quiz ID.
   const questions = suppliedQuestions ?? (isDemo ? sampleQuestions : [])
-  const draftKey = 'study-commons-quiz-responses:' + getSessionUser()!.id +
-    (quizId ? ':' + quizId : '')
+  // Session expiry must not crash a rerender or reassign an existing draft.
+  const [{ ownerId, draftKey }] = useState(() => {
+    const ownerId = getSessionUser()?.id
+    return { ownerId, draftKey: 'study-commons-quiz-responses:' +
+      (ownerId ?? crypto.randomUUID()) + (quizId ? ':' + quizId : '') }
+  })
   const [currentIndex, setCurrentIndex] = useState(0)
   const [responses, setResponses] = useState<Record<string, string>>(() => {
     try { return readQuizDraft(window.sessionStorage, draftKey, questions) } catch { return {} }
@@ -248,6 +252,11 @@ export default function QuizAttemptPage({
       setSubmitted(true)
       setShowSubmitModal(false)
       try { window.sessionStorage.removeItem(draftKey) } catch { /* Storage may be disabled. */ }
+      return
+    }
+
+    if (!ownerId || getSessionUser()?.id !== ownerId) {
+      setSubmitError('Your session has changed or expired. Please log in again before submitting.')
       return
     }
 
