@@ -44,6 +44,8 @@ API/runtime composition and authorization are documented in [integration](docs/I
 
 ## Verify and CI/CD
 
+For the complete team-wide testing submission, use [Whole-project testing](docs/TESTING.md): the updated case document, all four reports, test data, per-case execution evidence and manual acceptance register. `npm run test:project -- --date 2026-11-05 --label whole-project` executes the full plan against disposable fixtures and publishes a separate dated pack.
+
 Run `npm run check` at the root. In `frontend`, run `npm run test:coverage`, `npm run lint` and `npm run build`. After installing the Playwright browsers, run `npm run test:browser`. Run `npm run demo:build` then `npm run demo:verify` for the compiled-release/restart check. Report publication guards are checked with `python scripts/tests/test_testing_reports.py -v`. Tests use disposable MongoDB rather than the configured Atlas database. Backend coverage gates are 85% statements/lines/functions and 80% branches; frontend coverage is reported separately. See [updated test cases](docs/TEST_CASES_UPDATED_2026-11-05.md) and [all four testing reports](docs/testing/2026-11-05/README.md).
 
 [GitHub Actions](.github/workflows/ci.yml) builds, tests, lints and retains reports/build artifacts on push, PR and manual dispatch. It supersedes the original Jenkins proposal and validates the isolated production HTTPS configuration. The documented persistent local release supports the SRS demonstration environment; record the chosen environment, final demo and acceptance evidence. See the [CI guide](docs/GITHUB_ACTIONS.md).
