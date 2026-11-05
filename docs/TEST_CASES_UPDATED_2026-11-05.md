@@ -68,6 +68,8 @@ Use the explicit cross-test matrix in `docs/WORK_DIVISION.md`: Prajwal tests Dha
 
 ## 5 November audit additions
 
+- TC-QUIZ-Session-01/02: use the real auth/submission services, expire the session during submission and separately sign in as a different account before submitting. The page must show an error without crashing, preserve the original owner's answers and never submit/reassign them under the other account. The expiry case reproduced a null-user render crash before the correction; both cases are in `frontend/src/pages/QuizAttemptPage.session-expiry.test.tsx`.
+
 - TC-Auth-Race-01/02/03: delay an old upload, material-list or logout response; complete a newer login, then finish the old request (401 for materials, 204 for logout). The newer token, user and saved session must survive. All three failed before the correction and pass afterward in rontend/src/services/authService.test.ts. Current-session rejection and normal logout still invalidate the intended session.
 - Report integrity: seven synthetic-fixture checks in scripts/tests/test_testing_reports.py verify immutable historical snapshots, source mismatch, missing execution commands, partial browser matrices, suite-level errors, count mismatches, and clean date-specific publication with portable evidence hashes. Synthetic fixtures are never counted as application acceptance.
 - This revision supersedes the 2 November case document for current execution; its original report snapshot and initial Edge timeout remain preserved.
