@@ -12,6 +12,9 @@ from pathlib import Path
 import platform
 import re
 import subprocess
+import atexit
+import shutil
+import tempfile
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
@@ -22,7 +25,32 @@ parser.add_argument('--date', required=True, help='Execution date, YYYY-MM-DD')
 parser.add_argument('--browser-junit', type=Path, help='Explicit combined browser evidence, if a rerun was required')
 args = parser.parse_args()
 datetime.strptime(args.date, '%Y-%m-%d')
-OUT = ROOT / 'docs' / 'testing' / args.date
+DESTINATION = ROOT / 'docs' / 'testing' / args.date
+if DESTINATION.exists():
+    raise SystemExit('A dated report snapshot already exists. Preserve it; choose a new execution date.')
+execution = json.loads((ROOT / '.local' / f'testing-{args.date}' / 'execution.json').read_text(encoding='utf-8-sig'))
+# Validate source/command provenance before creating any published evidence.
+current_revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+if execution['sourceRevision'] != current_revision or execution['date'] != args.date:
+    raise SystemExit('Execution manifest does not match this revision/date.')
+required = ['npm run check', 'npm run test:coverage --prefix frontend',
+            'npm run lint --prefix frontend', 'npm run demo:build', 'npm run demo:verify',
+            'npm run test:browser --prefix frontend', 'node scripts/check-submitted-documents.mjs']
+if any(not any(command.startswith(name) for command in execution['commands']) for name in required):
+    raise SystemExit('Execution manifest is missing required check commands.')
+if any(code != 0 for code in execution['commands'].values()):
+    raise SystemExit('A required command did not pass; retain the failing evidence and investigate.')
+(ROOT / '.local').mkdir(exist_ok=True)
+OUT = Path(tempfile.mkdtemp(prefix=f'testing-report-{args.date}-', dir=ROOT / '.local'))
+
+
+def discard_staging():
+    # Only the unique staging directory allocated above can be removed.
+    if OUT.exists() and OUT.parent.resolve() == (ROOT / '.local').resolve() and OUT.name.startswith('testing-report-'):
+        shutil.rmtree(OUT)
+
+
+atexit.register(discard_staging)
 EVIDENCE = OUT / 'evidence'
 EVIDENCE.mkdir(parents=True, exist_ok=True)
 
@@ -57,8 +85,14 @@ for layer, path in sources:
     if datetime.fromtimestamp(path.stat().st_mtime).date().isoformat() != args.date:
         raise SystemExit(f'Refusing stale JUnit evidence: {path}')
     original = ET.parse(path).getroot()
+    if any(int(original.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
+        raise SystemExit(f'Non-passing JUnit root summary: {path}')
+    if original.get('tests') is not None and int(original.get('tests')) != len(list(original.iter('testcase'))):
+        raise SystemExit(f'JUnit summary disagrees with concrete cases: {path}')
     clean = ET.Element('testsuites', name=layer)
     for suite in original.iter('testsuite'):
+        if any(int(suite.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
+            raise SystemExit(f'Non-passing JUnit suite summary: {path}')
         if not suite.findall('testcase'):
             continue
         name = relative(suite.get('name', ''))
@@ -120,6 +154,8 @@ if execution['sourceRevision'] != git('rev-parse', 'HEAD') or execution['date'] 
 if any(code != 0 for code in execution['commands'].values()):
     raise SystemExit('A required command did not pass; do not publish a passing summary.')
 versions = json.loads((ROOT / '.local' / f'testing-{args.date}' / 'browser-versions.json').read_text(encoding='utf-8-sig'))
+if set(versions) != {'chrome', 'edge', 'firefox'} or any(not isinstance(v, str) or not v for v in versions.values()):
+    raise SystemExit('Record one actual installed version for each browser channel.')
 (EVIDENCE / 'browser-versions.json').write_text(json.dumps(versions, indent=2) + '\n', encoding='utf-8')
 counts = {level: {state: sum(c['level'] == level and c['status'] == state for c in cases) for state in ['PASS', 'FAIL', 'SKIP']} for level in sorted({c['level'] for c in cases})}
 initial_path = ROOT / '.local' / f'testing-{args.date}' / 'browser-initial.xml'
@@ -142,7 +178,7 @@ if initial_path.exists():
     ET.ElementTree(portable).write(EVIDENCE / 'browser-initial-junit.xml', encoding='utf-8', xml_declaration=True)
     write('INITIAL_BROWSER_RUN.md', '# Initial browser execution and rerun\n\n' + execution.get('browserRunNote', '') + '\n\n' + table(['Browser suite', 'Case', 'Initial result'], initial_rows) + '\n\n[Original outcomes, sanitized JUnit](evidence/browser-initial-junit.xml). The final browser evidence uses the unchanged Chrome/Firefox results and the complete isolated Edge rerun; initial failed results have not been counted as passes.')
 sha = execution['sourceRevision']
-header = f'Execution date: **{args.date}**, Asia/Calcutta. Source: `{sha}`. Branch: `{git("branch", "--show-current")}`. Reports describe this source plus the frontend coverage/reporting configuration changes listed in the execution manifest; no application source was modified.\n\n'
+header = f'Execution date: **{args.date}**, Asia/Calcutta. Source: `{sha}`. Branch: `{git("branch", "--show-current")}`. The execution manifest identifies the tested source and reporting configuration.\n\n'
 if execution.get('browserRunNote'):
     header += execution['browserRunNote'] + ' See [initial browser results](INITIAL_BROWSER_RUN.md).\n\n'
 summary = table(['Test level', 'Passed', 'Failed', 'Skipped'], [(level, data['PASS'], data['FAIL'], data['SKIP']) for level, data in counts.items()])
@@ -172,7 +208,7 @@ system_text = system_report.read_text(encoding='utf-8')
 system_text = system_text.replace('No failed automated test or confirmed new product defect was observed in these runs.',
     'The final verified automated results pass. The initial Edge bulk-moderation timeout and isolated rerun are recorded above; its exact transient cause is not established. No new product-code defect was confirmed. Continue monitoring this case for flakiness.')
 green_main = next((run for run in execution.get('ciForTestedSource', [])
-                   if run['branch'] == 'main' and run['conclusion'] == 'success'
+                   if run['head'] == sha and run['conclusion'] == 'success'
                    and len(run.get('jobs', [])) == 5
                    and all(job['conclusion'] == 'success' for job in run['jobs'])), None)
 if green_main:
@@ -186,6 +222,32 @@ readme = OUT / 'README.md'
 readme.write_text(readme.read_text(encoding='utf-8').replace('It preserves actual failed/skipped test outcomes if present.',
     'It rejects a non-passing final case set and retains the initial failed browser run separately when a rerun was needed.'), encoding='utf-8')
 
+# Date/run-specific prose must follow the actual execution, never a prior run.
+for name in ['README.md', 'SYSTEM_VALIDATION_REPORT.md', 'AUTOMATED_TEST_CASE_CATALOGUE.md']:
+    path = OUT / name
+    body = path.read_text(encoding='utf-8')
+    body = body.replace('# Testing reports — 2 November 2026', f'# Testing reports — {args.date}')
+    body = body.replace('Day-one evidence for the', 'Execution evidence for the')
+    body = body.replace('--date 2026-11-02', f'--date {args.date}')
+    current_cases = ROOT / 'docs' / f'TEST_CASES_UPDATED_{args.date}.md'
+    if current_cases.exists():
+        body = body.replace('TEST_CASES_UPDATED_2026-11-02.md', current_cases.name)
+    body = body.replace('or future 3–6 November test result', 'or unexecuted test result')
+    browser_count = sum(c['layer'] == 'browser' for c in cases)
+    body = body.replace('Complete browser matrix: six real integrated journeys per browser, Chrome/Edge/Firefox, eighteen cases.',
+                        f'Complete Chrome/Edge/Firefox browser matrix: {browser_count} verified cases; individual journeys and channels are listed in the case catalogue.')
+    if not initial_path.exists():
+        body = body.replace('The final verified automated results pass. The initial Edge bulk-moderation timeout and isolated rerun are recorded above; its exact transient cause is not established. No new product-code defect was confirmed. Continue monitoring this case for flakiness.',
+                            'The final automated run passed without failed or skipped cases. Historical failures remain recorded in their original dated packs; confirmed audit findings are listed below when applicable.')
+    path.write_text(body, encoding='utf-8')
+
+findings = execution.get('auditFindings', [])
+if findings:
+    with system_report.open('a', encoding='utf-8') as stream:
+        stream.write('\n## Confirmed audit findings\n\n' + table(
+            ['Finding', 'Owner/module', 'Status', 'Correction and verification'],
+            [[f['id'], f['owner'], f['status'], f['evidence']] for f in findings]) + '\n')
+
 manifest = {'generatedUtc': datetime.now(timezone.utc).isoformat(), 'execution': execution,
             'os': platform.system(), 'node': subprocess.check_output(['node', '--version'], text=True).strip(),
             'testCounts': counts, 'browserVersions': versions,
@@ -195,4 +257,6 @@ manifest = {'generatedUtc': datetime.now(timezone.utc).isoformat(), 'execution':
             'evidenceSha256': {str(p.relative_to(OUT)).replace(os.sep, '/'): hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
                                for p in sorted(OUT.rglob('*')) if p.is_file() and p.name != 'manifest.json'}}
 (EVIDENCE / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
-print(json.dumps({'reportDirectory': str(OUT), 'tests': len(cases), 'counts': counts}, indent=2))
+DESTINATION.parent.mkdir(parents=True, exist_ok=True)
+OUT.rename(DESTINATION)
+print(json.dumps({'reportDirectory': str(DESTINATION), 'tests': len(cases), 'counts': counts}, indent=2))
