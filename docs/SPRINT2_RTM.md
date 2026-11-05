@@ -1,5 +1,7 @@
 # Sprint 2 requirement/test matrix — 30 October 2026
 
+Current execution follow-up, 5 November: use the [project audit](PROJECT_AUDIT_2026-11-05.md), [updated cases](TEST_CASES_UPDATED_2026-11-05.md) and [fresh four-report pack](testing/2026-11-05/README.md). Earlier dated test counts below are historical. All planned functional modules are integrated; Jira Done status does not substitute for independent/manual acceptance evidence.
+
 Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated means executed automated verification, not invented human/faculty acceptance. Current execution and release evidence: [final implementation/test summary](SPRINT2_HARSHIT_FINAL_2026-10-30.md).
 
 | SRS IDs | Evidence / available implementation | Final acceptance boundary |
@@ -17,7 +19,7 @@ Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated 
 | NF-001 | All three browsers enforce primary-content under 3s after startup for Materials, Create/Search/View Quiz, Dashboard, Attempt, Result, History and Performance | Pass with timing attachments; normal single-user conditions |
 | NF-002 | Accounts, sessions, attempts/history and moderation survive actual MongoDB stop/restart; history remains after Quiz/Question removal | Restart/reconnect and built-release lifecycle pass |
 | NF-003 | Separate auth/material and real Quiz retrieval/scoring workloads at 10/50 sessions | Pass; scope and measured p90 values recorded without claiming 50 browser processes |
-| NF-004 | 15 journeys across Chrome/Edge/Firefox, including the complete saved Attempt/Result/History/Performance flow | Browser matrix pass |
+| NF-004 | Six journeys per installed Chrome/Edge/Firefox channel, including saved Attempt/Result/History/Performance and bulk moderation; actual versions recorded in the current report | Installed-channel evidence; latest and previous stable major versions at acceptance remain to be documented |
 | NF-005 | Dashboard/navbar at 320/375/768/1024/1440px, no overflow/overlap; loading/error/retry/confirmation/cancel states | Available-module pass; whole-product usability pending |
 | SR-001 | Existing bcrypt helper, confirmed initial Admin CLI and credential-exclusion tests | Validated |
 | SR-002/003 | Current account/session role, protected routes, Admin/Student UI gates, 401/403 | Validated on integrated routes; owner routes must comply |
