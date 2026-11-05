@@ -29,12 +29,14 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm run test:ci
+      - name: Verify test-report publication guards
+        run: python3 scripts/tests/test_testing_reports.py -v
       - name: Frontend tests and build when integrated
         if: ${{ hashFiles('frontend/package.json') != '' }}
         working-directory: frontend
         run: |
           npm ci
-          npm run test:ci
+          npm run test:coverage
           npm run lint
           npm run build
       - name: Build and verify local Node release without Docker or Atlas
@@ -50,6 +52,7 @@ jobs:
             reports/
             coverage/
             frontend/reports/
+            frontend/coverage/
           if-no-files-found: warn
           retention-days: 14
       - name: Retain frontend build
@@ -97,6 +100,7 @@ jobs:
           path: |
             frontend/playwright-report/
             frontend/reports/browser-junit.xml
+            frontend/reports/browser-results.json
             frontend/test-results/
           retention-days: 14
   containers:

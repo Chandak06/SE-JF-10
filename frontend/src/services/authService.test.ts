@@ -41,6 +41,24 @@ it('keeps the session when the logout request fails so revocation can be retried
   await expect(auth.logout()).rejects.toThrow('Unable to log out')
   expect(auth.getSessionToken()).toBe('test-token')
 })
+it.each(['upload', 'list', 'logout'])('preserves a newer login when an older %s request finishes', async operation => {
+  await signIn()
+  let finish!: (value: ReturnType<typeof reply>) => void
+  fetchMock.mockReturnValueOnce(new Promise(resolve => { finish = resolve }))
+  const pending = operation === 'upload' ? auth.uploadMaterial(input)
+    : operation === 'list' ? auth.listMaterials() : auth.logout()
+  const checked = operation === 'logout' ? expect(pending).resolves.toBeUndefined()
+    : expect(pending).rejects.toThrow('Authentication required.')
+  const newerUser = { ...student, id: 'user-2', name: 'New Student' }
+  fetchMock.mockResolvedValueOnce(reply({ authenticatedUser: newerUser, token: 'new-token' }))
+  await auth.login({ email: newerUser.email, password: 'ExamplePassword123!' })
+  finish(reply({ error: { message: 'Authentication required.' } }, operation === 'logout' ? 204 : 401))
+  await checked
+  expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer test-token')
+  expect(auth.getSessionToken()).toBe('new-token')
+  expect(auth.getSessionUser()?.id).toBe('user-2')
+  expect(sessionStorage.getItem('study-commons-session-token')).toBe('new-token')
+})
 it('rejects an incomplete login response and shows controlled login errors', async () => {
   fetchMock.mockResolvedValueOnce(reply({ authenticatedUser: student }))
   await expect(auth.login({ email: student.email, password: 'ExamplePassword123!' })).rejects.toThrow('unexpected response')

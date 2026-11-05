@@ -64,19 +64,21 @@ export async function login(input: { email: string; password: string }) {
   return result
 }
 export async function logout() {
+  const version = sessionVersion
   const token = sessionToken ?? storedToken()
   if (!token) { clearSession(); return }
   const response = await fetch(`${baseUrl}/api/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
   if (!response.ok && response.status !== 401) throw new Error('Unable to log out. Try again.')
-  clearSession()
+  if (version === sessionVersion) clearSession()
 }
 export async function uploadMaterial(input: { title: string; subject: string; description: string; file: File }) {
   if (!sessionToken) throw new Error('Please log in before uploading.')
+  const token = sessionToken
   const body = new FormData()
   body.set('title', input.title); body.set('subject', input.subject); body.set('description', input.description); body.set('file', input.file)
-  const response = await fetch(`${baseUrl}/api/materials`, { method: 'POST', headers: { Authorization: `Bearer ${sessionToken}` }, body })
+  const response = await fetch(`${baseUrl}/api/materials`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body })
   const result = await response.json().catch(() => ({})) as { material?: { id: string }; error?: { message?: string } }
-  if (response.status === 401) clearSession()
+  if (response.status === 401) invalidateExpiredSession(token)
   if (!response.ok) throw new Error(result.error?.message ?? 'Upload failed. Please try again.')
   if (!result.material?.id) throw new Error('The server returned an unexpected response.')
   return result.material
@@ -87,12 +89,13 @@ export type MaterialDetails = Pick<StudyMaterial, 'id' | 'title' | 'subject' | '
 // First-page convenience for older callers; paginated UIs use searchMaterials.
 export async function listMaterials(): Promise<StudyMaterial[]> {
   if (!sessionToken) throw new Error('Please log in to view materials.')
+  const token = sessionToken
   let response: Response
   try {
-    response = await fetch(`${baseUrl}/api/materials`, { headers: { Authorization: `Bearer ${sessionToken}` } })
+    response = await fetch(`${baseUrl}/api/materials`, { headers: { Authorization: `Bearer ${token}` } })
   } catch { throw new Error('Unable to reach the server. Check your connection and try again.') }
   const result = await response.json().catch(() => ({})) as { materials?: StudyMaterial[]; error?: { message?: string } }
-  if (response.status === 401) clearSession()
+  if (response.status === 401) invalidateExpiredSession(token)
   if (!response.ok) throw new Error(result.error?.message ?? 'Unable to load materials. Please try again.')
   if (!Array.isArray(result.materials)) throw new Error('The server returned an unexpected response.')
   return result.materials
@@ -101,7 +104,7 @@ export async function authorized(path: string, options: RequestInit = {}) {
   if (!sessionToken) throw new Error('Please log in to continue.')
   const token = sessionToken
   let response: Response
-  try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + sessionToken } }) }
+  try { response = await fetch(baseUrl + path, { ...options, headers: { ...options.headers, Authorization: 'Bearer ' + token } }) }
   catch { throw new Error('Unable to reach the server. Try again.') }
   if (response.status === 401) invalidateExpiredSession(token)
   if (!response.ok) {

@@ -1,0 +1,215 @@
+{
+  "generatedUtc": "2026-11-02T14:06:45.761896+00:00",
+  "execution": {
+    "date": "2026-11-02",
+    "sourceRevision": "303d1a315f2cd1658d08bc6d148d635e88b9a89d",
+    "sourceTrees": {
+      "backend/src": "8d913b085afe6e12374fd940c60cbd662b8c366d",
+      "backend/tests": "edb7d75e7e7d38a59cb5cf2c78dc51d0985ef175",
+      "frontend/src": "4bd7cccfa367da7fa91489a1334e16c12e60b8d4",
+      "frontend/e2e": "12df4e0c7d2726d993459060ac16292c548cc11f",
+      "frontend/tests": "2ab8b10c78fa3f877cdcda8d3f234ad5f0894d82"
+    },
+    "commands": {
+      "npm run check -- --reporter=json": 0,
+      "npm run test:coverage --prefix frontend": 0,
+      "npm run lint --prefix frontend": 0,
+      "npm run demo:build": 0,
+      "npm run demo:verify": 0,
+      "npm run test:browser --prefix frontend -- --project=edge": 0,
+      "node scripts/check-submitted-documents.mjs": 0
+    },
+    "initialBrowserRun": {
+      "command": "npm run test:browser --prefix frontend",
+      "exitCode": 1,
+      "passed": 17,
+      "failed": 1
+    },
+    "browserRunNote": "The initial full browser matrix passed 17/18 cases; Edge bulk moderation hit the 45-second test timeout at the confirm click. All six Edge cases then passed on an isolated rerun with unchanged product code, selectors and timeouts. Final browser evidence combines Chrome/Firefox from the first run with the complete Edge rerun (18 verified scenarios); the initial failure remains recorded. Its exact transient cause is not established.",
+    "reportingChanges": {
+      "frontend/vite.config.ts": "82f991cd0a28a19f7c1566ff2d53bfc0a5f34bde6a142fc64bc19e1fadf13623",
+      "frontend/package.json": "4b2e9266576432105b9aa7c612cbcd3835362b9c5e0cd716443ebdebaa1eb108",
+      "frontend/eslint.config.js": "794875adc9bd00c95d48e590343e515cb2216656262677079f8c33848040a744",
+      ".github/workflows/ci.yml": "7c87a396cead34cd91e0813d6cf177dc487a44d7e7a48b2a9c74e4fc5574aa45"
+    },
+    "ciForTestedSource": [
+      {
+        "id": 41317600776,
+        "head": "303d1a315f2cd1658d08bc6d148d635e88b9a89d",
+        "branch": "PES2UG24CS185-Sprint-2",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Chandak06/SE-JF-10/actions/runs/41317600776",
+        "jobs": [
+          {
+            "name": "containers",
+            "conclusion": "success"
+          },
+          {
+            "name": "backend",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (edge)",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (chrome)",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (firefox)",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 41317600728,
+        "head": "303d1a315f2cd1658d08bc6d148d635e88b9a89d",
+        "branch": "main",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Chandak06/SE-JF-10/actions/runs/41317600728",
+        "jobs": [
+          {
+            "name": "backend",
+            "conclusion": "success"
+          },
+          {
+            "name": "containers",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (edge)",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (firefox)",
+            "conclusion": "success"
+          },
+          {
+            "name": "browsers (chrome)",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "scope": "Disposable local MongoDB fixtures only; no destructive Atlas or saved demo operations. No application source/test assertions changed."
+  },
+  "os": "Windows",
+  "node": "v24.22.1",
+  "testCounts": {
+    "backend integration": {
+      "PASS": 131,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "backend unit": {
+      "PASS": 199,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "browser system": {
+      "PASS": 18,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "frontend component/service/integration": {
+      "PASS": 185,
+      "FAIL": 0,
+      "SKIP": 0
+    }
+  },
+  "browserVersions": {
+    "chrome": "156.0.8078.79",
+    "edge": "156.0.4314.58",
+    "firefox": "157.0"
+  },
+  "coverageTotals": {
+    "backend": {
+      "lines": {
+        "total": 605,
+        "covered": 592,
+        "skipped": 0,
+        "pct": 97.85
+      },
+      "statements": {
+        "total": 688,
+        "covered": 671,
+        "skipped": 0,
+        "pct": 97.52
+      },
+      "functions": {
+        "total": 185,
+        "covered": 183,
+        "skipped": 0,
+        "pct": 98.91
+      },
+      "branches": {
+        "total": 466,
+        "covered": 429,
+        "skipped": 0,
+        "pct": 92.06
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "frontend": {
+      "lines": {
+        "total": 1233,
+        "covered": 1000,
+        "skipped": 0,
+        "pct": 81.1
+      },
+      "statements": {
+        "total": 1560,
+        "covered": 1217,
+        "skipped": 0,
+        "pct": 78.01
+      },
+      "functions": {
+        "total": 414,
+        "covered": 327,
+        "skipped": 0,
+        "pct": 78.98
+      },
+      "branches": {
+        "total": 1378,
+        "covered": 987,
+        "skipped": 0,
+        "pct": 71.62
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    }
+  },
+  "acceptance": "Automated validation passed; manual/independent Test Plan exit pending.",
+  "evidenceSha256": {
+    "AUTOMATED_TEST_CASE_CATALOGUE.csv": "1d42595ad1e1c33cb5b63d7478b59943f08c8cd353b1aaccea9d436c9f7eec35",
+    "AUTOMATED_TEST_CASE_CATALOGUE.md": "b9a76982a71653ebd58075b32a63ff93a1e558838d2f4ac2bf7fbb8f6541f268",
+    "BRANCH_COVERAGE_REPORT.md": "03e73f85f8e2ae97420b349c5fd9e6e9ecd0d4db5925faf185b043be8d6e001c",
+    "CODE_COVERAGE_REPORT.md": "180471e3bba65eb32782c0ad75b12be19dc3f47f2bd146b626658de3d8b73cf6",
+    "evidence/backend-coverage-summary.json": "5bd462e06dc7cd918d9c4d17b80f39bad1ae06f6aaa861bc1d9f1b8690490070",
+    "evidence/backend-junit.xml": "766b4857689fd2035776a5143d1c1456eda6801707f63d0222ab87ee8d6dc0e4",
+    "evidence/backend-lcov.info": "f4d58631cc7687a78ff3e36319c7b43bdef9bd720cc0e01c11c049c66da6e3dc",
+    "evidence/browser-initial-junit.xml": "30ecceb2e4cdf758db727cdaa26d029837abc5f654794ebc42fd63e334a93970",
+    "evidence/browser-junit.xml": "b95f5d946d9a3019fb63f6fbec2c18428bddecaa2d2366497bc8f0c30a4c8cdf",
+    "evidence/browser-versions.json": "97f9966b88bf13752d3a7e1b71d682678e022056d7670ecca6c29c4a024108c3",
+    "evidence/frontend-coverage-summary.json": "f42795001638f7bac2fd5dd30beb92a06b7baf7b654bd7deeee1138b2b87df02",
+    "evidence/frontend-junit.xml": "ff44e14ff487069e9280d5d667962b8dcea8d1a8e7a842530c81ef61c7f77d24",
+    "evidence/frontend-lcov.info": "15932086f6faa5409658e6f843221b22f06f7422fe4f0769ced5854f88c13fe4",
+    "INITIAL_BROWSER_RUN.md": "a8c18df5d28837a0603c68381d40956ebc11212f1a628eb98761a9e0fa2c08f8",
+    "README.md": "a9bcf11ab83121f9a655c2324f116492735ebd71b9fb058373c4dd602a02607c",
+    "SYSTEM_VALIDATION_REPORT.md": "e45946e1cba1b7dc99edb98b2e4bcf8895ac130d32d874cc12fc8541c0903a62",
+    "UNIT_TEST_REPORT.md": "b334b926547359b59924ef8a65699ea6f724a58d25b68111c128ab303c82ffab"
+  },
+  "hashNormalization": "SHA-256 of UTF-8 text bytes with CRLF normalized to LF, matching portable Git text storage."
+}

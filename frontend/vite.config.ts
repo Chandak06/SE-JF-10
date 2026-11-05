@@ -10,5 +10,11 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     // Multi-field user-event flows need the same bounded budget as backend tests.
     testTimeout: 15_000,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/**/*.d.ts'],
+      reporter: ['text', 'html', 'lcov', 'json-summary'],
+    },
     reporters: ['default', 'junit'], outputFile: { junit: 'reports/junit.xml' } },
 })
