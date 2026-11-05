@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--date', required=True, help='Execution date, YYYY-MM-DD')
 parser.add_argument('--run-label', default='', help='Optional lowercase label for a separate run on the same date')
+parser.add_argument('--include-failures', action='store_true', help='Publish actual failed outcomes instead of a passing report; never changes a failure to a pass')
 parser.add_argument('--browser-junit', type=Path, help='Explicit combined browser evidence, if a rerun was required')
 args = parser.parse_args()
 datetime.strptime(args.date, '%Y-%m-%d')
@@ -42,7 +43,7 @@ required = ['npm run check', 'npm run test:coverage --prefix frontend',
             'npm run test:browser --prefix frontend', 'node scripts/check-submitted-documents.mjs']
 if any(not any(command.startswith(name) for command in execution['commands']) for name in required):
     raise SystemExit('Execution manifest is missing required check commands.')
-if any(code != 0 for code in execution['commands'].values()):
+if not args.include_failures and any(code != 0 for code in execution['commands'].values()):
     raise SystemExit('A required command did not pass; retain the failing evidence and investigate.')
 (ROOT / '.local').mkdir(exist_ok=True)
 # mkdtemp's Windows mode-700 ACL survives rename and can make the published
@@ -93,13 +94,13 @@ for layer, path in sources:
     if datetime.fromtimestamp(path.stat().st_mtime).date().isoformat() != args.date:
         raise SystemExit(f'Refusing stale JUnit evidence: {path}')
     original = ET.parse(path).getroot()
-    if any(int(original.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
+    if not args.include_failures and any(int(original.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
         raise SystemExit(f'Non-passing JUnit root summary: {path}')
     if original.get('tests') is not None and int(original.get('tests')) != len(list(original.iter('testcase'))):
         raise SystemExit(f'JUnit summary disagrees with concrete cases: {path}')
     clean = ET.Element('testsuites', name=layer)
     for suite in original.iter('testsuite'):
-        if any(int(suite.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
+        if not args.include_failures and any(int(suite.get(key, '0')) for key in ['failures', 'errors', 'skipped']):
             raise SystemExit(f'Non-passing JUnit suite summary: {path}')
         if not suite.findall('testcase'):
             continue
@@ -126,7 +127,8 @@ for layer, path in sources:
             cases.append(row)
             target = ET.SubElement(cleaned, 'testcase', classname=file, name=row['name'], time=str(row['seconds']))
             if status != 'PASS':
-                ET.SubElement(target, 'failure' if status == 'FAIL' else 'skipped').text = 'See original runner output for diagnosis.'
+                outcome_tag = 'error' if item.find('error') is not None else 'failure' if status == 'FAIL' else 'skipped'
+                ET.SubElement(target, outcome_tag).text = 'See execution observations and retained runner output for diagnosis.'
     # Preserve outcomes, names and durations, but omit hostname, stdout and local
     # attachment paths. Original runner outputs remain in ignored local folders.
     ET.indent(clean)
@@ -134,7 +136,7 @@ for layer, path in sources:
     if not any(c['layer'] == layer for c in cases):
         raise SystemExit(f'No test cases found: {path}')
 
-if any(c['status'] != 'PASS' for c in cases):
+if not args.include_failures and any(c['status'] != 'PASS' for c in cases):
     raise SystemExit('This passing-report generator requires a complete passing run. Retain failures separately and investigate before rerunning.')
 channels = {c['suite'].split(']')[0].lstrip('[') for c in cases if c['layer'] == 'browser'}
 if channels != {'chrome', 'edge', 'firefox'}:
@@ -159,7 +161,7 @@ for layer, folder in [('backend', ROOT / 'coverage'), ('frontend', ROOT / 'front
 execution = json.loads((ROOT / '.local' / f'testing-{run_id}' / 'execution.json').read_text(encoding='utf-8-sig'))
 if execution['sourceRevision'] != git('rev-parse', 'HEAD') or execution['date'] != args.date:
     raise SystemExit('Execution manifest does not match this revision/date.')
-if any(code != 0 for code in execution['commands'].values()):
+if not args.include_failures and any(code != 0 for code in execution['commands'].values()):
     raise SystemExit('A required command did not pass; do not publish a passing summary.')
 versions = json.loads((ROOT / '.local' / f'testing-{run_id}' / 'browser-versions.json').read_text(encoding='utf-8-sig'))
 if set(versions) != {'chrome', 'edge', 'firefox'} or any(not isinstance(v, str) or not v for v in versions.values()):
@@ -289,6 +291,27 @@ with (OUT / 'CODE_COVERAGE_REPORT.md').open('a', encoding='utf-8') as stream:
 with (OUT / 'BRANCH_COVERAGE_REPORT.md').open('a', encoding='utf-8') as stream:
     stream.write(f'\nWhole measured project: **{combined["branches"]["covered"]}/{combined["branches"]["total"]} branches ({combined["branches"]["pct"]}%)**. This weighted total uses both layers; the existing 80% CI branch threshold applies to the backend only.\n')
 
+fully_passing = all(c['status'] == 'PASS' for c in cases) and all(code == 0 for code in execution['commands'].values())
+if not fully_passing:
+    failed = [c for c in cases if c['status'] != 'PASS']
+    note = '\n**Local execution includes failed/skipped cases; full Test Plan exit is not satisfied.** CI and later rechecks are separate evidence and do not erase these results.\n'
+    for name in ['README.md', 'UNIT_TEST_REPORT.md', 'SYSTEM_VALIDATION_REPORT.md']:
+        path = OUT / name
+        body = path.read_text(encoding='utf-8')
+        body = body.replace('The final automated run passed without failed or skipped cases.', 'The local execution has failed/skipped cases recorded below.')
+        body = body.replace('**Automated validation passed; complete Test Plan/UAT exit is still pending the evidence above.**', '**Local automated validation has failures; complete Test Plan/UAT exit is pending correction/revalidation and the evidence above.**')
+        body = body.replace('verified cases; individual journeys', 'executed cases; individual journeys')
+        body = body.replace('| UAT / exit / release | No automated failures in executed cases |', '| UAT / exit / release | Local failed timing case retained |')
+        path.write_text(body + note, encoding='utf-8')
+    with system_report.open('a', encoding='utf-8') as stream:
+        stream.write('\n## Local failed/skipped cases\n\n' + table(['Evidence ID', 'Channel/case', 'Outcome'],
+            [[c['id'], c['name'], c['status']] for c in failed]) + '\n')
+    with (OUT / 'README.md').open('a', encoding='utf-8') as stream:
+        stream.write('\nThis pack explicitly includes failed outcomes (`--include-failures`). The nonzero browser command and failed case are preserved. Default passing-only publication still rejects them.\n')
+if execution.get('observations'):
+    with system_report.open('a', encoding='utf-8') as stream:
+        stream.write('\n## Execution observations\n\n' + '\n\n'.join(execution['observations']) + '\n')
+
 findings = execution.get('auditFindings', [])
 if findings:
     with system_report.open('a', encoding='utf-8') as stream:
@@ -301,7 +324,8 @@ manifest = {'generatedUtc': datetime.now(timezone.utc).isoformat(), 'execution':
             'testCounts': counts, 'browserVersions': versions,
             'coverageTotals': {layer: data['total'] for layer, data in coverage.items()},
             'wholeProjectCoverage': combined,
-            'acceptance': 'Automated validation passed; manual/independent Test Plan exit pending.',
+            'result': 'PASS' if fully_passing else 'FAILED_OR_INCOMPLETE',
+            'acceptance': 'Automated validation passed; manual/independent Test Plan exit pending.' if fully_passing else 'Local automated execution has failures; Test Plan exit not satisfied.',
             'hashNormalization': 'SHA-256 of UTF-8 text bytes with CRLF normalized to LF, matching portable Git text storage.',
             'evidenceSha256': {str(p.relative_to(OUT)).replace(os.sep, '/'): hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
                                for p in sorted(OUT.rglob('*')) if p.is_file() and p.name != 'manifest.json'}}
