@@ -57,8 +57,8 @@ class TestingReportPublication(unittest.TestCase):
             ET.SubElement(suite, 'testcase', classname=file, name='Synthetic report fixture', time='0.01')
         ET.ElementTree(root).write(path)
 
-    def generate(self):
-        return subprocess.run([sys.executable, str(self.root / 'scripts/generate-testing-reports.py'), '--date', self.date],
+    def generate(self, *arguments):
+        return subprocess.run([sys.executable, str(self.root / 'scripts/generate-testing-reports.py'), '--date', self.date, *arguments],
                               cwd=self.root, capture_output=True, text=True)
 
     def assert_rejected_without_publication(self):
@@ -74,6 +74,17 @@ class TestingReportPublication(unittest.TestCase):
         self.assertNotEqual(self.generate().returncode, 0)
         self.assertEqual(marker.read_text(), 'Keep historical evidence')
         self.assertEqual(list(self.out.iterdir()), [marker])
+
+    def test_named_run_preserves_an_existing_snapshot_on_the_same_date(self):
+        self.out.mkdir(parents=True)
+        marker = self.out / 'sentinel.txt'
+        marker.write_text('Original run evidence')
+        named_input = self.run.with_name(self.run.name + '-whole-project')
+        shutil.copytree(self.run, named_input)
+        result = self.generate('--run-label', 'whole-project')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(marker.read_text(), 'Original run evidence')
+        self.assertTrue(self.out.with_name(self.out.name + '-whole-project').joinpath('SYSTEM_VALIDATION_REPORT.md').is_file())
 
     def test_revision_mismatch_does_not_publish_partial_evidence(self):
         self.execution['sourceRevision'] = '0' * 40
@@ -104,6 +115,11 @@ class TestingReportPublication(unittest.TestCase):
         self.assert_rejected_without_publication()
 
     def test_clean_run_publishes_current_date_without_historical_timeout_claim(self):
+        summary = self.root / 'frontend/coverage/coverage-summary.json'
+        values = json.loads(summary.read_text())
+        for item in values.values():
+            item['branches'] = {'covered': 1, 'total': 3, 'skipped': 0, 'pct': 33.33}
+        summary.write_text(json.dumps(values))
         result = self.generate()
         self.assertEqual(result.returncode, 0, result.stderr)
         report = (self.out / 'SYSTEM_VALIDATION_REPORT.md').read_text(encoding='utf-8')
@@ -112,6 +128,7 @@ class TestingReportPublication(unittest.TestCase):
         self.assertIn(self.date, (self.out / 'README.md').read_text(encoding='utf-8'))
         self.assertFalse((self.out / 'INITIAL_BROWSER_RUN.md').exists())
         manifest = json.loads((self.out / 'evidence/manifest.json').read_text(encoding='utf-8'))
+        self.assertEqual(manifest['wholeProjectCoverage']['branches'], {'covered': 2, 'total': 4, 'pct': 50.0})
         for path, digest in manifest['evidenceSha256'].items():
             self.assertEqual(hashlib.sha256((self.out / path).read_bytes().replace(b'\r\n', b'\n')).hexdigest(), digest)
 
