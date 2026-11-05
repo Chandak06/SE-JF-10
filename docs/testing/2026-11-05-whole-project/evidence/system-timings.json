@@ -1,0 +1,147 @@
+[
+  {
+    "channel": "chrome",
+    "page": "Admin Dashboard",
+    "milliseconds": 600
+  },
+  {
+    "channel": "edge",
+    "page": "Materials",
+    "milliseconds": 2456
+  },
+  {
+    "channel": "edge",
+    "page": "Create Quiz",
+    "milliseconds": 2086
+  },
+  {
+    "channel": "edge",
+    "page": "Quiz Search",
+    "milliseconds": 1215
+  },
+  {
+    "channel": "edge",
+    "page": "Student Dashboard",
+    "milliseconds": 1135
+  },
+  {
+    "channel": "edge",
+    "page": "Quiz View",
+    "milliseconds": 1093
+  },
+  {
+    "channel": "edge",
+    "page": "Quiz Attempt",
+    "milliseconds": 423
+  },
+  {
+    "channel": "edge",
+    "page": "Submission and Result",
+    "milliseconds": 411
+  },
+  {
+    "channel": "edge",
+    "page": "Attempt History",
+    "milliseconds": 391
+  },
+  {
+    "channel": "edge",
+    "page": "Quiz View",
+    "milliseconds": 1066
+  },
+  {
+    "channel": "edge",
+    "page": "Quiz Attempt",
+    "milliseconds": 139
+  },
+  {
+    "channel": "edge",
+    "page": "Submission and Result",
+    "milliseconds": 302
+  },
+  {
+    "channel": "edge",
+    "page": "Attempt History",
+    "milliseconds": 191
+  },
+  {
+    "channel": "edge",
+    "page": "Subject Performance",
+    "milliseconds": 220
+  },
+  {
+    "channel": "edge",
+    "page": "Admin Dashboard",
+    "milliseconds": 554
+  },
+  {
+    "channel": "firefox",
+    "page": "Materials",
+    "milliseconds": 1490
+  },
+  {
+    "channel": "firefox",
+    "page": "Create Quiz",
+    "milliseconds": 2180
+  },
+  {
+    "channel": "firefox",
+    "page": "Quiz Search",
+    "milliseconds": 2145
+  },
+  {
+    "channel": "firefox",
+    "page": "Student Dashboard",
+    "milliseconds": 1823
+  },
+  {
+    "channel": "firefox",
+    "page": "Quiz View",
+    "milliseconds": 1614
+  },
+  {
+    "channel": "firefox",
+    "page": "Quiz Attempt",
+    "milliseconds": 326
+  },
+  {
+    "channel": "firefox",
+    "page": "Submission and Result",
+    "milliseconds": 825
+  },
+  {
+    "channel": "firefox",
+    "page": "Attempt History",
+    "milliseconds": 369
+  },
+  {
+    "channel": "firefox",
+    "page": "Quiz View",
+    "milliseconds": 1246
+  },
+  {
+    "channel": "firefox",
+    "page": "Quiz Attempt",
+    "milliseconds": 287
+  },
+  {
+    "channel": "firefox",
+    "page": "Submission and Result",
+    "milliseconds": 780
+  },
+  {
+    "channel": "firefox",
+    "page": "Attempt History",
+    "milliseconds": 285
+  },
+  {
+    "channel": "firefox",
+    "page": "Subject Performance",
+    "milliseconds": 519
+  },
+  {
+    "channel": "firefox",
+    "page": "Admin Dashboard",
+    "milliseconds": 576
+  }
+]
