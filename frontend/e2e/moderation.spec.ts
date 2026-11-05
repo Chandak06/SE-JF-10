@@ -5,7 +5,7 @@ import type { Connection } from 'mongoose'
 import { Types } from 'mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { PDFDocument } from 'pdf-lib'
-import { createServer, type ViteDevServer } from 'vite'
+import { build, preview, type PreviewServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import { connectDatabase } from '../../backend/src/db.js'
 import { loadConfig } from '../../backend/src/config.js'
@@ -15,7 +15,7 @@ import { provisionAdmin } from '../../backend/src/security/provision-admin.js'
 let mongo: MongoMemoryServer
 let connection: Connection
 let backend: Server
-let frontend: ViteDevServer
+let frontend: PreviewServer
 let url: string
 let runtime: Awaited<ReturnType<typeof createRuntime>>
 
@@ -65,16 +65,24 @@ test.beforeAll(async () => {
   await new Promise<void>(resolve => backend.once('listening', resolve))
   const address = backend.address()
   if (!address || typeof address === 'string') throw new Error('Listener unavailable')
-  frontend = await createServer({ configFile: false, root: fileURLToPath(new URL('../', import.meta.url)), plugins: [react()],
+  // Validate the shipped production bundle, including page-load timings. Development
+  // transforms and StrictMode diagnostics are not part of the deployed application.
+  const frontendRoot = fileURLToPath(new URL('../', import.meta.url))
+  const outDir = 'node_modules/.cache/e2e-production'
+  await build({ configFile: false, root: frontendRoot, plugins: [react()],
     define: { 'import.meta.env.VITE_API_BASE_URL': JSON.stringify('') },
-    server: { host: '127.0.0.1', port: 0, proxy: { '/api': { target: 'http://127.0.0.1:' + address.port, changeOrigin: true } } } })
-  await frontend.listen()
-  const web = frontend.httpServer?.address()
+    build: { outDir, emptyOutDir: true } })
+  frontend = await preview({ configFile: false, root: frontendRoot, build: { outDir },
+    preview: { host: '127.0.0.1', port: 0, proxy: { '/api': { target: 'http://127.0.0.1:' + address.port, changeOrigin: true } } } })
+  const web = frontend.httpServer.address()
   if (!web || typeof web === 'string') throw new Error('Frontend unavailable')
   url = 'http://127.0.0.1:' + web.port
 })
 test.afterAll(async () => {
-  await frontend?.close()
+  if (frontend) {
+    frontend.httpServer.closeAllConnections()
+    await new Promise<void>(resolve => frontend.httpServer.close(() => resolve()))
+  }
   if (backend) await new Promise<void>(resolve => backend.close(() => resolve()))
   await connection?.close(); await mongo?.stop()
 })
