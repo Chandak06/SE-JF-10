@@ -1,4 +1,4 @@
-> Active development branch: `PES2UG24CS185-Sprint-2`. See [Sprint 2 status](docs/SPRINT2_HARSHIT.md). Main preserves the Sprint 1 increment and video; this branch adds final-product integration.
+> Current status, 5 November 2026: `main` contains the integrated Sprint 2 application. `PES2UG24CS185-Sprint-2` contains the latest audit fixes and testing reports awaiting integration. The reproducible Sprint 1 increment remains on `PES2UG24CS185-Sprint-1`, including its video. See [current audit](docs/PROJECT_AUDIT_2026-11-05.md) and [testing evidence](docs/testing/2026-11-05/README.md).
 
 # Collaborative Study Material & Quiz Platform
 
@@ -13,7 +13,7 @@ The final project plan contains exactly two implementation sprints:
 
 Sprint 2 is planned to complete the entire application; it is not claimed complete. See the [final plan](docs/TWO_SPRINT_PLAN.md), [work division](docs/WORK_DIVISION.md) and authoritative [Sprint 1 closeout](docs/SPRINT1_CLOSEOUT.md).
 
-The merged Sprint 1 increment includes Dharani's registration/login/logout and validated PDF upload; Prajwal's Question Bank, Add MCQ, filters and student-safe endpoint; Karan's attempt model/UI and scoring prototype; and Harshit's shared authentication, hashing, authorization, integration/security tests and CI. The attempt page uses sample questions and local submission rather than production server scoring.
+The saved Sprint 1 increment includes Dharani's registration/login/logout and validated PDF upload; Prajwal's Question Bank, Add MCQ, filters and student-safe endpoint; Karan's attempt model/UI and scoring prototype; and Harshit's shared authentication, hashing, authorization, integration/security tests and CI. Its sample-question prototype is historical; the current app loads real Quizzes and persists server-scored attempts.
 
 
 ## Current Sprint 2 development
@@ -22,7 +22,7 @@ The merged Sprint 1 increment includes Dharani's registration/login/logout and v
 
 **29 October:** Reviewed team Sprint 2 contributions are combined in a PR targeting **main**, as requested. Real Quiz creation/search, trusted submission API, Student Dashboard and enhanced PDF workflows are now connected to shared authentication and Admin Quiz moderation. See the [name-wise review, fixes, tests and remaining deliverables](docs/SPRINT2_TEAM_REVIEW_2026-10-29.md). The separation notes below describe the earlier plan; the saved Sprint 1 branch/video remain available.
 
-On `PES2UG24CS185-Sprint-2`, Admin login opens the Administrator Dashboard with links to the existing Question Bank and confirmed material/question moderation. Protected material search, paging and PDF downloads are integrated. Production Quiz/Attempt/history/performance and other unpublished owner modules remain explicit integration dependencies; see [current Sprint 2 status](docs/SPRINT2_HARSHIT.md).
+Admin login opens the Administrator Dashboard with Question Bank and confirmed single/bulk material/question/quiz moderation. Students can upload/search/view/download PDFs, create/find/attempt Quizzes and view saved results, history and complete subject-wise performance. The legacy practice URL redirects to real Quiz discovery, with no arbitrary countdown. Folder management was dropped on 30 October. Independent acceptance evidence remains separate from automated implementation checks.
 
 For a separate persistent local Docker demo, use `docker compose -f compose.local.yaml up --build -d`, then open `http://localhost:8080`. This explicit local environment uses its own MongoDB volume, does not use Atlas, and exposes only a loopback web port. Follow [setup and Admin provisioning instructions](docs/DEPLOYMENT.md); it is not a public HTTPS deployment.
 
@@ -37,19 +37,19 @@ Use Node.js 24.15 or newer within the supported Node 24 series (`.nvmrc`: 24.19.
 - `npm run db:check`: compile and verify MongoDB with an authenticated ping without changing records. Recheck live connectivity before recording.
 - `npm run dev`: backend on port 5000 by default.
 - In `frontend`, run `npm ci` and `npm run dev`. Set `VITE_API_BASE_URL` in a local frontend `.env` if needed.
-- Register, log in and use the material upload page to submit title, subject, description and a PDF. Use an authorized administrator account for Add MCQ; show the student attempt prototype with its stated limitation.
+- Register, log in and use the material upload page to submit title, subject, description and a PDF. Use an authorized administrator account for Add MCQ; as a Student, create/find a real Quiz, submit answers and inspect saved results/history/performance.
 - `npm run build` and `npm start`: production backend.
 
 API/runtime composition and authorization are documented in [integration](docs/INTEGRATION.md), the [Question contract](docs/question-api-contract.md) and [Attempt contract](docs/attempt-api-contract.md).
 
 ## Verify and CI/CD
 
-Run `npm run check` at the root. In `frontend`, run `npm run test:ci`, `npm run lint` and `npm run build`. Tests use disposable MongoDB rather than the configured Atlas database. Backend coverage gates are 85% statements/lines/functions and 80% branches.
+Run `npm run check` at the root. In `frontend`, run `npm run test:coverage`, `npm run lint` and `npm run build`. After installing the Playwright browsers, run `npm run test:browser`. Run `npm run demo:build` then `npm run demo:verify` for the compiled-release/restart check. Report publication guards are checked with `python scripts/tests/test_testing_reports.py -v`. Tests use disposable MongoDB rather than the configured Atlas database. Backend coverage gates are 85% statements/lines/functions and 80% branches; frontend coverage is reported separately. See [updated test cases](docs/TEST_CASES_UPDATED_2026-11-05.md) and [all four testing reports](docs/testing/2026-11-05/README.md).
 
-[GitHub Actions](.github/workflows/ci.yml) builds, tests, lints and retains reports/build artifacts on push, PR and manual dispatch. It supersedes the original Jenkins proposal. Hosted deployment and final release validation belong to Sprint 2; a deployment target must still be confirmed. See the [CI guide](docs/GITHUB_ACTIONS.md).
+[GitHub Actions](.github/workflows/ci.yml) builds, tests, lints and retains reports/build artifacts on push, PR and manual dispatch. It supersedes the original Jenkins proposal and validates the isolated production HTTPS configuration. The documented persistent local release supports the SRS demonstration environment; record the chosen environment, final demo and acceptance evidence. See the [CI guide](docs/GITHUB_ACTIONS.md).
 
-Keep draft Sprint 2 PR #8 separate until Harshit confirms the Sprint 1 recording is complete. Follow the [recording/separation guide](docs/SPRINT_SEPARATION.md). This documentation branch is for review and is not merged automatically.
+Sprint 2 PR #8 and subsequent team integrations are already merged. The earlier main-only-Sprint-1 separation instructions are historical; use the saved Sprint 1 branch when reproducing the original video. New audit/report changes remain reviewable on the Sprint 2 branch until integrated.
 
-References: [SRS](SRS.md), [SAD](SAD.pdf), editable [Test Plan](TEST_PLAN.md), generated [Test Plan PDF](TEST_PLAN.pdf), [historical references](docs/historical/README.md) and [documentation audit](docs/DOCUMENTATION_AUDIT_2026-10-25.md).
+Frozen submitted references: [SRS](SRS.md), [SAD](SAD.pdf), [Test Plan](TEST_PLAN.md) and [Test Plan PDF](TEST_PLAN.pdf). Current test-case/report revisions supplement these documents. See also [historical references](docs/historical/README.md) and [documentation audit](docs/DOCUMENTATION_AUDIT_2026-10-25.md).
 
 For the 27 October Sprint 1 evaluation, follow the [current readiness checklist](docs/SPRINT1_EVALUATION_READINESS.md) and [one-minute video outline](demos/README.md). On Windows, run `./scripts/start-sprint1.ps1 -Service backend` and `./scripts/start-sprint1.ps1 -Service frontend` in separate terminals. The launcher uses a compatible installed Node or the available bundled runtime without changing global settings.
