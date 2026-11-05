@@ -114,6 +114,29 @@ class TestingReportPublication(unittest.TestCase):
         tree.write(path)
         self.assert_rejected_without_publication()
 
+    def test_explicit_failure_report_preserves_failed_case_and_exit_code(self):
+        path = self.root / 'frontend/reports/browser-junit.xml'
+        tree = ET.parse(path)
+        tree.getroot().set('errors', '1')
+        suite = tree.getroot().find('testsuite')
+        suite.set('errors', '1')
+        ET.SubElement(suite.find('testcase'), 'error', message='Primary content took 3726 ms')
+        tree.write(path)
+        self.execution['commands']['npm run test:browser --prefix frontend'] = 1
+        self.save_execution()
+        self.assert_rejected_without_publication()
+        result = self.generate('--include-failures')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = (self.out / 'SYSTEM_VALIDATION_REPORT.md').read_text(encoding='utf-8')
+        self.assertNotIn('**Automated validation passed;', report)
+        self.assertNotIn('final automated run passed', report)
+        self.assertIn('Local failed/skipped cases', report)
+        manifest = json.loads((self.out / 'evidence/manifest.json').read_text(encoding='utf-8'))
+        self.assertEqual(manifest['result'], 'FAILED_OR_INCOMPLETE')
+        self.assertEqual(manifest['testCounts']['browser system']['FAIL'], 1)
+        self.assertEqual(manifest['execution']['commands']['npm run test:browser --prefix frontend'], 1)
+        self.assertEqual(len(list(ET.parse(self.out / 'evidence/browser-junit.xml').getroot().iter('error'))), 1)
+
     def test_clean_run_publishes_current_date_without_historical_timeout_claim(self):
         summary = self.root / 'frontend/coverage/coverage-summary.json'
         values = json.loads(summary.read_text())
