@@ -8,6 +8,8 @@
 
 The PDFs are printed exports of test-tool output, not authored narrative reports. The unit PDF contains backend unit/module JUnit results and separately labelled frontend component/service/integration results. The system PDF contains Playwright's HTML report and complete JUnit case list. The combined coverage PDF prints V8/Istanbul HTML tables for both layers, including branch coverage. Exactly three PDFs are provided, each below the form's 10 MB limit.
 
+Latest actual execution: **6 November 2026**. Download the [native HTML/XML/coverage reports and command logs](../testing/2026-11-06-native-tool-reports/native-reports.zip), or inspect the [machine execution record](../testing/2026-11-06-native-tool-reports/execution.json). The HTML files provide the original interactive navigation; PDF exports are static printouts.
+
 ## Generate reports by running tests
 
 Use Node >=24.15 <25, installed root/frontend dependencies and Playwright browsers, and Python 3. Tests use disposable MongoDB.
