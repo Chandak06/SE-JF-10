@@ -4,6 +4,8 @@ Testing window: **2–6 November 2026**. Current complete automated execution: *
 
 ## Submission documents
 
+**Form-ready uploads:** [three submission PDFs](submission/README.md) - one Unit Test PDF, one System Validation PDF, and one combined Code + Branch Coverage PDF, each below 10 MB. Prepared 6 November from the verified 5 November execution; original evidence packs remain below.
+
 - [Updated whole-project Test Case Document](TEST_CASES_WHOLE_PROJECT.md)
 - [Unit Test Report](testing/2026-11-05-production-validation/UNIT_TEST_REPORT.md)
 - [System Validation Report](testing/2026-11-05-production-validation/SYSTEM_VALIDATION_REPORT.md)
