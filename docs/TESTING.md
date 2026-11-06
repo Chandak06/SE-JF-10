@@ -4,7 +4,7 @@ Testing window: **2–6 November 2026**. Current complete automated execution: *
 
 ## Submission documents
 
-**Form-ready uploads:** [three submission PDFs](submission/README.md) - one Unit Test PDF, one System Validation PDF, and one combined Code + Branch Coverage PDF, each below 10 MB. Prepared 6 November from the verified 5 November execution; original evidence packs remain below.
+**Form uploads from actual test tools:** [three native PDF exports and commands](submission/README.md). Vitest JUnit, Playwright HTML/JUnit and V8/Istanbul HTML replace the authored PDF summaries. Actual dates, counts and raw reports are retained in the dated native-report archive. Markdown packs below remain historical interpretations and evidence.
 
 - [Updated whole-project Test Case Document](TEST_CASES_WHOLE_PROJECT.md)
 - [Unit Test Report](testing/2026-11-05-production-validation/UNIT_TEST_REPORT.md)
