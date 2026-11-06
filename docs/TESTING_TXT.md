@@ -1,5 +1,7 @@
 # Generate plain-text reports from test commands
 
+The reviewed 6 November outputs are saved under [submission/txt](submission/txt/). All commands in those three captures returned exit code 0; the system capture includes the successful Firefox rerun. Normal command execution writes to `reports/text/`, as below.
+
 From the repository root, run:
 
 ```powershell
