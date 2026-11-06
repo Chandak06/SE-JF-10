@@ -1,5 +1,17 @@
 # Test-tool outputs for the form
 
+## Reviewed TXT command outputs
+
+The latest reviewed TXT files were captured from the actual commands at source `93ef68f21d0fba21945c7cb0f675dc7b9ba9f667`. All six commands returned exit code 0. The successful system rerun completed on 6 November at 20:27 IST: 131 integration cases and all 21 browser scenarios passed, including Firefox. Repeated cases in the coverage commands are not additional unique cases.
+
+- [Unit / component results](txt/Unit_Test_Report.txt)
+- [Integration / system results](txt/System_Validation_Report.txt)
+- [Code and branch coverage](txt/Code_and_Branch_Coverage_Report.txt)
+
+These files are unchanged copies of `reports/text/` output and can be converted to PDF by the submitter. Earlier native PDF exports and their separate execution record are retained below. [TXT generation commands](../TESTING_TXT.md).
+
+## Earlier native PDF exports
+
 | Upload field | PDF export |
 | --- | --- |
 | Unit Test Report | [Unit_Test_Report.pdf](Unit_Test_Report.pdf) |
