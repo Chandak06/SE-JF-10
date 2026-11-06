@@ -1,0 +1,452 @@
+Unit / component test command output
+Source commit: 93ef68f21d0fba21945c7cb0f675dc7b9ba9f667
+Tracked source changes: no
+Generated from actual command output; test counts in separate commands may overlap.
+Frontend test output includes component, service and integration suites.
+
+==============================================================================
+COMMAND: npm run test:unit -- --reporter=verbose --reporter=junit --outputFile=reports/unit-junit.xml
+Started UTC: 2026-11-06T14:40:45.867Z
+
+> se-jackfruit-security-foundation@0.1.0 test:unit
+> vitest run backend/tests/unit --reporter=verbose --reporter=junit --outputFile=reports/unit-junit.xml
+
+
+ RUN  v5.0.3 D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT
+
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-01: creates and persists a valid Quiz document with title, subject, question references, creator, and timestamps 27ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-02: rejects missing or empty title 5ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-03: rejects title exceeding 150 characters 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-04: rejects missing or empty subject 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-05: rejects subject exceeding 100 characters 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-06: rejects missing or empty questions array 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-07: rejects duplicate question references in a quiz 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-08: rejects missing creator 1ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-09: rejects unknown fields in strict mode 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-10: findQuizById retrieves existing quiz and returns null for non-existent or invalid ID 20ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-11: deleteQuizById deletes existing quiz and returns null for non-existent or invalid ID 11ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-12: softDeleteQuizById marks quiz with removedAt and administrator ID 22ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-13: reuses the model registered on the same connection 2ms
+ ✓ backend/tests/unit/quiz-model.test.ts > Quiz model & API (CSMQ-47) > UT-M2-QUIZ-14: rejects falsy or missing question ID elements in questions array 2ms
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:26224) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > applies defaults and normalizes email 22ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects a user with missing required fields 4ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects invalid persisted user data: { name: '   ', …(1) } 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects invalid persisted user data: { name: '<script>', …(1) } 3ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects invalid persisted user data: { name: 'Test Student', …(1) } 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects plaintext password data 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > enforces unique normalized email addresses in MongoDB 8ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > rejects a role outside the allowed values 3ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > hides passwordHash in ordinary queries 20ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > User model > reuses the model registered on the same connection 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > initializes the User model and indexes 4ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > finds an account by ID, including its password hash 5ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > returns null for an unknown ID 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > finds accounts using a trimmed, case-insensitive email 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > returns null for an unknown email 2ms
+ ✓ backend/tests/unit/user-repository.test.ts > Production User model and Mongo account repository > Mongo account repository > creates a student with a trimmed name and normalized email 3ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > creates a valid quiz attempt 18ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > rejects missing required fields 15ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > rejects percentage below 0 3ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > rejects percentage above 100 2ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > rejects fractional scores 2ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > rejects infinite scores 9ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > stores and reads an attempt from MongoDB 10ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts > QuizAttempt model > reuses the model registered on the same connection 1ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > uses independently salted hashes and verifies only the correct password 227ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects invalid input "" 1ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects invalid input "short" 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects invalid input "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects invalid input "🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒🔒" 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects invalid input "valid-length\u0000password" 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > accepts exactly 72 bytes and never silently truncates multibyte passwords 112ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects unsafe cost 0 1ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects unsafe cost 4 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects unsafe cost 9 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects unsafe cost 15 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > rejects unsafe cost 10.5 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > handles invalid stored hashes safely 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > handles invalid stored hashes safely 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > handles invalid stored hashes safely 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > handles invalid stored hashes safely 0ms
+ ✓ backend/tests/unit/password.test.ts > UT-M4-01 / TC-Sec-01 password hashing > does not coerce non-string input 0ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-01: creates and persists a valid Question with MCQ fields, timestamps, and creator 18ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects missing question text 3ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects missing subject 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects missing topic 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects missing or invalid difficulty 1ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects fewer than two options 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects more than six options in the database model 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects fractional marks in the database model 1ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects option text longer than 500 characters in the database model 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-02: rejects duplicate option IDs 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > UT-M2-03: rejects when correctAnswer does not match any allowed option ID 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > allows question creation without optional creator field 2ms
+ ✓ backend/tests/unit/question-model.test.ts > Question model (CSMQ-22) > reuses the model registered on the same connection 1ms
+ ✓ backend/tests/unit/release-guards.test.ts > refuses release smoke writes without explicit disposable-environment confirmation 82ms
+ ✓ backend/tests/unit/release-guards.test.ts > refuses non-loopback release smoke targets without transmitting or printing embedded credentials 82ms
+ ✓ backend/tests/unit/release-guards.test.ts > disables the old public-Student promotion shortcut before any database operation 70ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > attaches only the authenticated user context 37ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > rejects malformed credentials  7ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > rejects malformed credentials Basic abc 3ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > rejects malformed credentials Bearer invalid 3ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > rejects malformed credentials Bearer aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Bearer aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 3ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > rejects a missing user even when the role guard is mounted alone 3ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > allows administrators and forbids students 6ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > does not turn a database outage into successful authentication 4ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > validates values and keeps request data out of errors and logs 18ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > maps parsing, oversized JSON, and duplicate key errors to safe messages 14ms
+ ✓ backend/tests/unit/middleware.test.ts > UT-M4-02 through UT-M4-06 shared middleware > preserves safe application errors and delegates when headers have been sent 0ms
+ ✓ backend/tests/unit/middleware.test.ts > application transport and health > reports liveness/readiness independently and returns safe 404s 19ms
+ ✓ backend/tests/unit/middleware.test.ts > application transport and health > uses the configured CORS origin 3ms
+ ✓ backend/tests/unit/middleware.test.ts > application transport and health > requires HTTPS in production and refuses spoofed proxy headers by default 8ms
+ ✓ backend/tests/unit/middleware.test.ts > application transport and health > refuses to mount unprotected feature routers 0ms
+ ✓ backend/tests/unit/attempt-history-route.test.ts > CSMQ-43: Attempt history API > uses the authenticated user ID 34ms
+ ✓ backend/tests/unit/attempt-history-route.test.ts > CSMQ-43: Attempt history API > rejects invalid pagination 7ms
+ ✓ backend/tests/unit/attempt-history-route.test.ts > CSMQ-43: Attempt history API > does not trust a userId query parameter 5ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > accepts a fully compliant question payload 4ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects missing or empty questionText with clear error 1ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects questionText exceeding maximum length 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects missing or empty subject with clear error 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects missing or empty topic with clear error 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects invalid difficulty values with clear error 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Required fields validation > rejects non-positive marks 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Options and correctAnswer validation > rejects when correctAnswer does not match any option ID 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Options and correctAnswer validation > rejects when fewer than 2 options are provided 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Options and correctAnswer validation > rejects when more than 6 options are provided 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Options and correctAnswer validation > rejects duplicate option IDs 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Options and correctAnswer validation > rejects option with missing or blank text 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Unexpected fields and middleware behavior > rejects unrecognized extra fields in request body 0ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Unexpected fields and middleware behavior > middleware throws AppError with 400 status and message on failure 1ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts > CSMQ-24 Question Validation Suite > Unexpected fields and middleware behavior > middleware attaches parsed data and proceeds when valid 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > loads development defaults and validates a production HTTPS origin 5ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {} 2ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"PORT":"0"} 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"PORT":"invalid"} 0ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"BCRYPT_ROUNDS":"4"} 0ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"SESSION_TTL_MINUTES":"0"} 0ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"CLIENT_ORIGIN":"https://study.example/path"} 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"CLIENT_ORIGIN":"ftp://study.example"} 0ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"TRUST_PROXY":"true"} 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"TRUST_PROXY":"1"} 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"NODE_ENV":"production"} 1ms
+ ✓ backend/tests/unit/config.test.ts > environment configuration > fails closed on invalid configuration {"MONGODB_URI":"invalid-secret-credential"} 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > evaluates and saves a valid quiz attempt 3ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > handles partially answered quizzes 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects a quiz that does not exist 1ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects a removed quiz 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects an empty quiz 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects missing database questions 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects an invalid selected option 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects questions outside the quiz 0ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > rejects duplicate quiz question references 1ms
+ ✓ backend/tests/unit/submission-service.test.ts > CSMQ-40: Quiz submission service > normalizes case-insensitive question IDs 1ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts > CSMQ-28: Consolidated Member 2 Test Suite Verification > UT-M2-01: verifies Question model schema and required properties 2ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts > CSMQ-28: Consolidated Member 2 Test Suite Verification > UT-M2-02: verifies 2 to 6 options requirement in API validation schema 3ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts > CSMQ-28: Consolidated Member 2 Test Suite Verification > UT-M2-03: verifies correctAnswer must match one of the options 1ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts > CSMQ-28: Consolidated Member 2 Test Suite Verification > UT-M2-04: verifies filter builder query parsing 1ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts > CSMQ-28: Consolidated Member 2 Test Suite Verification > UT-M2-05: verifies student-safe question serializer completely omits answers 2ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > accepts valid quiz creation payload 3ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects missing or empty title 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects title longer than 150 characters 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects missing or empty subject 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects empty questions array 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects invalid question ID formatting 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects duplicate question IDs in selection 0ms
+ ✓ backend/tests/unit/quiz-validation.test.ts > Quiz Validation Unit (CSMQ-48) > rejects extra unrecognized fields (strict schema) 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-01: valid MCQ passes validation 3ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: missing questionText is rejected with clear message 1ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: missing subject is rejected with clear message 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: missing topic is rejected with clear message 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: invalid difficulty is rejected 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: fewer than 2 options is rejected 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-02: duplicate option IDs are rejected 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > UT-M2-03: correctAnswer not matching any option is rejected with clear message 0ms
+ ✓ backend/tests/unit/question-validation.test.ts > Question validation (CSMQ-24 / UT-M2-01..03) > rejects option with empty text 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > accepts a valid quiz submission 3ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects an invalid quiz ID 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects duplicate question responses 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects a missing selected option 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects student-supplied scores 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects student-supplied user IDs 0ms
+ ✓ backend/tests/unit/attempt-validation.test.ts > CSMQ-40: Quiz attempt submission validation > rejects submissions exceeding the response limit 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > accepts complete metadata and trims surrounding whitespace 4ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects missing title 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects missing subject 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects missing description 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects invalid or unexpected metadata 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects invalid or unexpected metadata 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects invalid or unexpected metadata 0ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts > study material upload metadata validation > rejects invalid or unexpected metadata 0ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts > Student-safe question payload serializer (CSMQ-26 / UT-M2-05) > UT-M2-05: correctly strips correctAnswer from student-facing question object 3ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts > Student-safe question payload serializer (CSMQ-26 / UT-M2-05) > UT-M2-05: serializes an array of questions without exposing answers 0ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts > Student-safe question payload serializer (CSMQ-26 / UT-M2-05) > UT-M2-05 / IT-M2-05: creates quiz payload structure matching Member 3 attempt-api-contract 0ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts > Student-safe question payload serializer (CSMQ-26 / UT-M2-05) > handles question objects without options gracefully 0ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts > Student-safe question payload serializer (CSMQ-26 / UT-M2-05) > handles missing id, missing questionText, and default payload options 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: returns empty filter object when no parameters are passed 2ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: ignores empty, whitespace-only, or non-string parameters 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: builds filter by subject correctly 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: builds filter by topic correctly 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > matches partial text without treating user input as a regular expression 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: builds filter by difficulty correctly 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: ignores invalid difficulty values 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: builds combined filter with subject and topic 0ms
+ ✓ backend/tests/unit/question-filters.test.ts > Question filter logic (CSMQ-25 / UT-M2-04) > UT-M2-04: builds combined filter with subject, topic, and difficulty 0ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > calculates scores using the server answer key 2ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > rejects questions outside the quiz 1ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > rejects options not belonging to the question 0ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > rejects duplicate responses 0ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > rejects empty quizzes 0ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > rejects invalid trusted answer keys 0ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts > CSMQ-40: Trusted server-side evaluation > accepts MongoDB IDs regardless of letter case 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > returns default active filter when empty params provided 2ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > filters by search keyword matching title case-insensitively 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > accepts keyword parameter as alias for search 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > filters by subject case-insensitively 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > combines keyword search and subject filter 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > escapes regex metacharacters properly to prevent injection / regex errors 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > ignores empty strings and whitespace-only parameters 0ms
+ ✓ backend/tests/unit/quiz-filters.test.ts > Quiz Filter Unit Tests (CSMQ-50) > ignores invalid types for search and subject 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > returns full score when all answers are correct 2ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > returns zero score when all answers are incorrect 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > calculates the exact score for mixed answers 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > handles unanswered questions without crashing 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > treats an empty selected option as unanswered 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > rounds percentage to two decimal places 0ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts > evaluateQuiz > handles an empty quiz safely 0ms
+
+ Test Files  21 passed (21)
+      Tests  199 passed (199)
+   Start at  20:10:47
+   Duration  11.62s (import 54%, tests 40%, transform 5%, worker 1%)
+
+    Isolate  21 workers spawned · ~147ms startup each (spawn + environment, per file)
+             at least ~2.94s faster with isolate: false — reuses workers across files instead of one per file
+
+JUNIT report written to D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/reports/unit-junit.xml
+
+Finished UTC: 2026-11-06T14:40:59.470Z
+Exit code: 0
+
+==============================================================================
+COMMAND: npm run test:ci --prefix frontend -- --reporter=verbose --reporter=junit
+Started UTC: 2026-11-06T14:40:59.470Z
+
+> frontend@0.0.0 test:ci
+> vitest run --reporter=verbose --reporter=junit
+
+
+ RUN  v5.0.3 D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/frontend
+
+ ✓ src/App.test.tsx > Study Commons routes and forms > redirects anonymous quiz access to login 111ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > redirects the retired prototype URL to real quiz discovery without starting an attempt 49ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > keeps independent answers in the isolated Sprint 1 component 311ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows landing navigation and opens registration 57ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > switches theme and remembers the choice 56ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > validates registration fields before calling the API 132ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows a success message after successful registration 1160ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows a duplicate-email error during registration 1075ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows a useful error when registration cannot reach the server 1085ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows login validation and API errors 815ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > does not accept invalid email or short password on login 64ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > redirects logged-out visitors from materials to login 18ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > redirects anonymous dashboard access to login 14ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > shows student navigation destinations including quiz history and performance 36ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > navigates to the student dashboard after successful login 830ms
+ ✓ src/App.test.tsx > Study Commons routes and forms > logs out and returns to login with logged-out navigation 169ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > renders Question Bank header and empty state initially 71ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > opens Add MCQ form when clicking + Add New MCQ 66ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > submits valid MCQ form and displays success message 2573ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > renders questions list when questions exist 29ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > triggers listQuestions with subject filter 93ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > triggers listQuestions with difficulty filter 67ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > clears listing error banner when subsequent filter request succeeds 73ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > ensures only results for current filters update the list when filter changes during save 2674ms
+ ✓ src/pages/QuestionBankPage.test.tsx > QuestionBankPage (CSMQ-23 / CSMQ-24) > clears loading state and displays results when an MCQ is saved while initial list is still loading 1198ms
+ ✓ src/pages/MaterialsPage.test.tsx > shows the empty library state and opens a separate upload form 217ms
+ ✓ src/pages/MaterialsPage.test.tsx > submits PDF metadata through the shared authenticated service 736ms
+ ✓ src/pages/MaterialsPage.test.tsx > loads the 26th material and resets pagination when a new search is submitted 719ms
+ ✓ src/pages/MaterialsPage.test.tsx > retries a failed next page with the same search and cursor, keeping existing results 111ms
+ ✓ src/pages/MaterialsPage.test.tsx > preserves the submitted search after upload and resets the native PDF picker 304ms
+ ✓ src/pages/MaterialsPage.test.tsx > ignores an older initial response after an upload refresh and finishes loading 99ms
+ ✓ src/pages/MaterialsPage.test.tsx > does not append an older page after a different search completes 87ms
+ ✓ src/pages/MaterialsPage.test.tsx > retries a failed first-page search with the same query 67ms
+ ✓ src/pages/MaterialsPage.test.tsx > combines keyword and subject filters and explains unmatched results 355ms
+ ✓ src/pages/MaterialsPage.test.tsx > searches existing subjects in the filter menu and applies a selected subject 414ms
+ ✓ src/pages/MaterialsPage.test.tsx > loads and displays metadata for a selected material 73ms
+ ✓ src/pages/MaterialsPage.test.tsx > opens the recent material PDF directly from the dashboard link 34ms
+ ✓ src/pages/MaterialsPage.test.tsx > shows an unavailable message when selected material details cannot be loaded 64ms
+ ✓ src/pages/MaterialsPage.test.tsx > opens the selected PDF inline and releases its object URL when closed 130ms
+ ✓ src/pages/MaterialsPage.test.tsx > downloads the selected PDF with a title based PDF filename 47ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > prevents selecting stale questions while filters load and distinguishes errors from no matches 179ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > renders page header, title, subject, and question picker 33ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > shows error if question bank fetch fails 21ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > validates empty title on submission 109ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > validates empty subject on submission 406ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > validates zero questions selected on submission 742ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > toggles question selection and updates counter 228ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > supports select all and deselect all buttons 175ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > submits valid quiz and displays success message 724ms
+ ✓ src/pages/CreateQuizPage.test.tsx > CreateQuizPage (CSMQ-49) > displays API error message when creation fails 608ms
+ ✓ tests/auth.integration.test.ts > connects the actual frontend client to registration, login, PDF storage and revoking logout 450ms
+ ✓ tests/auth.integration.test.ts > rejects an anonymous real multipart upload before storing bytes 10ms
+ ✓ tests/auth.integration.test.ts > retrieves all 26 matching materials through the real paginated client and backend 118ms
+ ✓ tests/quiz-prototype.integration.test.tsx > IT-M3-02/03: renders Member 2 payload and evaluates mixed correct, incorrect and unanswered… from the actual UI 644ms
+ ✓ tests/quiz-prototype.integration.test.tsx > IT-M3-02/03: renders Member 2 payload and evaluates all correct selections from the actual UI 629ms
+ ✓ tests/admin-routing.test.tsx > redirects unauthenticated dashboard access to common login 99ms
+ ✓ tests/admin-routing.test.tsx > keeps Students away from /admin and opens the student dashboard 56ms
+ ✓ tests/admin-routing.test.tsx > keeps Students away from /admin/moderation and opens the student dashboard 54ms
+ ✓ tests/admin-routing.test.tsx > routes successful Admin login to the dashboard with Question Bank and moderation links 1003ms
+ ✓ src/pages/AdminPage.test.tsx > confirms that Delete all includes filtered-out items and cancellation sends no request 486ms
+ ✓ src/pages/AdminPage.test.tsx > opens the moderation category selected from the dashboard 56ms
+ ✓ src/pages/AdminPage.test.tsx > blocks student moderation before loading resources 23ms
+ ✓ src/pages/AdminPage.test.tsx > offers per-item deletion with a separate confirmation and cancellation 349ms
+ ✓ src/pages/AdminPage.test.tsx > retains the resource and confirmation when removal fails 157ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > hides previous results while a new filter loads and does not call a failed search empty 117ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > renders header, search inputs, and loads available quizzes 19ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > displays empty state when no quizzes exist 14ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > filters quizzes by search keyword and subject inputs 353ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > clears filters when Clear Filters button is clicked 180ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > shows error banner and retries successfully 113ms
+ ✓ src/pages/QuizListPage.test.tsx > QuizListPage (CSMQ-51) > links to quiz view details page 45ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > describes SRS scoring as one point per correct response regardless of marks metadata 33ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > does not invent a time limit or expire an unsubmitted real quiz 77ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > sends selected answers to the real API 87ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > preserves answers when submission fails 70ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > prevents duplicate clicks while submitting 65ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx > CSMQ-41: Quiz Attempt frontend integration > keeps the sample quiz in local demo mode 56ms
+ ✓ tests/admin-session.integration.test.tsx > waits for server validation before restoring Admin navigation and Question Bank after refresh 110ms
+ ✓ tests/admin-session.integration.test.tsx > ignores a forged browser role and redirects a server-identified Student to their dashboard 51ms
+ ✓ tests/admin-session.integration.test.tsx > redirects an expired stored session to the common login page after refresh 26ms
+ ✓ src/pages/QuizAttemptPage.session-expiry.test.tsx > keeps the quiz and original user draft available when submission expires the session 179ms
+ ✓ src/pages/QuizAttemptPage.session-expiry.test.tsx > does not submit or reassign a draft after a different account logs in 55ms
+ ✓ src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx > CSMQ-45 / real frontend submission service to result callback > POSTs authenticated answers to the server and uses its result 108ms
+ ✓ src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx > CSMQ-45 / real frontend submission service to result callback > does not advance to a result when the server rejects a submission 41ms
+ ✓ src/pages/QuizHistoryPage.test.tsx > CSMQ-43: Quiz History page > renders saved quiz attempts 101ms
+ ✓ src/pages/QuizHistoryPage.test.tsx > CSMQ-43: Quiz History page > shows an empty state 38ms
+ ✓ src/pages/QuizHistoryPage.test.tsx > CSMQ-43: Quiz History page > supports retrying failed requests 54ms
+ ✓ src/pages/QuizHistoryPage.test.tsx > CSMQ-43: Quiz History page > loads the next history page 31ms
+ ✓ src/pages/QuizAttemptPage.result-navigation.test.tsx > CSMQ-42: result navigation triggered only by saved attempts > calls the success handler with the server result 109ms
+ ✓ src/pages/QuizAttemptPage.result-navigation.test.tsx > CSMQ-42: result navigation triggered only by saved attempts > does not navigate after a failed submission 62ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > shows submitted-SAD answer feedback only in a matching successful result 118ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > renders trusted submission metrics and navigation 36ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > never exposes question answer keys 7ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > shows a safe empty state when navigated to directly 9ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > rejects a result that does not match the URL 7ms
+ ✓ src/pages/QuizResultPage.test.tsx > CSMQ-42: Quiz Result screen > does not display malformed or inflated scores 6ms
+ ✓ src/pages/QuizInsightsPage.test.tsx > QuizInsightsPage > loads the complete history and shows saved metrics 123ms
+ ✓ src/pages/QuizInsightsPage.test.tsx > QuizInsightsPage > does not pretend a limited sample represents the full history 11ms
+ ✓ src/pages/QuizInsightsPage.test.tsx > QuizInsightsPage > handles an empty history 16ms
+ ✓ src/pages/QuizInsightsPage.test.tsx > QuizInsightsPage > retries a failed history request 73ms
+ ✓ src/pages/StudentDashboardPage.test.tsx > shows recently opened active materials and links back to their details 133ms
+ ✓ src/pages/StudentDashboardPage.test.tsx > keeps each student recent list separate and shows a first-open empty state 13ms
+ ✓ src/pages/AdminDashboardPage.test.tsx > shows available moderation actions and identifies missing Quiz integration 84ms
+ ✓ src/pages/AdminDashboardPage.test.tsx > refuses a server-identified Student without querying administrator resources 22ms
+ ✓ src/pages/AdminDashboardPage.test.tsx > shows controlled loading/error states and retries a failed resource request 111ms
+ ✓ src/pages/AdminDashboardPage.test.tsx > offers Quiz moderation when a real owner adapter has been registered 32ms
+ ✓ src/pages/QuizViewPage.test.tsx > QuizViewPage (CSMQ-51) > renders quiz header, subject badge, question count, and questions list 96ms
+ ✓ src/pages/QuizViewPage.test.tsx > QuizViewPage (CSMQ-51) > CRITICAL SECURITY: never displays or contains correctAnswer or answer keys 16ms
+ ✓ src/pages/QuizViewPage.test.tsx > QuizViewPage (CSMQ-51) > renders error state and back link when quiz is not found 33ms
+ ✓ src/pages/QuizViewPage.navigation.test.tsx > CSMQ-41: Quiz start navigation > opens the real quiz attempt route 113ms
+ ✓ src/pages/QuizViewPage.navigation.test.tsx > CSMQ-41: Quiz start navigation > does not allow starting an empty quiz 28ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx > CSMQ-41: Real quiz attempt loader > accepts the canonical lowercase ID returned for an uppercase MongoDB URL 21ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx > CSMQ-41: Real quiz attempt loader > loads and renders real quiz questions 42ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx > CSMQ-41: Real quiz attempt loader > shows errors when quiz loading fails 17ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx > CSMQ-41: Real quiz attempt loader > retries after a failed request 29ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx > CSMQ-41: Real quiz attempt loader > loads new questions when quiz ID changes 24ms
+ ✓ src/pages/QuizHistoryPage.insights-navigation.test.tsx > performance insights navigation > provides a link from history to performance insights 76ms
+ ✓ src/services/authService.test.ts > registers without creating a client session 3ms
+ ✓ src/services/authService.test.ts > sends the session in a header and multipart data without setting a false content type 2ms
+ ✓ src/services/authService.test.ts > invalidates locally after server logout and refuses further upload 1ms
+ ✓ src/services/authService.test.ts > clears expired authentication on protected-route rejection 1ms
+ ✓ src/services/authService.test.ts > keeps the session when the logout request fails so revocation can be retried 0ms
+ ✓ src/services/authService.test.ts > preserves a newer login when an older upload request finishes 1ms
+ ✓ src/services/authService.test.ts > preserves a newer login when an older list request finishes 1ms
+ ✓ src/services/authService.test.ts > preserves a newer login when an older logout request finishes 0ms
+ ✓ src/services/authService.test.ts > rejects an incomplete login response and shows controlled login errors 0ms
+ ✓ src/services/authService.test.ts > restores only a token after refresh and obtains the current role from the server 1ms
+ ✓ src/services/authService.test.ts > fails closed on rejected restoration and clears stored credentials (401) 0ms
+ ✓ src/services/authService.test.ts > fails closed on rejected restoration and clears stored credentials (503) 0ms
+ ✓ src/services/authService.test.ts > fails closed on offline restoration 0ms
+ ✓ src/services/authService.test.ts > deduplicates restoration and does not resurrect a session after logout during restoration 0ms
+ ✓ src/services/authService.test.ts > retains in-memory login if browser session storage is unavailable 1ms
+ ✓ src/services/authService.test.ts > preserves pagination metadata and sends the search, cursor and abort signal 1ms
+ ✓ src/services/authService.test.ts > rejects malformed pagination responses instead of silently losing the cursor 1ms
+ ✓ src/services/authService.test.ts > loads validated available material subjects using the authenticated endpoint 1ms
+ ✓ src/services/authService.test.ts > requests inline and attachment PDFs through the authenticated material endpoint 1ms
+ ✓ src/services/final-integration.test.ts > includes the 51st attempt in subject averages rather than truncating performance to the newest page 7ms
+ ✓ src/services/final-integration.test.ts > rejects an incomplete or shifting history instead of presenting an incorrect subject average 2ms
+ ✓ src/services/final-integration.test.ts > clears expired shared authentication for history 1ms
+ ✓ src/services/final-integration.test.ts > clears expired shared authentication for submission 1ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > loads student-safe quiz questions 3ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > rejects an invalid quiz ID 1ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > requires authentication 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > handles unavailable quizzes 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > handles network failures 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > rejects empty quizzes 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > rejects malformed question data 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > rejects mismatched quiz IDs 0ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > does not expose correct answers 1ms
+ ✓ src/services/quizAttemptDataService.test.ts > CSMQ-41: Real quiz loading service > rejects duplicate question IDs 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > submits responses with authentication 2ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > rejects submission without login 1ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > handles expired sessions 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > displays backend validation errors 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > handles network failures 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > rejects incomplete results 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > rejects invalid numeric results 0ms
+ ✓ src/services/attemptService.test.ts > CSMQ-41: Quiz Attempt API Service > handles server errors 0ms
+ ✓ src/services/quiz-security.test.ts > clears the expired session consistently when Quiz discovery returns 401 8ms
+ ✓ src/services/quiz-security.test.ts > does not clear a newer login when an older Quiz request is rejected 1ms
+ ✓ src/services/attemptHistoryService.csmq45-boundaries.test.ts > CSMQ-45 / history API frontend authorization boundaries > fetches only the current session history, never requesting a user ID 2ms
+ ✓ src/services/attemptHistoryService.csmq45-boundaries.test.ts > CSMQ-45 / history API frontend authorization boundaries > rejects expired sessions and forbidden history access 1ms
+ ✓ src/services/attemptHistoryService.csmq45-boundaries.test.ts > CSMQ-45 / history API frontend authorization boundaries > rejects malformed history payloads rather than displaying untrusted data 0ms
+ ✓ src/services/attemptHistoryService.test.ts > CSMQ-43: Attempt history service > fetches authenticated student history 3ms
+ ✓ src/services/attemptHistoryService.test.ts > CSMQ-43: Attempt history service > requires authentication 1ms
+ ✓ src/services/attemptHistoryService.test.ts > CSMQ-43: Attempt history service > handles expired sessions 0ms
+ ✓ src/services/attemptHistoryService.test.ts > CSMQ-43: Attempt history service > rejects malformed history responses 0ms
+ ✓ src/services/attemptHistoryService.test.ts > CSMQ-43: Attempt history service > rejects invalid pagination 0ms
+ ✓ src/services/attemptInsights.csmq45-acceptance.test.ts > CSMQ-45 / performance acceptance and export safety > groups only provided student attempts by subject with correct averages 2ms
+ ✓ src/services/attemptInsights.csmq45-acceptance.test.ts > CSMQ-45 / performance acceptance and export safety > does not mix attempts from different accounts when analyzing their separate API responses 0ms
+ ✓ src/services/attemptInsights.csmq45-acceptance.test.ts > CSMQ-45 / performance acceptance and export safety > handles empty performance and unknown subjects without fabricated scores 1ms
+ ✓ src/services/attemptInsights.csmq45-acceptance.test.ts > CSMQ-45 / performance acceptance and export safety > protects exported CSV fields against spreadsheet formula execution 0ms
+ ✓ src/services/attemptInsights.test.ts > calculateAttemptInsights > returns a useful empty state 2ms
+ ✓ src/services/attemptInsights.test.ts > calculateAttemptInsights > computes average, best, latest and subject summaries 1ms
+ ✓ src/services/attemptInsights.test.ts > calculateAttemptInsights > shows the trend in chronological order 0ms
+ ✓ src/services/attemptInsights.test.ts > calculateAttemptInsights > limits the displayed chart to 12 most recent dated attempts 1ms
+ ✓ src/services/attemptInsights.test.ts > calculateAttemptInsights > groups missing subject under General 0ms
+ ✓ src/services/attemptHistoryCsv.test.ts > createAttemptHistoryCsv > includes column headers and the actual saved scores 1ms
+ ✓ src/services/attemptHistoryCsv.test.ts > createAttemptHistoryCsv > escapes comma and double quotes 0ms
+ ✓ src/services/attemptHistoryCsv.test.ts > createAttemptHistoryCsv > prevents spreadsheet formulas from executing on import 0ms
+ ✓ src/services/attemptHistoryCsv.test.ts > createAttemptHistoryCsv > includes headers even with no attempts 1ms
+ ✓ src/services/quizDraft.test.ts > ignores malformed draft null 2ms
+ ✓ src/services/quizDraft.test.ts > ignores malformed draft [] 0ms
+ ✓ src/services/quizDraft.test.ts > ignores malformed draft 42 0ms
+ ✓ src/services/quizDraft.test.ts > ignores malformed draft "text" 0ms
+ ✓ src/services/quizDraft.test.ts > ignores malformed draft {broken 0ms
+ ✓ src/services/quizDraft.test.ts > retains only valid options for known questions 0ms
+ ✓ src/services/quizDraft.test.ts > survives disabled browser storage 0ms
+ ✓ src/services/recentMaterials.test.ts > ignores corrupted/out-of-range recent dates rather than crashing the dashboard 3ms
+ ✓ src/services/recentMaterials.test.ts > keeps recent materials scoped to the current user and deduplicates repeated opens 1ms
+
+ Test Files  35 passed (35)
+      Tests  190 passed (190)
+   Start at  20:11:00
+   Duration  65.13s (tests 46%, environment 38%, setup 7%, import 6%, transform 2%)
+
+Environment  jsdom was created 35 times · 22.91s total, 38% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+JUNIT report written to D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/frontend/reports/junit.xml
+
+Finished UTC: 2026-11-06T14:42:06.110Z
+Exit code: 0
+
+REPORT COMMAND EXIT CODE: 0

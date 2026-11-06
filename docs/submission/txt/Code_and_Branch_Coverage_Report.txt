@@ -1,0 +1,294 @@
+Code and branch coverage command output
+Source commit: 93ef68f21d0fba21945c7cb0f675dc7b9ba9f667
+Tracked source changes: no
+Generated from actual command output; test counts in separate commands may overlap.
+Frontend test output includes component, service and integration suites.
+
+==============================================================================
+COMMAND: npm run test:coverage
+Started UTC: 2026-11-06T14:46:36.403Z
+
+> se-jackfruit-security-foundation@0.1.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v5.0.3 D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT
+      Coverage enabled with v8
+
+stdout | backend/tests/integration/team-sprint2.test.ts > serves real Quiz retrieval and trusted submissions for 10 concurrent Student sessions
+Real Quiz load: 10 sessions, 20 requests, p90 130ms (paired retrieval + submission).
+
+stdout | backend/tests/integration/team-sprint2.test.ts > serves real Quiz retrieval and trusted submissions for 50 concurrent Student sessions
+Real Quiz load: 50 sessions, 100 requests, p90 457ms (paired retrieval + submission).
+
+ ✓ backend/tests/integration/team-sprint2.test.ts (9 tests) 11894ms
+   ✓ connects real Question creation, Quiz discovery, trusted submission and persisted attempt without answer leakage 360ms
+   ✓ enforces actual Quiz moderation, excludes discovery/submission and preserves existing attempt history 339ms
+   ✓ makes moderated Questions unavailable through real Quiz reads and trusted scoring 359ms
+   ✓ rejects malformed Quiz filters, forged scores and Admin submissions 315ms
+   ✓ deduplicates racing retries of one submission, rejects changed answers and permits a fresh repeat attempt 359ms
+   ✓ retains history and retry identity after reconnect and after moderation without exposing post-submission keys through history 455ms
+   ✓ supports the submitted SAD download path with the same authenticated PDF bytes and removal denial 463ms
+   ✓ serves real Quiz retrieval and trusted submissions for 10 concurrent Student sessions 1678ms
+   ✓ serves real Quiz retrieval and trusted submissions for 50 concurrent Student sessions 6869ms
+stdout | backend/tests/integration/sprint2.test.ts > keeps normal protected operations within three seconds for 10 concurrent authenticated sessions
+NFR scoped smoke: 10 sessions, 20 authenticated requests; p90=56ms
+
+stdout | backend/tests/integration/sprint2.test.ts > keeps normal protected operations within three seconds for 50 concurrent authenticated sessions
+NFR scoped smoke: 50 sessions, 100 authenticated requests; p90=267ms
+
+ ✓ backend/tests/integration/sprint2.test.ts (12 tests) 7655ms
+   ✓ keeps normal protected operations within three seconds for 10 concurrent authenticated sessions 856ms
+   ✓ keeps normal protected operations within three seconds for 50 concurrent authenticated sessions 3651ms
+ ✓ backend/tests/integration/admin-provisioning.test.ts (16 tests) 3756ms
+   ✓ runs the real CLI only against disposable MongoDB, uses its database, exits cleanly and prints no secrets 1152ms
+   ✓ refuses the CLI before connecting when production or confirmation is invalid 478ms
+   ✓ exits cleanly after a database-connected CLI refusal without promoting a Student or leaking input 610ms
+   ✓ uses the common login and server-verified RBAC for real Question Bank creation and persistence 355ms
+ ✓ backend/tests/integration/quizzes.test.ts (17 tests) 3182ms
+ ✓ backend/tests/integration/local-demo.test.ts (2 tests) 3054ms
+   ✓ serves protected APIs and SPA routes, preserving sessions, questions and removal across actual MongoDB restarts 2941ms
+ ✓ backend/tests/integration/security.test.ts (17 tests) 2639ms
+   ✓ IT-M4-01 / TC-Auth-01..03 MongoDB-backed account integration (14)
+     ✓ uses the same error for wrong passwords and unknown or disabled accounts 360ms
+ ✓ backend/tests/integration/questions.test.ts (8 tests) 2297ms
+ ✓ backend/tests/integration/question-moderation.test.ts (4 tests) 2219ms
+   ✓ moderates the actual Question model, excludes both read APIs and preserves persisted attempt references 366ms
+   ✓ requires current admin role, confirmation and valid identifiers; removal is atomic 300ms
+   ✓ discovers integrated modules and rejects malicious query/body fields 319ms
+   ✓ persists question moderation and sessions after runtime recreation and database reconnect 408ms
+ ✓ backend/tests/integration/runtime.test.ts (8 tests) 1810ms
+ ✓ backend/tests/integration/attempt-api.test.ts (8 tests) 1840ms
+ ✓ backend/tests/integration/bulk-moderation.test.ts (3 tests) 1458ms
+ ✓ backend/tests/integration/quiz-attempt.test.ts (4 tests) 1191ms
+ ✓ backend/tests/integration/quiz-contract-cross-module.test.ts (3 tests) 1274ms
+ ✓ backend/tests/integration/attempt-repository.test.ts (5 tests) 618ms
+ ✓ backend/tests/unit/quiz-model.test.ts (14 tests) 616ms
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+(node:31816) [MONGOOSE] Warning: Mongoose: `Document.prototype.validateSync()` is deprecated and will be removed in Mongoose 10. Use `Document.prototype.validate()` instead.
+ ✓ backend/tests/unit/user-repository.test.ts (16 tests) 589ms
+ ✓ backend/tests/integration/csmq45-history-isolation.test.ts (6 tests) 691ms
+ ✓ backend/tests/unit/question-model.test.ts (13 tests) 644ms
+ ✓ backend/tests/unit/quiz-attempt-model.test.ts (8 tests) 557ms
+ ✓ backend/tests/unit/password.test.ts (17 tests) 379ms
+ ✓ backend/tests/unit/release-guards.test.ts (3 tests) 224ms
+ ✓ backend/tests/unit/middleware.test.ts (15 tests) 135ms
+ ✓ backend/tests/integration/csmq45-submission-acceptance.test.ts (9 tests) 73ms
+ ✓ backend/tests/unit/attempt-history-route.test.ts (3 tests) 50ms
+ ✓ backend/tests/unit/config.test.ts (12 tests) 10ms
+ ✓ backend/tests/unit/csmq-24-question-validation.test.ts (15 tests) 11ms
+ ✓ backend/tests/unit/submission-service.test.ts (10 tests) 12ms
+ ✓ backend/tests/unit/csmq-28-consolidated-suite.test.ts (5 tests) 9ms
+ ✓ backend/tests/unit/material-upload-validation.test.ts (8 tests) 6ms
+ ✓ backend/tests/unit/question-validation.test.ts (9 tests) 8ms
+ ✓ backend/tests/unit/attempt-validation.test.ts (7 tests) 6ms
+ ✓ backend/tests/unit/student-safe-serializer.test.ts (5 tests) 6ms
+ ✓ backend/tests/unit/quiz-validation.test.ts (8 tests) 6ms
+ ✓ backend/tests/unit/quiz-filters.test.ts (8 tests) 4ms
+ ✓ backend/tests/unit/question-filters.test.ts (9 tests) 4ms
+ ✓ backend/tests/unit/trusted-evaluation.test.ts (7 tests) 5ms
+ ✓ backend/tests/unit/evaluate-quiz.test.ts (7 tests) 4ms
+
+ Test Files  37 passed (37)
+      Tests  330 passed (330)
+   Start at  20:16:37
+   Duration  67.28s (tests 79%, import 19%, worker 1%, transform 1%)
+
+    Isolate  37 workers spawned · ~101ms startup each (spawn + environment, per file)
+             at least ~3.63s faster with isolate: false — reuses workers across files instead of one per file
+
+JUNIT report written to D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/reports/junit.xml
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   97.53 |    92.02 |   98.91 |   97.85 |                   
+ src               |   97.97 |    98.63 |     100 |   97.46 |                   
+  app.ts           |     100 |      100 |     100 |     100 |                   
+  config.ts        |     100 |      100 |     100 |     100 |                   
+  db.ts            |      60 |      100 |     100 |      60 | 12-13             
+  errors.ts        |     100 |    95.65 |     100 |     100 | 22                
+  runtime.ts       |     100 |      100 |     100 |     100 |                   
+ src/admin         |    87.5 |    83.33 |   85.71 |   85.18 |                   
+  moderation.ts    |    87.5 |    83.33 |   85.71 |   85.18 | 27-30,41          
+ src/attempts      |   95.91 |    86.74 |     100 |    96.5 |                   
+  evaluate.ts      |     100 |      100 |     100 |     100 |                   
+  history-route.ts |   91.66 |    83.33 |     100 |   91.66 | 46                
+  history.ts       |       0 |        0 |       0 |       0 |                   
+  ...repository.ts |   93.47 |    75.75 |     100 |   95.23 | 46,124            
+  router.ts        |     100 |      100 |     100 |     100 |                   
+  ...on-service.ts |   96.15 |    93.75 |     100 |   96.15 | 93                
+  ...evaluation.ts |      96 |    91.66 |     100 |      96 | 35                
+  validation.ts    |     100 |      100 |     100 |     100 |                   
+ src/materials     |   98.79 |       94 |   95.23 |     100 |                   
+  upload.ts        |   98.79 |       94 |   95.23 |     100 | 31,88,98          
+ src/middleware    |     100 |      100 |     100 |     100 |                   
+  auth.ts          |     100 |      100 |     100 |     100 |                   
+  validation.ts    |     100 |      100 |     100 |     100 |                   
+ src/models        |     100 |      100 |     100 |     100 |                   
+  question.ts      |     100 |      100 |     100 |     100 |                   
+  quiz-attempt.ts  |     100 |      100 |     100 |     100 |                   
+  quiz.ts          |     100 |      100 |     100 |     100 |                   
+  user.ts          |     100 |      100 |     100 |     100 |                   
+ src/questions     |     100 |    91.66 |     100 |     100 |                   
+  filters.ts       |     100 |      100 |     100 |     100 |                   
+  router.ts        |     100 |       80 |     100 |     100 | 55-104            
+  serializer.ts    |     100 |      100 |     100 |     100 |                   
+  validation.ts    |     100 |     87.5 |     100 |     100 | 71                
+ src/quizzes       |   98.55 |    81.63 |     100 |   98.46 |                   
+  filters.ts       |     100 |      100 |     100 |     100 |                   
+  router.ts        |   97.95 |    71.42 |     100 |   97.77 | 23                
+  validation.ts    |     100 |    83.33 |     100 |     100 | 44                
+ src/repositories  |     100 |      100 |     100 |     100 |                   
+  ...repository.ts |     100 |      100 |     100 |     100 |                   
+ src/routes        |     100 |      100 |     100 |     100 |                   
+  auth.ts          |     100 |      100 |     100 |     100 |                   
+ src/security      |   96.42 |     92.2 |     100 |   98.48 |                   
+  auth-service.ts  |   93.33 |    92.59 |     100 |     100 | 14-22             
+  password.ts      |     100 |      100 |     100 |     100 |                   
+  ...sion-admin.ts |   96.87 |    87.09 |     100 |      96 | 46                
+  sessions.ts      |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+Finished UTC: 2026-11-06T14:47:44.964Z
+Exit code: 0
+
+==============================================================================
+COMMAND: npm run test:coverage --prefix frontend
+Started UTC: 2026-11-06T14:47:44.964Z
+
+> frontend@0.0.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v5.0.3 D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/frontend
+      Coverage enabled with v8
+
+ ✓ src/pages/QuestionBankPage.test.tsx (9 tests) 7666ms
+   ✓ QuestionBankPage (CSMQ-23 / CSMQ-24) (9)
+     ✓ submits valid MCQ form and displays success message 2656ms
+     ✓ ensures only results for current filters update the list when filter changes during save 2740ms
+     ✓ clears loading state and displays results when an MCQ is saved while initial list is still loading 1756ms
+ ✓ src/App.test.tsx (16 tests) 6689ms
+   ✓ Study Commons routes and forms (16)
+     ✓ keeps independent answers in the isolated Sprint 1 component 499ms
+     ✓ shows a success message after successful registration 1176ms
+     ✓ shows a duplicate-email error during registration 1193ms
+     ✓ shows a useful error when registration cannot reach the server 1121ms
+     ✓ shows login validation and API errors 906ms
+     ✓ navigates to the student dashboard after successful login 853ms
+ ✓ src/pages/MaterialsPage.test.tsx (15 tests) 3467ms
+   ✓ submits PDF metadata through the shared authenticated service 785ms
+   ✓ loads the 26th material and resets pagination when a new search is submitted 508ms
+   ✓ preserves the submitted search after upload and resets the native PDF picker 332ms
+   ✓ combines keyword and subject filters and explains unmatched results 438ms
+   ✓ searches existing subjects in the filter menu and applies a selected subject 462ms
+ ✓ src/pages/CreateQuizPage.test.tsx (10 tests) 3526ms
+   ✓ CreateQuizPage (CSMQ-49) (10)
+     ✓ validates empty subject on submission 428ms
+     ✓ validates zero questions selected on submission 736ms
+     ✓ submits valid quiz and displays success message 919ms
+     ✓ displays API error message when creation fails 750ms
+ ✓ tests/auth.integration.test.ts (3 tests) 1465ms
+   ✓ connects the actual frontend client to registration, login, PDF storage and revoking logout 391ms
+ ✓ tests/quiz-prototype.integration.test.tsx (2 tests) 1192ms
+   ✓ IT-M3-02/03: renders Member 2 payload and evaluates mixed correct, incorrect and unanswered… from the actual UI 676ms
+   ✓ IT-M3-02/03: renders Member 2 payload and evaluates all correct selections from the actual UI 515ms
+ ✓ tests/admin-routing.test.tsx (4 tests) 1395ms
+   ✓ routes successful Admin login to the dashboard with Question Bank and moderation links 1127ms
+ ✓ src/pages/AdminPage.test.tsx (5 tests) 1141ms
+   ✓ confirms that Delete all includes filtered-out items and cancellation sends no request 589ms
+   ✓ offers per-item deletion with a separate confirmation and cancellation 303ms
+ ✓ src/pages/QuizListPage.test.tsx (7 tests) 765ms
+ ✓ src/pages/QuizAttemptPage.submit.test.tsx (6 tests) 393ms
+ ✓ src/pages/AdminDashboardPage.test.tsx (4 tests) 211ms
+ ✓ src/pages/QuizAttemptPage.session-expiry.test.tsx (2 tests) 240ms
+ ✓ src/pages/QuizHistoryPage.test.tsx (4 tests) 266ms
+ ✓ src/pages/QuizInsightsPage.test.tsx (4 tests) 213ms
+ ✓ tests/admin-session.integration.test.tsx (3 tests) 252ms
+ ✓ src/pages/QuizResultPage.test.tsx (6 tests) 173ms
+ ✓ src/pages/QuizAttemptPage.result-navigation.test.tsx (2 tests) 189ms
+ ✓ src/pages/QuizAttemptPage.csmq45-acceptance.test.tsx (2 tests) 208ms
+ ✓ src/pages/StudentDashboardPage.test.tsx (2 tests) 160ms
+ ✓ src/pages/QuizViewPage.test.tsx (3 tests) 168ms
+ ✓ src/pages/QuizViewPage.navigation.test.tsx (2 tests) 164ms
+ ✓ src/pages/QuizAttemptLoader.test.tsx (5 tests) 144ms
+ ✓ src/pages/QuizHistoryPage.insights-navigation.test.tsx (1 test) 83ms
+ ✓ src/services/authService.test.ts (19 tests) 54ms
+ ✓ src/services/final-integration.test.ts (4 tests) 13ms
+ ✓ src/services/quiz-security.test.ts (2 tests) 8ms
+ ✓ src/services/quizAttemptDataService.test.ts (10 tests) 9ms
+ ✓ src/services/attemptService.test.ts (8 tests) 7ms
+ ✓ src/services/attemptHistoryService.test.ts (5 tests) 10ms
+ ✓ src/services/attemptHistoryService.csmq45-boundaries.test.ts (3 tests) 6ms
+ ✓ src/services/attemptInsights.test.ts (5 tests) 5ms
+ ✓ src/services/quizDraft.test.ts (7 tests) 4ms
+ ✓ src/services/recentMaterials.test.ts (2 tests) 8ms
+ ✓ src/services/attemptInsights.csmq45-acceptance.test.ts (4 tests) 5ms
+ ✓ src/services/attemptHistoryCsv.test.ts (4 tests) 5ms
+
+ Test Files  35 passed (35)
+      Tests  190 passed (190)
+   Start at  20:17:45
+   Duration  67.98s (tests 48%, environment 35%, setup 7%, import 6%, transform 2%, worker 1%)
+
+Environment  jsdom was created 35 times · 21.70s total, 35% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+JUNIT report written to D:/SEMESTERS/SEM5_2025/SE-JACKFRUIT/frontend/reports/junit.xml
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   78.45 |    71.86 |   79.27 |   81.46 |                   
+ src               |   70.73 |    75.86 |    64.7 |   69.23 |                   
+  App.tsx          |    72.5 |    75.86 |    64.7 |   71.05 | 72-85,127,143-161 
+  main.tsx         |       0 |      100 |     100 |       0 | 9                 
+ src/components    |   55.55 |     58.2 |   56.52 |   60.46 |                   
+  FormField.tsx    |     100 |      100 |     100 |     100 |                   
+  ...alLibrary.tsx |       0 |        0 |       0 |       0 | 6-27              
+  Navbar.tsx       |   94.44 |    88.46 |     100 |    92.3 | 18                
+  ThemeToggle.tsx  |   88.23 |       80 |    87.5 |     100 | 11-19             
+ src/hooks         |   96.29 |    77.27 |     100 |     100 |                   
+  ...ialLibrary.ts |   96.29 |    77.27 |     100 |     100 | 32-34,61-66       
+ src/pages         |   84.98 |    76.24 |   83.45 |   87.17 |                   
+  ...boardPage.tsx |     100 |       80 |     100 |     100 | 18-20,32          
+  AdminPage.tsx    |   86.23 |    77.23 |   86.36 |   86.59 | ...32-133,152,171 
+  ...eQuizPage.tsx |   92.68 |     90.9 |   85.18 |    92.3 | 92-94,242-248,291 
+  HomePage.tsx     |     100 |      100 |     100 |     100 |                   
+  LoginPage.tsx    |     100 |    83.33 |     100 |     100 | 11-13             
+  ...rialsPage.tsx |   75.11 |    66.12 |      70 |   82.67 | ...64,174,185,190 
+  ...nBankPage.tsx |   80.86 |    78.57 |   78.37 |   80.73 | ...38,363-364,409 
+  ...mptLoader.tsx |      88 |       75 |   88.88 |   95.45 | 112               
+  ...temptPage.tsx |   77.58 |    74.75 |   72.41 |   77.66 | ...19,486,600,642 
+  ...storyPage.tsx |   93.75 |    67.85 |   92.85 |   96.66 | 210               
+  ...ightsPage.tsx |   96.66 |    68.18 |   93.33 |      96 | 46                
+  QuizListPage.tsx |   89.13 |    78.72 |   91.66 |   89.13 | 74-80             
+  ...esultPage.tsx |   92.68 |    93.54 |     100 |   94.87 | 58,69             
+  QuizViewPage.tsx |      88 |    69.44 |     100 |     100 | 32-77,82-84,209   
+  RegisterPage.tsx |     100 |       90 |     100 |     100 | 11                
+  ...boardPage.tsx |     100 |     62.5 |     100 |     100 | 18-28             
+ src/services      |   67.16 |    65.32 |   71.91 |    71.5 |                   
+  ...HistoryCsv.ts |   47.61 |       50 |   83.33 |   41.17 | 33-44             
+  ...oryService.ts |   84.44 |    90.76 |    87.5 |      90 | 55,141,158,174    
+  ...ptInsights.ts |     100 |       75 |     100 |     100 | 30-31,71          
+  ...mptService.ts |      84 |    71.05 |      50 |    91.3 | 111-112           
+  authService.ts   |    75.6 |     64.4 |   67.74 |   78.94 | ...17-148,172-180 
+  ...Validation.ts |      80 |    84.37 |     100 |     100 | 7,9,11-16,18      
+  ...ionService.ts |   31.42 |    25.92 |      25 |   39.28 | 45-80,109-122     
+  ...ataService.ts |      80 |    75.71 |    87.5 |      80 | ...52,163-171,208 
+  quizDraft.ts     |     100 |      100 |     100 |     100 |                   
+  quizService.ts   |    9.09 |     6.66 |    12.5 |   11.62 | 66-163            
+  ...tMaterials.ts |   77.77 |    82.35 |     100 |   91.66 | 19                
+-------------------|---------|----------|---------|---------|-------------------
+
+Finished UTC: 2026-11-06T14:48:53.821Z
+Exit code: 0
+
+REPORT COMMAND EXIT CODE: 0

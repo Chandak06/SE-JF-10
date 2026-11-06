@@ -4,6 +4,12 @@ Testing window: **2–6 November 2026**. Current complete automated execution: *
 
 ## Submission documents
 
+For plain-text files produced directly from test commands, see [TXT report commands](TESTING_TXT.md): `npm run reports:txt`. This does not invoke PDF generation.
+
+**Form uploads from actual test tools:** [three native PDF exports and commands](submission/README.md). Vitest JUnit, Playwright HTML/JUnit and V8/Istanbul HTML replace the authored PDF summaries. Actual dates, counts and raw reports are retained in the dated native-report archive. Markdown packs below remain historical interpretations and evidence.
+
+Latest command execution: [6 November native reports and logs](testing/2026-11-06-native-tool-reports/native-reports.zip), with [actual commands, timestamps, exit codes and counts](testing/2026-11-06-native-tool-reports/execution.json).
+
 - [Updated whole-project Test Case Document](TEST_CASES_WHOLE_PROJECT.md)
 - [Unit Test Report](testing/2026-11-05-production-validation/UNIT_TEST_REPORT.md)
 - [System Validation Report](testing/2026-11-05-production-validation/SYSTEM_VALIDATION_REPORT.md)
