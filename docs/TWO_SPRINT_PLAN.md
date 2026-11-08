@@ -1,6 +1,6 @@
 # Final two-sprint implementation plan
 
-Current execution note, 5 November: `main` now contains Sprint 2 team integrations. PR #8 has been merged; the Sprint 1 recording state is preserved on `PES2UG24CS185-Sprint-1`. The earlier branch-separation instructions below describe the original recording plan. Folder management was explicitly dropped on 30 October. Use the [current audit](PROJECT_AUDIT_2026-11-05.md) and [testing pack](testing/2026-11-05/README.md) for actual verification and remaining acceptance evidence; submitted SRS/SAD/Test Plan files are preserved.
+Current execution note, 8 November: `main` contains Sprint 2 integrations and the verified TXT reports merged in PR #45. The Sprint 1 recording state remains on `PES2UG24CS185-Sprint-1`. The earlier branch-separation instructions below describe the original recording plan. Folder management was dropped on 30 October. Use [current testing](TESTING.md) and the [acceptance register](testing/MANUAL_ACCEPTANCE.md); submitted SRS/SAD/Test Plan remain unchanged.
 
 Updated 25 October 2026. The Collaborative Study Material & Quiz Platform is developed and completed through exactly two implementation sprints: Sprint 1 and Sprint 2. This describes the approved delivery structure; it does not assert that Sprint 2 has been implemented or accepted.
 
