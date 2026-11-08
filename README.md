@@ -1,4 +1,4 @@
-> Current status, 5 November 2026: `main` contains the integrated Sprint 2 application. `PES2UG24CS185-Sprint-2` contains the latest audit fixes and testing reports awaiting integration. The reproducible Sprint 1 increment remains on `PES2UG24CS185-Sprint-1`, including its video. See [current audit](docs/PROJECT_AUDIT_2026-11-05.md) and [testing evidence](docs/testing/2026-11-05/README.md).
+> Current status, 8 November 2026: `main` contains the integrated application and verified command-generated testing reports. The reproducible Sprint 1 increment remains on `PES2UG24CS185-Sprint-1`, including its video. Use the [three TXT submission reports](docs/submission/README.md) and [current testing guide](docs/TESTING.md).
 
 # Collaborative Study Material & Quiz Platform
 
@@ -44,13 +44,13 @@ API/runtime composition and authorization are documented in [integration](docs/I
 
 ## Verify and CI/CD
 
-For the complete team-wide testing submission, use [Whole-project testing](docs/TESTING.md): the updated case document, all four reports, test data, per-case execution evidence and manual acceptance register. `npm run test:project -- --date 2026-11-05 --label whole-project` executes the full plan against disposable fixtures and publishes a separate dated pack.
+For the complete team-wide testing submission, use [Whole-project testing](docs/TESTING.md): the current case document, three TXT reports, test data and manual acceptance register. `npm run reports:txt` executes the test tools and captures their actual output. Code and branch coverage are combined in the third report.
 
-Run `npm run check` at the root. In `frontend`, run `npm run test:coverage`, `npm run lint` and `npm run build`. After installing the Playwright browsers, run `npm run test:browser`. Run `npm run demo:build` then `npm run demo:verify` for the compiled-release/restart check. Report publication guards are checked with `python scripts/tests/test_testing_reports.py -v`. Tests use disposable MongoDB rather than the configured Atlas database. Backend coverage gates are 85% statements/lines/functions and 80% branches; frontend coverage is reported separately. See [updated test cases](docs/TEST_CASES_UPDATED_2026-11-05.md) and [all four testing reports](docs/testing/2026-11-05/README.md).
+Run `npm run check` at the root. In `frontend`, run `npm run test:coverage`, `npm run lint` and `npm run build`. After installing the Playwright browsers, run `npm run test:browser`. Run `npm run demo:build` then `npm run demo:verify` for the compiled-release/restart check. TXT capture and failure propagation are checked with `node --test scripts/tests/text-test-reports.test.mjs`. Tests use disposable MongoDB rather than Atlas. Backend coverage gates are 85% statements/lines/functions and 80% branches; frontend coverage is reported separately. See [current test cases](docs/TEST_CASES_WHOLE_PROJECT.md) and [three TXT reports](docs/submission/README.md).
 
 [GitHub Actions](.github/workflows/ci.yml) builds, tests, lints and retains reports/build artifacts on push, PR and manual dispatch. It supersedes the original Jenkins proposal and validates the isolated production HTTPS configuration. The documented persistent local release supports the SRS demonstration environment; record the chosen environment, final demo and acceptance evidence. See the [CI guide](docs/GITHUB_ACTIONS.md).
 
-Sprint 2 PR #8 and subsequent team integrations are already merged. The earlier main-only-Sprint-1 separation instructions are historical; use the saved Sprint 1 branch when reproducing the original video. New audit/report changes remain reviewable on the Sprint 2 branch until integrated.
+Sprint 2 PR #8 and subsequent team integrations, including verified TXT reports in PR #45, are merged. The earlier main-only-Sprint-1 separation instructions are historical; use the saved Sprint 1 branch when reproducing the original video.
 
 Frozen submitted references: [SRS](SRS.md), [SAD](SAD.pdf), [Test Plan](TEST_PLAN.md) and [Test Plan PDF](TEST_PLAN.pdf). Current test-case/report revisions supplement these documents. See also [historical references](docs/historical/README.md) and [documentation audit](docs/DOCUMENTATION_AUDIT_2026-10-25.md).
 
