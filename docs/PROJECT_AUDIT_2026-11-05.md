@@ -1,12 +1,14 @@
 # Project and testing audit — 5 November 2026
 
+> Historical audit retained for its defect reproductions and ownership record. The fixes were subsequently integrated into main by PR #44. Current results are the [reviewed TXT reports](submission/README.md); removed exports linked below resolve to their immutable pre-cleanup versions. Old counts and integration-pending statements describe the original audit date.
+
 Reviewed application source: `4d1e735b92114cd0ba84328ce1c882ff55508360` on `PES2UG24CS185-Sprint-2`. Main at review start: `303d1a315f2cd1658d08bc6d148d635e88b9a89d`. Review covered submitted requirement mappings, authentication/session lifecycle, upload/search/download, Question Bank/Quiz contracts, trusted scoring/idempotency, saved result/history/performance, moderation, deployment/CI and report integrity.
 
 ## Result
 
 The implemented modules pass the executed automated validation after the corrections below. The audit found **two reproducible product defects** and corrected both on the Sprint 2 branch. Main does not yet contain these fixes or the dated testing packs. No open PR existed when checked; merge/review is a separate integration step.
 
-The four requested reports are available in the [5 November testing pack](testing/2026-11-05/README.md), with [updated test cases](TEST_CASES_UPDATED_2026-11-05.md), per-case outcomes, JUnit, LCOV, coverage summaries and source/evidence fingerprints. Original [2 November evidence](testing/2026-11-02/README.md), including its Edge timeout and rerun, is preserved. The final 5 November browser execution passed all eighteen cases in one complete run.
+The four requested reports are available in the [5 November testing pack](https://github.com/Chandak06/SE-JF-10/blob/cb440bba6b20bbfb4e50dc8e67519584ba4b3439/docs/testing/2026-11-05/README.md), with [updated test cases](https://github.com/Chandak06/SE-JF-10/blob/cb440bba6b20bbfb4e50dc8e67519584ba4b3439/docs/TEST_CASES_UPDATED_2026-11-05.md), per-case outcomes, JUnit, LCOV, coverage summaries and source/evidence fingerprints. Original [2 November evidence](https://github.com/Chandak06/SE-JF-10/blob/cb440bba6b20bbfb4e50dc8e67519584ba4b3439/docs/testing/2026-11-02/README.md), including its Edge timeout and rerun, is preserved. The final 5 November browser execution passed all eighteen cases in one complete run.
 
 ## Confirmed defects and corrections
 
