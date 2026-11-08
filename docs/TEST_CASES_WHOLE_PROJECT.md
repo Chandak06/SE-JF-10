@@ -1,6 +1,6 @@
 # Whole-project Test Case Document — 5 November 2026
 
-Owner/coordinator: Harshit Chandak (PES2UG24CS185), Team 10. Testing window: **2–6 November 2026**. This supplementary revision updates the test cases for the integrated Sprint 1 and Sprint 2 application. The submitted SRS, SAD and Test Plan remain unchanged. Current execution results are in [the production report pack](testing/2026-11-05-production-validation/README.md); the generated case catalogue records every executed automated case, its source, duration and outcome. The [earlier failed execution](testing/2026-11-05-whole-project/README.md) remains preserved.
+Owner/coordinator: Harshit Chandak (PES2UG24CS185), Team 10. Testing window: **2-6 November 2026**. This supplementary Test Case Document covers the integrated Sprint 1 and Sprint 2 application; submitted SRS, SAD and Test Plan remain unchanged. Current outcomes are in the [three reviewed TXT reports](submission/README.md), which retain test names, source, actual output and exit codes. Older generated catalogues and failed runs remain available in [pre-cleanup Git history](https://github.com/Chandak06/SE-JF-10/tree/cb440bba6b20bbfb4e50dc8e67519584ba4b3439/docs/testing).
 
 ## Execution rules and fixtures
 
@@ -73,8 +73,8 @@ Use the explicit cross-test matrix in `docs/WORK_DIVISION.md`: Prajwal tests Dha
 - TC-QUIZ-Session-01/02: use the real auth/submission services, expire the session during submission and separately sign in as a different account before submitting. The page must show an error without crashing, preserve the original owner's answers and never submit/reassign them under the other account. The expiry case reproduced a null-user render crash before the correction; both cases are in `frontend/src/pages/QuizAttemptPage.session-expiry.test.tsx`.
 
 - TC-Auth-Race-01/02/03: delay an old upload, material-list or logout response; complete a newer login, then finish the old request (401 for materials, 204 for logout). The newer token, user and saved session must survive. All three failed before the correction and pass afterward in `frontend/src/services/authService.test.ts`. Current-session rejection and normal logout still invalidate the intended session.
-- Report integrity: nine synthetic-fixture checks in scripts/tests/test_testing_reports.py verify immutable historical snapshots, source mismatch, missing execution commands, partial browser matrices, suite-level errors, count mismatches, and clean date-specific publication with portable evidence hashes. Synthetic fixtures are never counted as application acceptance.
-- This revision supersedes the 2 November case document for current execution; its original report snapshot and initial Edge timeout remain preserved.
+- TXT capture integrity: three Node regression checks in `scripts/tests/text-test-reports.test.mjs` verify stdout/stderr capture, split UTF-8 and terminal escapes, real nonzero exit codes, continuation after failures, and executable-start errors. These checks run in CI and are not application acceptance cases.
+- This is the current case document; superseded copies and their original failure evidence remain recoverable from Git history.
 
 ## Whole-project ownership and execution scope
 
@@ -101,6 +101,6 @@ Expected: all ten users complete without crashes, loss or cross-user history/dra
 
 ### Automated execution and acceptance records
 
-Run `npm run test:project -- --date 2026-11-05 --label whole-project` after committing the source. The runner executes the complete backend/frontend suites, coverage, lint/build, real compiled release/restart checks, report-integrity guards, full browser matrix and frozen-document check; records actual exit codes; and publishes the four reports. Use a new label for a later execution on the same date, preserving previous evidence.
+Run `npm run reports:txt` to execute unit/component, integration/browser and coverage commands and save their real output to three TXT files. See [command details](TESTING_TXT.md). Additional build/release verification uses `npm run check`, frontend lint/build, and `npm run demo:build` / `npm run demo:verify`; the frozen-document guard remains part of CI. The obsolete Markdown/PDF publication tools have been retired.
 
-The concrete executed-case catalogue records every parameterized assertion. [Test data](testing/TEST_DATA.md) and [manual acceptance record](testing/MANUAL_ACCEPTANCE.md) are part of the submission. No automated pass is substituted for named independent peer review, representative-user usability or Project Guide acceptance.
+The reviewed TXT captures include verbose concrete case names and actual outcomes. [Test data](testing/TEST_DATA.md) and [manual acceptance record](testing/MANUAL_ACCEPTANCE.md) are part of the submission. No automated pass is substituted for named independent peer review, representative-user usability or Project Guide acceptance.
