@@ -9,8 +9,6 @@
   },
   "scripts": {
     "check:submitted": "node scripts/check-submitted-documents.mjs",
-    "test:project": "node scripts/run-project-testing.mjs",
-    "reports:native": "node scripts/generate-native-test-reports.mjs",
     "reports:txt": "node scripts/generate-text-test-reports.mjs",
     "report:unit:txt": "node scripts/generate-text-test-reports.mjs unit",
     "report:system:txt": "node scripts/generate-text-test-reports.mjs system",

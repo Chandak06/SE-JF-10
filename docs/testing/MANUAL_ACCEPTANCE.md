@@ -1,6 +1,6 @@
 # Independent and user acceptance record — Team 10
 
-Testing window: 2–6 November 2026. Current automated results and real browser concurrency are in the [production validation pack](2026-11-05-production-validation/README.md); the [earlier failed run](2026-11-05-whole-project/README.md) is preserved. This register records only independent/manual evidence; a Pending entry is not an executed pass. Append dated evidence rather than filling expected outcomes as actual outcomes.
+Testing window: 2-6 November 2026. Current automated outcomes are in the [three reviewed TXT reports](../submission/README.md). Earlier generated packs, including failed runs, remain in [pre-cleanup Git history](https://github.com/Chandak06/SE-JF-10/tree/cb440bba6b20bbfb4e50dc8e67519584ba4b3439/docs/testing). This register records only independent/manual evidence; Pending is not an executed pass. Append genuine dated evidence rather than entering expected outcomes as actual outcomes.
 
 ## Verified existing human-review evidence
 

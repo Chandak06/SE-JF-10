@@ -1,6 +1,6 @@
 # Sprint 2 requirement/test matrix — 30 October 2026
 
-Current execution follow-up, 5 November: use the [project audit](PROJECT_AUDIT_2026-11-05.md), [updated cases](TEST_CASES_UPDATED_2026-11-05.md) and [fresh four-report pack](testing/2026-11-05/README.md). Earlier dated test counts below are historical. All planned functional modules are integrated; Jira Done status does not substitute for independent/manual acceptance evidence.
+Current execution follow-up, 8 November: use the [current cases](TEST_CASES_WHOLE_PROJECT.md), [three reviewed TXT reports](submission/README.md) and [testing guide](TESTING.md). Earlier dated counts below and the [5 November audit](PROJECT_AUDIT_2026-11-05.md) are historical. All planned functional modules are integrated; Jira Done status does not replace independent/manual acceptance evidence.
 
 Submitted SRS/SAD/Test Plan files are frozen and fingerprint-checked. Validated means executed automated verification, not invented human/faculty acceptance. Current execution and release evidence: [final implementation/test summary](SPRINT2_HARSHIT_FINAL_2026-10-30.md).
 
